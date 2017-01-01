@@ -1,0 +1,19 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Stepper dimensions, per material.io guidelines -->
+    <dimen name="event_circle_diameter">24dp</dimen>
+    <dimen name="icon_left_padding">24dp</dimen>
+    <dimen name="icon_top_bottom_padding">8dp</dimen>
+    <dimen name="label_top_padding">24dp</dimen>
+    <dimen name="label_bottom_padding">16dp</dimen>
+    <dimen name="space_below_active_step">48dp</dimen>
+    <dimen name="space_below_inactive_step">40dp</dimen>
+
+    <!-- Elevation -->
+    <dimen name="head_space_elevation">4dp</dimen>
+
+</resources>

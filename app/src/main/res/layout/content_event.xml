@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_event"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.nightcap.previously.EventActivity"
+    tools:showIn="@layout/activity_event">
+
+
+    <RelativeLayout
+        android:id="@+id/detail_head_space"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:background="@color/colorPrimary"
+        android:elevation="@dimen/head_space_elevation">
+
+        <TextView
+            android:id="@+id/label_event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textAlignment="viewStart"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorAccent" />
+
+        <EditText
+            android:id="@+id/event_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences|textAutoCorrect"
+            android:hint="Event name"
+            android:ems="10"
+            android:textAlignment="viewStart"
+            android:layout_below="@+id/label_event_name"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:textSize="24sp"
+            android:textColor="?android:attr/textColorPrimaryInverse"
+            android:textColorHint="@color/hint_foreground_material_dark" />
+
+        <TextView
+            android:text="Date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/label_event_date"
+            android:textAlignment="viewStart"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/event_name"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/colorAccent" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:id="@+id/event_date"
+            android:textAlignment="viewStart"
+            android:layout_below="@+id/label_event_date"
+            android:layout_alignParentStart="true"
+            android:inputType="date"
+            android:onClick="showDatePickerDialog"
+            android:textColor="?android:attr/textColorPrimaryInverse" />
+
+    </RelativeLayout>
+
+    <Button
+        android:text="Save event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_save_event"
+        android:onClick="onSaveButtonClick"
+        android:layout_marginEnd="11dp"
+        android:layout_marginTop="13dp"
+        android:layout_below="@+id/detail_head_space"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Notes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_notes"
+        android:layout_marginStart="16dp"
+        android:layout_alignTop="@+id/button_save_event"
+        android:layout_alignParentStart="true"
+        android:textColor="@color/colorAccent" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textAutoCorrect|textMultiLine"
+        android:ems="10"
+        android:id="@+id/event_notes"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/label_notes" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/event_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/ic_action_add"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_above="@+id/label_notes"
+        android:layout_alignEnd="@+id/button_save_event"
+        android:layout_marginEnd="18dp" />
+
+</RelativeLayout>
