@@ -1,5 +1,12 @@
-# Previously
+# Timestream
 
-Also known as Timestream. Currently just testing Github integration.
+This is an Android app for recording irregularly recurring events.
 
-Here are some edits. Here are some more. And another.
+Examples of things you may want to track include:
+- Seeing the doctor/dentist
+- Recording periods (to check for regularity), or symptoms (e.g. migraines, back pain)
+- Changing contacts/razor blades/toothbrushes
+- Getting a haircut
+- Washing the car
+
+A Nightcap Initiative.
