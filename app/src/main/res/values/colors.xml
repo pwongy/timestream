@@ -4,8 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF9800</color>
 
-    <color name="colorAlternate">#FF0000</color>
-
     <!-- Timeline -->
     <color name="colorTimeline">#BDBDBD</color>
 
