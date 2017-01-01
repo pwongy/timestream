@@ -25,4 +25,4 @@ Android app.
 
 _A Nightcap Initiative._
 
-Work in progress...
+Work in progress...probably gonna take a while.
