@@ -1,7 +1,5 @@
 # Timestream
 
-_A Nightcap Initiative._
-
 ## About
 
 **Timestream** is an Android app for recording irregularly recurring events (i.e. those without a
@@ -24,3 +22,5 @@ Design steppers](see https://material.io/guidelines/components/steppers.html). T
 the use of a custom ListAdapter.
 - Events will be added via either a separate Activity or using a BottomSheet, similar to the Todoist
 Android app.
+
+_A Nightcap Initiative._
