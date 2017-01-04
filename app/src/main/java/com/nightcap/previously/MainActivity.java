@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -11,9 +14,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
     private DbHandler dbHandler;
+
+    // RecyclerView
+    private List<Event> eventList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private EventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +47,37 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initialise Realm
-//        Realm.init(this); // Moved to DbHandler
-
         dbHandler = new DbHandler(this);
+
+        // Recycler view stuff
+        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+
+        eventAdapter = new EventAdapter(eventList);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setAdapter(eventAdapter);
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        prepareEventData();
+    }
+
+    private void prepareEventData() {
+        Log.d(TAG, "Data prepared...?");
+        eventList = dbHandler.getEventList();
+
+        int count = eventAdapter.getItemCount();
+
+        for (int position = 0; position < eventList.size(); position++) {
+            eventAdapter.notifyItemInserted(position);
+        }
+
+//        eventAdapter.notifyDataSetChanged();
+        count = eventAdapter.getItemCount();
+        Log.d(TAG, "Count: " + count);
     }
 
     @Override
@@ -46,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         showData();
+        prepareEventData();
     }
 
     @Override

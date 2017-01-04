@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class EventActivity extends AppCompatActivity {
     private String TAG = "EventActivity";
-    FloatingActionButton fab;
+//    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +33,13 @@ public class EventActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Floating action button
-        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Start new Activity to add an event
-            }
-        });
+//        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Start new Activity to add an event
+//            }
+//        });
     }
 
     @Override
@@ -48,7 +48,7 @@ public class EventActivity extends AppCompatActivity {
 
         RelativeLayout header = (RelativeLayout) findViewById(R.id.detail_head_space);
         Log.i(TAG, "Header height: " + header.getHeight());
-        fab.setY(header.getHeight());
+//        fab.setY(header.getHeight());
 
     }
 
@@ -90,10 +90,10 @@ public class EventActivity extends AppCompatActivity {
 
             // Save new event
             Event event = new Event();
-            event.setType(eventName);
+            event.setName(eventName);
             event.setDate(eventDate);
             event.setNotes(eventNotes);
-            dbHandler.saveEventType(event);
+            dbHandler.saveEventName(event);
 
             // Return to main screen
             Intent homeIntent = new Intent(this, MainActivity.class);
