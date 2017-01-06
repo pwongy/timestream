@@ -8,11 +8,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "Main activity created");
 
+        // Inflate xml layout
         setContentView(R.layout.activity_main);
 
         // Toolbar
@@ -49,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Initialise Realm for data handling
+        // Get a data handler, which initialises Realm during construction
         dbHandler = new DbHandler(this);
 
-        /* ---- Recycler view ---- */
+        // Recycler view stuff
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
         // LayoutManager
@@ -65,32 +63,20 @@ public class MainActivity extends AppCompatActivity {
         // Adapter (must be set after LayoutManager)
         eventAdapter = new EventAdapter(eventList);
         recyclerView.setAdapter(eventAdapter);
-
-        prepareEventData();
     }
 
     private void prepareEventData() {
-        Log.d(TAG, "Data prepared...?");
+        // Get data from Realm
         eventList = dbHandler.getEventList();
+
+        // Send to adapter
         eventAdapter.updateData(eventList);
-
-        int count = eventAdapter.getItemCount();
-
-//        for (int position = 0; position < eventList.size(); position++) {
-//            eventAdapter.eventList.add(eventList.get(position));
-//            eventAdapter.notifyItemInserted(position);
-//        }
-
-//        eventAdapter.notifyDataSetChanged();
-        count = eventAdapter.getItemCount();
-        Log.d(TAG, "Count: " + count);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        showData();
+        prepareEventData();
     }
 
     @Override
@@ -127,12 +113,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onGetButtonClick(View view) {
-        showData();
+
     }
 
-    private void showData() {
-        String e = dbHandler.getEventTypes();
-        TextView output_tv = (TextView) findViewById(R.id.output_text);
-        output_tv.setText(e);
-    }
 }
