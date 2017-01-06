@@ -15,7 +15,7 @@ import java.util.List;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     String TAG = "EVENT_ADAPTER";
-    public List<Event> eventList;
+    private List<Event> eventList;
 
     // ViewHolder pattern as required
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -34,6 +34,17 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         this.eventList = el;
         Log.i(TAG, "el: " + el.toString());
         Log.w(TAG, "eventlist: " + eventList.toString());
+    }
+
+    public void updateData(List<Event> el) {
+        if (eventList != null) {
+            eventList.clear();
+            eventList.addAll(el);
+        }
+        else {
+            eventList = el;
+        }
+        notifyDataSetChanged();
     }
 
     // To inflate the item layout and create the ViewHolder

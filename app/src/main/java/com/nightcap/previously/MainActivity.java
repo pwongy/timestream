@@ -65,19 +65,21 @@ public class MainActivity extends AppCompatActivity {
         // Adapter (must be set after LayoutManager)
         eventAdapter = new EventAdapter(eventList);
         recyclerView.setAdapter(eventAdapter);
+
         prepareEventData();
     }
 
     private void prepareEventData() {
         Log.d(TAG, "Data prepared...?");
         eventList = dbHandler.getEventList();
+        eventAdapter.updateData(eventList);
 
         int count = eventAdapter.getItemCount();
 
-        for (int position = 0; position < eventList.size(); position++) {
-            eventAdapter.eventList.add(eventList.get(position));
-            eventAdapter.notifyItemInserted(position);
-        }
+//        for (int position = 0; position < eventList.size(); position++) {
+//            eventAdapter.eventList.add(eventList.get(position));
+//            eventAdapter.notifyItemInserted(position);
+//        }
 
 //        eventAdapter.notifyDataSetChanged();
         count = eventAdapter.getItemCount();
