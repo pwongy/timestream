@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         // Adapter (must be set after LayoutManager)
         eventAdapter = new EventAdapter(eventList);
         recyclerView.setAdapter(eventAdapter);
-//        prepareEventData();
+        prepareEventData();
     }
 
     private void prepareEventData() {
@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         showData();
-        prepareEventData();
     }
 
     @Override

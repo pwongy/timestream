@@ -13,7 +13,7 @@
     <dimen name="space_below_active_step">48dp</dimen>
     <dimen name="space_below_inactive_step">40dp</dimen>
 
-    <dimen name="list_top_bottom_padding">16dp</dimen>
+    <dimen name="list_top_bottom_padding">10dp</dimen>
 
     <!-- Elevation -->
     <dimen name="head_space_elevation">4dp</dimen>

@@ -46,7 +46,7 @@
             android:layout_alignParentEnd="true"
             android:textSize="24sp"
             android:textColor="?android:attr/textColorPrimaryInverse"
-            android:textColorHint="?android:attr/textColorHint" />
+            android:textColorHint="?android:attr/textColorHintInverse" />
 
         <TextView
             android:text="Date"
