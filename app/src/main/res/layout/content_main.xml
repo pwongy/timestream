@@ -47,7 +47,7 @@
         android:layout_below="@+id/output_text"
         android:layout_alignParentStart="true"
         android:layout_marginTop="16dp"
+        android:scrollbars="vertical"
         android:elevation="4dp"/>
-
 
 </RelativeLayout>

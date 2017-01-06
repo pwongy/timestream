@@ -24,18 +24,21 @@ public class MainActivity extends AppCompatActivity {
     // RecyclerView
     private List<Event> eventList = new ArrayList<>();
     private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
     private EventAdapter eventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Log.d(TAG, "Main activity created");
 
         setContentView(R.layout.activity_main);
+
+        // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // FAB
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.main_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,23 +49,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Initialise Realm
+        // Initialise Realm for data handling
         dbHandler = new DbHandler(this);
 
-        // Recycler view stuff
+        /* ---- Recycler view ---- */
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
-        eventAdapter = new EventAdapter(eventList);
+        // LayoutManager
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        recyclerView.setAdapter(eventAdapter);
-
+        // Animator
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        prepareEventData();
+        // Adapter (must be set after LayoutManager)
+        eventAdapter = new EventAdapter(eventList);
+        recyclerView.setAdapter(eventAdapter);
+//        prepareEventData();
     }
 
     private void prepareEventData() {
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         int count = eventAdapter.getItemCount();
 
         for (int position = 0; position < eventList.size(); position++) {
+            eventAdapter.eventList.add(eventList.get(position));
             eventAdapter.notifyItemInserted(position);
         }
 
