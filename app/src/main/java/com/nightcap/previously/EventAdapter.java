@@ -27,21 +27,19 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         }
     }
 
-    public EventAdapter(List<Event> el) {
-        this.eventList = el;
-
-//        Log.i(TAG, "Constructor called");
-//        Log.i(TAG, "el: " + el.toString());
-//        Log.w(TAG, "eventlist: " + eventList.toString());
+    // Constructor
+    public EventAdapter(List<Event> list) {
+        this.eventList = list;
     }
 
-    public void updateData(List<Event> el) {
+    // Updating the list data
+    public void updateData(List<Event> list) {
         if (eventList != null) {
             eventList.clear();
-            eventList.addAll(el);
+            eventList.addAll(list);
         }
         else {
-            eventList = el;
+            eventList = list;
         }
         notifyDataSetChanged();
     }
@@ -55,7 +53,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         return vh;
     }
 
-    // To populate data into the view
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
