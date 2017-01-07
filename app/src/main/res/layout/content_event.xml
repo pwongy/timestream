@@ -73,17 +73,6 @@
 
     </RelativeLayout>
 
-    <Button
-        android:text="Save event"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_save_event"
-        android:onClick="onSaveButtonClick"
-        android:layout_marginEnd="11dp"
-        android:layout_marginTop="13dp"
-        android:layout_below="@+id/detail_head_space"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:text="Notes"
         android:layout_width="wrap_content"
