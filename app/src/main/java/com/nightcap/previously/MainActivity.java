@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -60,23 +61,28 @@ public class MainActivity extends AppCompatActivity {
         // Animator
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        // Decorator
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);
+
         // Adapter (must be set after LayoutManager)
         eventAdapter = new EventAdapter(eventList);
         recyclerView.setAdapter(eventAdapter);
     }
 
-    private void prepareEventData() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        prepareData();
+    }
+
+    private void prepareData() {
         // Get data from Realm
         eventList = dbHandler.getEventList();
 
         // Send to adapter
         eventAdapter.updateData(eventList);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        prepareEventData();
     }
 
     @Override
