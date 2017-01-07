@@ -41,6 +41,13 @@ public class EventActivity extends AppCompatActivity {
 //                // Start new Activity to add an event
 //            }
 //        });
+
+        // Change editText underline colour
+//        EditText nameEditText = (EditText) findViewById(R.id.event_name);
+//        nameEditText.getBackground().mutate()
+//                .setColorFilter(getResources().getColor(R.color.colorEditTextUnderline),
+//                        PorterDuff.Mode.SRC_ATOP);
+
     }
 
     @Override
@@ -67,8 +74,10 @@ public class EventActivity extends AppCompatActivity {
                 Intent homeIntent = new Intent(this, MainActivity.class);
                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(homeIntent);
+                break;
             case R.id.action_save_event:
                 saveEvent();
+                break;
         }
         return (super.onOptionsItemSelected(menuItem));
     }
