@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,16 @@ public class MainActivity extends AppCompatActivity {
         // Adapter (must be set after LayoutManager)
         eventAdapter = new EventAdapter(eventList);
         recyclerView.setAdapter(eventAdapter);
+
+        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(
+                new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        Toast.makeText(getApplicationContext(), "Clicked position: " + position,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     @Override
