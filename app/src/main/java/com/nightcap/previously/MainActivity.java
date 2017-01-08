@@ -118,19 +118,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClearButtonClick(View view) {
-        boolean isDbDeleted = dbHandler.resetDatabase();
-
-        if (isDbDeleted){
-            // Restart app
-            Intent restartIntent = getIntent();
-            restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(restartIntent);
-        }
-    }
-
-    public void onGetButtonClick(View view) {
-
-    }
+//    public void onClearButtonClick(View view) {
+//        boolean isDbDeleted = dbHandler.resetDatabase();
+//
+//        if (isDbDeleted){
+//            // Restart app
+//            Intent restartIntent = getIntent();
+//            restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            startActivity(restartIntent);
+//        }
+//    }
 
 }
