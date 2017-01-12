@@ -4,11 +4,13 @@
 Timestream is an Android app for recording irregularly recurring events, often of low priority. We humans can forget these easily, so this app is designed to help keep track of these events and provide reminders when they are "due".
 
 Examples of things you may want to log include:
-- Replacing your water filter
-- Seeing the doctor/dentist
 - Recording periods (to check for regularity), or medical symptoms (e.g. migraines, back pain)
-- Starting a new pair of contact lenses / razor blade / toothbrush
+- Seeing the doctor/dentist
+- Replacing your Britta filter
+- Starting a new pair of contact lenses/razor blade/toothbrush
 - Calling your mum/dad
+- Updating account passwords
+- Clearing cookies/internet cache
 - Getting a haircut
 - Washing the car
 
