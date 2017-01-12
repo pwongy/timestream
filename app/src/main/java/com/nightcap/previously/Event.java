@@ -7,7 +7,7 @@ import io.realm.RealmObject;
  */
 
 public class Event extends RealmObject {
-    private String type;
+    private String name;
     private String date;
     private String notes;
 
@@ -15,12 +15,12 @@ public class Event extends RealmObject {
 
     }
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDate() {

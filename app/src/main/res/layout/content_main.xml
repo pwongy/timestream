@@ -5,100 +5,15 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.nightcap.previously.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:gravity="center_vertical"
-        android:layout_below="@+id/delete_button"
-        android:layout_alignParentStart="true"
-        android:id="@+id/header_1">
-
-        <TextView
-            android:id="@+id/circle_1"
-            android:layout_width="@dimen/event_circle_diameter"
-            android:layout_height="@dimen/event_circle_diameter"
-            android:layout_below="@+id/delete_button"
-            android:layout_alignParentStart="true"
-            android:background="@drawable/event_circle"
-            android:paddingLeft="@dimen/icon_left_padding"
-            android:paddingTop="@dimen/icon_top_bottom_padding"
-            android:paddingBottom="@dimen/icon_top_bottom_padding" />
-
-        <TextView
-            android:text="5 days ago"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/days_ago_1"
-            android:textStyle="normal|bold"
-            android:textColor="?android:attr/textColorPrimary"
-            android:layout_alignBaseline="@+id/circle_1"
-            android:layout_toEndOf="@+id/circle_1"
-            android:layout_marginStart="9dp"
-            android:textSize="16sp"
-            android:layout_weight="1" />
-    </LinearLayout>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/timeline_stroke"
-        android:id="@+id/imageView"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="11dp"
-        android:layout_below="@+id/header_1"
-        android:layout_alignEnd="@+id/textView5" />
-
-    <TextView
-        android:layout_width="@dimen/event_circle_diameter"
-        android:id="@+id/textView5"
-        android:background="@drawable/event_circle"
-        android:layout_height="@dimen/event_circle_diameter"
-        android:paddingLeft="@dimen/icon_left_padding"
-        android:paddingTop="@dimen/icon_top_bottom_padding"
-        android:paddingBottom="@dimen/icon_top_bottom_padding"
-        android:textColor="@android:color/white"
-        android:text="2"
-        android:textAlignment="center"
-        android:layout_marginTop="8dp"
-        android:layout_below="@+id/imageView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/main_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
         android:layout_alignParentStart="true" />
-
-    <TextView
-        android:text="Stuff will show up here"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/output_text"
-        android:layout_marginStart="8dp"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_toEndOf="@+id/textView5" />
-
-    <Button
-        android:text="Get events"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/get_button"
-        android:onClick="onGetButtonClick"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:text="Clear all events"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/delete_button"
-        android:onClick="onClearButtonClick"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
-
 
 </RelativeLayout>

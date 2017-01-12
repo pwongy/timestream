@@ -1,8 +1,11 @@
 package com.nightcap.previously;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -20,10 +23,10 @@ class DbHandler {
         realm = Realm.getDefaultInstance();
     }
 
-    void saveEventType(Event event) {
+    void saveEventName(Event event) {
         // First, see if event already added
         boolean isEventExists = false;
-        final RealmResults<Event> existingEvents = realm.where(Event.class).equalTo("type", event.getType()).findAll();
+        final RealmResults<Event> existingEvents = realm.where(Event.class).equalTo("name", event.getName()).findAll();
         if (existingEvents.size() != 0) {
             isEventExists = true;
             Log.d(TAG, "Duplicate event...will not be added to DB.");
@@ -46,6 +49,13 @@ class DbHandler {
 
         final RealmResults<Event> events = realm.where(Event.class).findAll();
         return events.toString();
+    }
+
+    public List<Event> getEventList() {
+        final RealmResults<Event> events = realm.where(Event.class).findAll();
+        List<Event> copied = realm.copyFromRealm(events);
+        Log.d(TAG, "Copied data: " + copied.toString());
+        return copied;
     }
 
     boolean resetDatabase() {

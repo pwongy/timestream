@@ -2,11 +2,11 @@ package com.nightcap.previously;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class EventActivity extends AppCompatActivity {
     private String TAG = "EventActivity";
-    FloatingActionButton fab;
+//    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +31,23 @@ public class EventActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
 
         // Floating action button
-        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Start new Activity to add an event
-            }
-        });
+//        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Start new Activity to add an event
+//            }
+//        });
+
+        // Change editText underline colour
+//        EditText nameEditText = (EditText) findViewById(R.id.event_name);
+//        nameEditText.getBackground().mutate()
+//                .setColorFilter(getResources().getColor(R.color.colorEditTextUnderline),
+//                        PorterDuff.Mode.SRC_ATOP);
+
     }
 
     @Override
@@ -48,8 +56,15 @@ public class EventActivity extends AppCompatActivity {
 
         RelativeLayout header = (RelativeLayout) findViewById(R.id.detail_head_space);
         Log.i(TAG, "Header height: " + header.getHeight());
-        fab.setY(header.getHeight());
+//        fab.setY(header.getHeight());
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_event, menu);
+        return true;
     }
 
     @Override
@@ -59,6 +74,10 @@ public class EventActivity extends AppCompatActivity {
                 Intent homeIntent = new Intent(this, MainActivity.class);
                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(homeIntent);
+                break;
+            case R.id.action_save_event:
+                saveEvent();
+                break;
         }
         return (super.onOptionsItemSelected(menuItem));
     }
@@ -68,7 +87,7 @@ public class EventActivity extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    public void onSaveButtonClick(View v) {
+    private void saveEvent() {
         // Get handler
         DbHandler dbHandler = new DbHandler(this);
 
@@ -90,10 +109,10 @@ public class EventActivity extends AppCompatActivity {
 
             // Save new event
             Event event = new Event();
-            event.setType(eventName);
+            event.setName(eventName);
             event.setDate(eventDate);
             event.setNotes(eventNotes);
-            dbHandler.saveEventType(event);
+            dbHandler.saveEventName(event);
 
             // Return to main screen
             Intent homeIntent = new Intent(this, MainActivity.class);
