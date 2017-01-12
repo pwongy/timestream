@@ -9,6 +9,7 @@ Examples of things you may want to log include:
 - Replacing your Britta filter
 - Starting a new pair of contact lenses/razor blade/toothbrush
 - Calling your mum/dad
+- Buying flowers for your girlfriend
 - Updating account passwords
 - Clearing cookies/internet cache
 - Getting a haircut
