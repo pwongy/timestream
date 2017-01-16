@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
- * Created by Paul on 8/11/2016.
+ * Activity for editing events before storage to database.
  */
 
 public class EventActivity extends AppCompatActivity {
@@ -110,7 +110,7 @@ public class EventActivity extends AppCompatActivity {
             // Save new event
             Event event = new Event();
             event.setName(eventName);
-            event.setDate(eventDate);
+            event.setDate(new DateHandler().stringToDate(eventDate));
             event.setNotes(eventNotes);
             dbHandler.saveEvent(event);
 

@@ -5,13 +5,13 @@ import java.util.Date;
 import io.realm.RealmObject;
 
 /**
- * Created by Paul on 7/11/2016.
+ * Class representing each event in the log.
  */
 
 public class Event extends RealmObject {
     private String name;
-    private String date;    // To be moved to instance
-    private String notes;   // To be moved to instance
+    private Date date;
+    private String notes;
 
     private int periodInDays;
     private Date nextDue;
@@ -29,11 +29,11 @@ public class Event extends RealmObject {
         this.name = name;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

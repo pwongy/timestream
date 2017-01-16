@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Created by Paul on 3/01/2017.
+ * Adapter for sending database events to RecyclerView.
  */
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
@@ -58,7 +58,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         Event event = eventList.get(position);
         holder.nameView.setText(event.getName());
-        holder.dateView.setText(event.getDate());
+        holder.dateView.setText(new DateHandler().dateToString(event.getDate()));
     }
 
     // To determine the number of items

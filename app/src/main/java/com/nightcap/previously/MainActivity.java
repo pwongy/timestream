@@ -18,6 +18,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Main Activity. Displays existing database events.
+ */
+
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
     private DbHandler dbHandler;
