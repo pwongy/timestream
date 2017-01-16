@@ -11,7 +11,7 @@ import io.realm.RealmObject;
 public class EventInstance extends RealmObject {
     private long id;
     private Date date;
-    private Event type;
+    private Event name;
     private String notes;
 
     public EventInstance() {
@@ -26,12 +26,12 @@ public class EventInstance extends RealmObject {
         this.id = id;
     }
 
-    public Event getType() {
-        return type;
+    public Event getName() {
+        return name;
     }
 
-    public void setType(Event type) {
-        this.type = type;
+    public void setName(Event name) {
+        this.name = name;
     }
 
     public Date getDate() {

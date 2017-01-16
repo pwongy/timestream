@@ -112,7 +112,7 @@ public class EventActivity extends AppCompatActivity {
             event.setName(eventName);
             event.setDate(eventDate);
             event.setNotes(eventNotes);
-            dbHandler.saveEventName(event);
+            dbHandler.saveEvent(event);
 
             // Return to main screen
             Intent homeIntent = new Intent(this, MainActivity.class);

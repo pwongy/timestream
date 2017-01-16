@@ -12,7 +12,7 @@ Examples of things you may want to log include:
 - Clearing cookies/internet cache
 - Calling your mum/dad
 - Buying flowers for your girlfriend
-- Starting a new pair of contact lenses/razor blade/toothbrush
+- Starting a new toothbrush/razor blade/contact lenses
 - Getting a haircut
 - Washing the car
 
