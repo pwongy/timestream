@@ -10,8 +10,9 @@ import io.realm.RealmObject;
 
 public class EventInstance extends RealmObject {
     private long id;
-    private Event type;
     private Date date;
+    private Event type;
+    private String notes;
 
     public EventInstance() {
 

@@ -1,5 +1,7 @@
 package com.nightcap.previously;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
 
 /**
@@ -8,8 +10,12 @@ import io.realm.RealmObject;
 
 public class Event extends RealmObject {
     private String name;
-    private String date;
-    private String notes;
+    private String date;    // To be moved to instance
+    private String notes;   // To be moved to instance
+
+    private int periodInDays;
+    private Date nextDue;
+    private boolean notifications;
 
     public Event() {
 
