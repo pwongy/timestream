@@ -98,6 +98,14 @@ public class EventActivity extends AppCompatActivity {
         EditText inputDate = (EditText) findViewById(R.id.event_date);
         String eventDate = inputDate.getText().toString();
 
+        EditText inputPeriod = (EditText) findViewById(R.id.event_period);
+        int eventPeriod;
+        try {
+            eventPeriod = Integer.parseInt(inputPeriod.getText().toString());
+        } catch (NumberFormatException e) {
+            eventPeriod = -1;   // Use a negative value to indicate no repeats
+        }
+
         EditText inputNotes = (EditText) findViewById(R.id.event_notes);
         String eventNotes = inputNotes.getText().toString();
 
@@ -111,6 +119,7 @@ public class EventActivity extends AppCompatActivity {
             Event event = new Event();
             event.setName(eventName);
             event.setDate(new DateHandler().stringToDate(eventDate));
+            event.setPeriod(eventPeriod);
             event.setNotes(eventNotes);
             dbHandler.saveEvent(event);
 

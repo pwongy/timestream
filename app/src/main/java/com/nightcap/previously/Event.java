@@ -12,8 +12,8 @@ public class Event extends RealmObject {
     private String name;
     private Date date;
     private String notes;
-
     private int periodInDays;
+
     private Date nextDue;
     private boolean notifications;
 
@@ -43,5 +43,13 @@ public class Event extends RealmObject {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public int getPeriod() {
+        return periodInDays;
+    }
+
+    public void setPeriod(int periodInDays) {
+        this.periodInDays = periodInDays;
     }
 }
