@@ -38,15 +38,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textCapSentences|textAutoCorrect"
-            android:hint="Event name"
+            android:hint="@string/event_name_hint"
+            android:textColorHint="?android:attr/textColorHintInverse"
             android:ems="10"
             android:textAlignment="viewStart"
             android:layout_below="@+id/label_event_name"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:textSize="24sp"
-            android:textColor="?android:attr/textColorPrimaryInverse"
-            android:textColorHint="?android:attr/textColorHintInverse" />
+            android:textColor="?android:attr/textColorPrimaryInverse" />
 
         <TextView
             android:text="Date"
@@ -68,6 +68,8 @@
             android:layout_below="@+id/label_event_date"
             android:layout_alignParentStart="true"
             android:inputType="date"
+            android:hint="@string/event_date_hint"
+            android:textColorHint="?android:attr/textColorHintInverse"
             android:onClick="showDatePickerDialog"
             android:textColor="?android:attr/textColorPrimaryInverse" />
 
