@@ -8,7 +8,7 @@ import java.util.Date;
  * Support class for converting between Dates, Calendars, and Strings.
  */
 
-public class DateHandler {
+class DateHandler {
 
     DateHandler() {
 
@@ -36,6 +36,20 @@ public class DateHandler {
         }
 
         return date;
+    }
+
+    Date nextDueDate(Date lastTime, int period) {
+        Date nextTime;
+
+        // Convert lastTime to Calendar
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(lastTime);
+
+        // Increment by period
+        cal.add(Calendar.DATE, period);
+
+        nextTime = cal.getTime();
+        return nextTime;
     }
 
 }

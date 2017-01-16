@@ -114,12 +114,14 @@ public class EventActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Event name and date must be filled in", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "Attempting to save event");
+            DateHandler dh = new DateHandler();
 
             // Save new event
             Event event = new Event();
             event.setName(eventName);
-            event.setDate(new DateHandler().stringToDate(eventDate));
+            event.setDate(dh.stringToDate(eventDate));
             event.setPeriod(eventPeriod);
+            event.setNextDue(dh.nextDueDate(dh.stringToDate(eventDate), eventPeriod));
             event.setNotes(eventNotes);
             dbHandler.saveEvent(event);
 

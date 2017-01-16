@@ -12,15 +12,15 @@ import java.util.List;
  * Adapter for sending database events to RecyclerView.
  */
 
-public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
+class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     String TAG = "EventAdapter";
     private List<Event> eventList;
 
     // ViewHolder pattern as required
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameView, dateView;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        TextView nameView, dateView;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             nameView = (TextView) view.findViewById(R.id.list_event_name);
             dateView = (TextView) view.findViewById(R.id.list_event_date);
@@ -28,12 +28,12 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     }
 
     // Constructor
-    public EventAdapter(List<Event> list) {
+    EventAdapter(List<Event> list) {
         this.eventList = list;
     }
 
     // Updating the list data
-    public void updateData(List<Event> list) {
+    void updateData(List<Event> list) {
         if (eventList != null) {
             eventList.clear();
             eventList.addAll(list);
@@ -58,7 +58,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         Event event = eventList.get(position);
         holder.nameView.setText(event.getName());
-        holder.dateView.setText(new DateHandler().dateToString(event.getDate()));
+
+        // Build date string
+        DateHandler dh = new DateHandler();
+        StringBuilder sb = new StringBuilder(dh.dateToString(event.getDate()));
+        if (event.hasPeriod()) {
+            sb.append("  ➡  ");
+            sb.append(dh.dateToString(event.getNextDue()));
+        }
+        holder.dateView.setText(sb.toString());
     }
 
     // To determine the number of items

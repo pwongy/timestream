@@ -52,4 +52,16 @@ public class Event extends RealmObject {
     public void setPeriod(int periodInDays) {
         this.periodInDays = periodInDays;
     }
+
+    public boolean hasPeriod() {
+        return !(this.getPeriod() == -1);
+    }
+
+    public Date getNextDue() {
+        return nextDue;
+    }
+
+    public void setNextDue(Date nextDue) {
+        this.nextDue = nextDue;
+    }
 }
