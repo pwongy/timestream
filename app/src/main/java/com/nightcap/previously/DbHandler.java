@@ -1,6 +1,7 @@
 package com.nightcap.previously;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.List;
@@ -11,12 +12,13 @@ import io.realm.RealmResults;
 
 class DbHandler {
     private String TAG = "DbHandler";
-    private Context appContext;
     private Realm eventLog;    // Realm = database
 
-    DbHandler(Context context) {
-        appContext = context;
+    private SharedPreferences dataStore;
+    private String spDataFilename = "data";
+    private String KEY_EVENT_COUNT = "event_count";
 
+    DbHandler(Context appContext) {
         // Initialise Realm
         Realm.init(appContext);
 
@@ -27,6 +29,9 @@ class DbHandler {
                 .build();
         // Use the config
         eventLog = Realm.getInstance(config);
+
+        // Get SharedPreferences file
+        dataStore = appContext.getSharedPreferences(spDataFilename, Context.MODE_PRIVATE);
     }
 
     void saveEvent(Event event) {
@@ -48,6 +53,7 @@ class DbHandler {
         eventLog.commitTransaction();
         Log.d(TAG, "Event added to DB.");
 
+        incrementEventCount();
     }
 
     String getEventTypes() {
@@ -84,5 +90,22 @@ class DbHandler {
         }
 
         return isDbDeleted;
+    }
+
+    int getEventCount() {
+        String dateKey = KEY_EVENT_COUNT;
+        return dataStore.getInt(dateKey, 0);
+    }
+
+    void incrementEventCount() {
+        SharedPreferences.Editor editor = dataStore.edit();
+
+        String dateKey = KEY_EVENT_COUNT;   // Key
+        int count = getEventCount();
+        count++;
+        editor.putInt(dateKey, count);      // Value
+
+        // Commit the edits
+        editor.apply();
     }
 }

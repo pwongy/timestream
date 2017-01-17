@@ -118,6 +118,8 @@ public class EventActivity extends AppCompatActivity {
 
             // Save new event
             Event event = new Event();
+            int id = dbHandler.getEventCount() + 1;
+            event.setId(id);
             event.setName(eventName);
             event.setDate(dh.stringToDate(eventDate));
             event.setPeriod(eventPeriod);

@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Toast.makeText(getApplicationContext(), "Clicked position: " + position,
+                        Toast.makeText(getApplicationContext(), "Clicked position ID: " + eventList.get(position).getId(),
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
