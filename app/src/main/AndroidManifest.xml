@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EventActivity"
+            android:name=".EditActivity"
             android:label="@string/new_event"
             android:theme="@style/AppTheme.NoActionBar" />
 

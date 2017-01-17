@@ -17,7 +17,7 @@ import android.widget.Toast;
  * Activity for editing events before storage to database.
  */
 
-public class EventActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity {
     private String TAG = "EventActivity";
 //    FloatingActionButton fab;
 

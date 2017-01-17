@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Start new Activity to add an event
-                Intent addEvent = new Intent(getApplicationContext(), EventActivity.class);
+                Intent addEvent = new Intent(getApplicationContext(), EditActivity.class);
                 startActivity(addEvent);
             }
         });
