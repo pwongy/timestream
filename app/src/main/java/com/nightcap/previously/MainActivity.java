@@ -9,6 +9,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Main Activity. Displays existing database events.
+ */
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
@@ -30,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "MainActivity created");
 
         // Inflate xml layout
         setContentView(R.layout.activity_main);
@@ -52,19 +58,14 @@ public class MainActivity extends AppCompatActivity {
         // Get a data handler, which initialises Realm during construction
         dbHandler = new DbHandler(this);
 
-        // Recycler view stuff
+        // Recycler view
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
-        // LayoutManager
-        layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);                          // LayoutManager
         recyclerView.setLayoutManager(layoutManager);
-
-        // Animator
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        // Decorator
+        recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Toast.makeText(getApplicationContext(), "Clicked position: " + position,
+                        Toast.makeText(getApplicationContext(), "Clicked position ID: " + eventList.get(position).getId(),
                                 Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareData() {
         // Get data from Realm
-        eventList = dbHandler.getEventList();
+        eventList = dbHandler.getAllEvents();
 
         // Send to adapter
         eventAdapter.updateData(eventList);

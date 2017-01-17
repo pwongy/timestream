@@ -18,4 +18,9 @@
     <!-- Elevation -->
     <dimen name="head_space_elevation">4dp</dimen>
 
+    <!--Labels-->
+    <dimen name="label_margin">16dp</dimen>
+    <dimen name="label_adjustment">4dp</dimen>
+    <dimen name="event_icon_margin">14dp</dimen>
+
 </resources>

@@ -3,14 +3,13 @@ package com.nightcap.previously;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.util.Calendar;
 
 /**
- * Created by Paul on 8/11/2016.
+ * Dialog for selecting event date.
  */
 
 public class DatePickerDialog extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
@@ -30,10 +29,8 @@ public class DatePickerDialog extends DialogFragment implements android.app.Date
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Do something with the date chosen by the user
-        Log.d("Tag test", "stuff");
-
         EditText dateField = (EditText) getActivity().findViewById(R.id.event_date);
-        dateField.setText(day + "/" + (month + 1) + "/" + year);
+        dateField.setText(new DateHandler().dateToString(year, month, day));
     }
 
 }

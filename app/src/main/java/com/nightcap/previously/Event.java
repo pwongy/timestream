@@ -1,18 +1,36 @@
 package com.nightcap.previously;
 
+import java.util.Date;
+
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by Paul on 7/11/2016.
+ * Class representing each event in the log.
  */
 
 public class Event extends RealmObject {
+    @PrimaryKey
+    private int id;
+
     private String name;
-    private String date;
+    private Date date;
+    private int periodInDays;
+    private Date nextDue;
     private String notes;
+
+    private boolean notifications;
 
     public Event() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -23,12 +41,32 @@ public class Event extends RealmObject {
         this.name = name;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getPeriod() {
+        return periodInDays;
+    }
+
+    public void setPeriod(int periodInDays) {
+        this.periodInDays = periodInDays;
+    }
+
+    public boolean hasPeriod() {
+        return !(this.getPeriod() == -1);
+    }
+
+    public Date getNextDue() {
+        return nextDue;
+    }
+
+    public void setNextDue(Date nextDue) {
+        this.nextDue = nextDue;
     }
 
     public String getNotes() {

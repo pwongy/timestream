@@ -1,70 +1,86 @@
 package com.nightcap.previously;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 class DbHandler {
     private String TAG = "DbHandler";
-    private Context appContext;
-    private Realm realm;    // A Realm is a database
+    private Realm eventLog;    // Realm = database
 
-    DbHandler(Context context) {
-        appContext = context;
+    private SharedPreferences dataStore;
+    private String spDataFilename = "data";
+    private String KEY_EVENT_COUNT = "event_count";
 
+    DbHandler(Context appContext) {
         // Initialise Realm
         Realm.init(appContext);
-        realm = Realm.getDefaultInstance();
+
+        // The Realm file will be located in Context.getFilesDir() with chosen name
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("event_log.realm")
+                .schemaVersion(1)
+                .build();
+        // Use the config
+        eventLog = Realm.getInstance(config);
+
+        // Get SharedPreferences file
+        dataStore = appContext.getSharedPreferences(spDataFilename, Context.MODE_PRIVATE);
     }
 
-    void saveEventName(Event event) {
-        // First, see if event already added
+    void saveEvent(Event event) {
+        // First, check if the event has already been added
         boolean isEventExists = false;
-        final RealmResults<Event> existingEvents = realm.where(Event.class).equalTo("name", event.getName()).findAll();
+        final RealmResults<Event> existingEvents = eventLog.where(Event.class)
+                .equalTo("name", event.getName())
+                .findAll();
         if (existingEvents.size() != 0) {
+            Log.d(TAG, "Duplicate event.");
             isEventExists = true;
-            Log.d(TAG, "Duplicate event...will not be added to DB.");
+        } else {
+
         }
 
-        if (!isEventExists) {
-            // Persist data via transaction
-            realm.beginTransaction();
-            realm.copyToRealm(event);
-            realm.commitTransaction();
+        // Persist data via transaction
+        eventLog.beginTransaction();
+        eventLog.copyToRealmOrUpdate(event);
+        eventLog.commitTransaction();
+        Log.d(TAG, "Event added to DB.");
 
-            Log.d(TAG, "Event added to DB.");
-        }
+        incrementEventCount();
     }
 
     String getEventTypes() {
         // Check for emptiness
-        boolean isEmpty = realm.where(Event.class).findAll().isEmpty();
+        boolean isEmpty = eventLog.where(Event.class).findAll().isEmpty();
         Log.d(TAG, "Database is empty: " + isEmpty);
 
-        final RealmResults<Event> events = realm.where(Event.class).findAll();
+        final RealmResults<Event> events = eventLog.where(Event.class).findAll();
         return events.toString();
     }
 
-    public List<Event> getEventList() {
-        final RealmResults<Event> events = realm.where(Event.class).findAll();
-        List<Event> copied = realm.copyFromRealm(events);
+    public List<Event> getAllEvents() {
+        final RealmResults<Event> events = eventLog.where(Event.class).findAll();
+        // Add sorting logic here
+
+        List<Event> copied = eventLog.copyFromRealm(events);
         Log.d(TAG, "Copied data: " + copied.toString());
         return copied;
     }
 
     boolean resetDatabase() {
         boolean isDbDeleted = false;
-        Realm db = realm;
+        Realm db = eventLog;
 
         try {
             db.close();
-            isDbDeleted = Realm.deleteRealm(realm.getConfiguration());
+            isDbDeleted = Realm.deleteRealm(eventLog.getConfiguration());
             if (isDbDeleted) {
                 Log.d(TAG, "Realm file has been deleted.");
             }
@@ -74,5 +90,22 @@ class DbHandler {
         }
 
         return isDbDeleted;
+    }
+
+    int getEventCount() {
+        String dateKey = KEY_EVENT_COUNT;
+        return dataStore.getInt(dateKey, 0);
+    }
+
+    void incrementEventCount() {
+        SharedPreferences.Editor editor = dataStore.edit();
+
+        String dateKey = KEY_EVENT_COUNT;   // Key
+        int count = getEventCount();
+        count++;
+        editor.putInt(dateKey, count);      // Value
+
+        // Commit the edits
+        editor.apply();
     }
 }

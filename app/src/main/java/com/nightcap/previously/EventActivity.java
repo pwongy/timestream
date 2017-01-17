@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 /**
- * Created by Paul on 8/11/2016.
+ * Activity for editing events before storage to database.
  */
 
 public class EventActivity extends AppCompatActivity {
@@ -32,6 +32,10 @@ public class EventActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
+
+        // Date field EditText
+        EditText dateEdit = (EditText) findViewById(R.id.event_date);
+        dateEdit.setOnFocusChangeListener(focusListener);
 
         // Floating action button
 //        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
@@ -98,6 +102,14 @@ public class EventActivity extends AppCompatActivity {
         EditText inputDate = (EditText) findViewById(R.id.event_date);
         String eventDate = inputDate.getText().toString();
 
+        EditText inputPeriod = (EditText) findViewById(R.id.event_period);
+        int eventPeriod;
+        try {
+            eventPeriod = Integer.parseInt(inputPeriod.getText().toString());
+        } catch (NumberFormatException e) {
+            eventPeriod = -1;   // Use a negative value to indicate no repeats
+        }
+
         EditText inputNotes = (EditText) findViewById(R.id.event_notes);
         String eventNotes = inputNotes.getText().toString();
 
@@ -106,13 +118,18 @@ public class EventActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Event name and date must be filled in", Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "Attempting to save event");
+            DateHandler dh = new DateHandler();
 
             // Save new event
             Event event = new Event();
+            int id = dbHandler.getEventCount() + 1;
+            event.setId(id);
             event.setName(eventName);
-            event.setDate(eventDate);
+            event.setDate(dh.stringToDate(eventDate));
+            event.setPeriod(eventPeriod);
+            event.setNextDue(dh.nextDueDate(dh.stringToDate(eventDate), eventPeriod));
             event.setNotes(eventNotes);
-            dbHandler.saveEventName(event);
+            dbHandler.saveEvent(event);
 
             // Return to main screen
             Intent homeIntent = new Intent(this, MainActivity.class);
@@ -120,5 +137,14 @@ public class EventActivity extends AppCompatActivity {
             startActivity(homeIntent);
         }
     }
+
+    private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus){
+                showDatePickerDialog(v);
+            }
+        }
+    };
+
 
 }
