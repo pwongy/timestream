@@ -33,6 +33,10 @@ public class EventActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
+        // Date field EditText
+        EditText dateEdit = (EditText) findViewById(R.id.event_date);
+        dateEdit.setOnFocusChangeListener(focusListener);
+
         // Floating action button
 //        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -133,5 +137,14 @@ public class EventActivity extends AppCompatActivity {
             startActivity(homeIntent);
         }
     }
+
+    private View.OnFocusChangeListener focusListener = new View.OnFocusChangeListener() {
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (hasFocus){
+                showDatePickerDialog(v);
+            }
+        }
+    };
+
 
 }

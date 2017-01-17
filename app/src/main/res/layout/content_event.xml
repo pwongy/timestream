@@ -72,6 +72,7 @@
             android:inputType="date"
             android:hint="@string/event_date_hint"
             android:textColorHint="?android:attr/textColorHintInverse"
+            android:focusable="true"
             android:onClick="showDatePickerDialog"
             android:textColor="?android:attr/textColorPrimaryInverse" />
 
