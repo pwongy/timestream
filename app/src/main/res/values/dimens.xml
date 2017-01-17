@@ -17,10 +17,19 @@
 
     <!-- Elevation -->
     <dimen name="head_space_elevation">4dp</dimen>
+    <dimen name="card_elevation">4dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
 
     <!--Labels-->
     <dimen name="label_margin">16dp</dimen>
     <dimen name="label_adjustment">4dp</dimen>
     <dimen name="event_icon_margin">14dp</dimen>
+
+
+    <dimen name="about_logo_size">80dp</dimen>
+    <dimen name="about_text_margin">8dp</dimen>
+
+    <string name="about_copyright">Copyright © 2016–17</string>
+    <string name="author">Paul Wong</string>
 
 </resources>

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         // FAB
@@ -113,7 +113,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(), "Open settings", Toast.LENGTH_SHORT).show();
             return true;
+        } else if (id == R.id.action_about) {
+            Intent about = new Intent(this, AboutActivity.class);
+            startActivity(about);
         }
 
         return super.onOptionsItemSelected(item);
