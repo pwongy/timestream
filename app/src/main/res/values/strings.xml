@@ -7,7 +7,8 @@
     <string name="event_name_hint">Describe the task</string>
     <string name="event_date_label">Date</string>
     <string name="event_date_hint">Today (default)</string>
-    <string name="event_period_label">Repeat period (in days)</string>
+    <string name="event_period_label">Repeat period</string>
+    <string name="event_period_hint">[in days]</string>
     <string name="event_notes_label">Notes</string>
-    <string name="event_notes_hint">(Optional)</string>
+    <string name="event_notes_hint">Optional</string>
 </resources>
