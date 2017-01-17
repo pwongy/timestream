@@ -49,7 +49,7 @@ class DbHandler {
 
         // Persist data via transaction
         eventLog.beginTransaction();
-        eventLog.copyToRealm(event);
+        eventLog.copyToRealmOrUpdate(event);
         eventLog.commitTransaction();
         Log.d(TAG, "Event added to DB.");
 
