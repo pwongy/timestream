@@ -74,6 +74,15 @@ class DbHandler {
         return copied;
     }
 
+    public Event getEventById(int id) {
+        final RealmResults<Event> event = eventLog.where(Event.class).equalTo("id", id).findAll();
+        // Add sorting logic here
+
+        Event copied = eventLog.copyFromRealm(event).get(0);
+        Log.d(TAG, "Copied data: " + copied.getName());
+        return copied;
+    }
+
     boolean resetDatabase() {
         boolean isDbDeleted = false;
         Realm db = eventLog;

@@ -76,8 +76,10 @@ public class MainActivity extends AppCompatActivity {
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Toast.makeText(getApplicationContext(), "Clicked position ID: " + eventList.get(position).getId(),
-                                Toast.LENGTH_SHORT).show();
+                        // Intent to show event info
+                        Intent info = new Intent(getApplicationContext(), EventInfoActivity.class);
+                        info.putExtra("event_id", eventList.get(position).getId());
+                        startActivity(info);
                     }
                 }
         );
