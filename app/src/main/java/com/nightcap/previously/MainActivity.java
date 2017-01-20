@@ -9,7 +9,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "MainActivity created");
+//        Log.d(TAG, "MainActivity created");
 
         // Inflate xml layout
         setContentView(R.layout.activity_main);
 
         // Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         // FAB
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Start new Activity to add an event
-                Intent addEvent = new Intent(getApplicationContext(), EventActivity.class);
+                Intent addEvent = new Intent(getApplicationContext(), EditActivity.class);
                 startActivity(addEvent);
             }
         });
@@ -76,8 +75,10 @@ public class MainActivity extends AppCompatActivity {
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Toast.makeText(getApplicationContext(), "Clicked position ID: " + eventList.get(position).getId(),
-                                Toast.LENGTH_SHORT).show();
+                        // Intent to show event info
+                        Intent info = new Intent(getApplicationContext(), EventInfoActivity.class);
+                        info.putExtra("event_id", eventList.get(position).getId());
+                        startActivity(info);
                     }
                 }
         );
@@ -113,21 +114,14 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(), "Open settings", Toast.LENGTH_SHORT).show();
             return true;
+        } else if (id == R.id.action_about) {
+            Intent about = new Intent(this, AboutActivity.class);
+            startActivity(about);
         }
 
         return super.onOptionsItemSelected(item);
     }
-
-//    public void onClearButtonClick(View view) {
-//        boolean isDbDeleted = dbHandler.resetDatabase();
-//
-//        if (isDbDeleted){
-//            // Restart app
-//            Intent restartIntent = getIntent();
-//            restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(restartIntent);
-//        }
-//    }
 
 }

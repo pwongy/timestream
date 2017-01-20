@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.nightcap.previously.AboutActivity"
+    tools:showIn="@layout/activity_about"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="top"
+    android:background="@color/colorCardBackground"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:elevation="@dimen/card_elevation">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/card_padding">
+
+            <!--Logo-->
+            <!--<ImageView-->
+                <!--android:id="@+id/about_logo"-->
+                <!--android:layout_width="@dimen/about_logo_size"-->
+                <!--android:layout_height="@dimen/about_logo_size"-->
+                <!--android:layout_marginEnd="@dimen/card_padding"-->
+                <!--android:gravity="center"-->
+                <!--android:src="@drawable/event_circle"-->
+                <!--android:scaleType="fitCenter"-->
+                <!--android:cropToPadding="false"-->
+                <!--android:contentDescription="@string/app_name" />-->
+
+            <!--App info-->
+            <TextView
+                android:id="@+id/about_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/about_text_margin"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/app_name"
+                style="@style/TextAppearance.AppCompat.Title" />
+            <TextView
+                android:id="@+id/about_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/about_name"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:text="Version number" />
+            <TextView
+                android:id="@+id/about_build_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/about_text_margin"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/about_version"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:text="Build date" />
+
+            <!--Copyright-->
+            <TextView
+                android:id="@+id/about_copyright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/about_build_date"
+                android:text="@string/about_copyright"
+                style="@style/TextAppearance.AppCompat.Small" />
+            <TextView
+                android:id="@+id/about_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/about_copyright"
+                android:text="@string/author"
+                style="@style/TextAppearance.AppCompat.Small" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

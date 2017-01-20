@@ -13,18 +13,37 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.util.Date;
+
 /**
  * Activity for editing events before storage to database.
  */
 
-public class EventActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity {
     private String TAG = "EventActivity";
+
+    private boolean isEditExistingEvent;
+    int editId;
+
+    DbHandler dbHandler;
 //    FloatingActionButton fab;
+
+    // Input fields
+    EditText inputName;
+    EditText inputDate;
+    EditText inputPeriod;
+    EditText inputNotes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event);
+
+        // Set up views
+        setContentView(R.layout.activity_edit);
+        inputName = (EditText) findViewById(R.id.event_name);
+        inputDate = (EditText) findViewById(R.id.event_date);
+        inputPeriod = (EditText) findViewById(R.id.event_period);
+        inputNotes = (EditText) findViewById(R.id.event_notes);
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_toolbar);
@@ -33,9 +52,37 @@ public class EventActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
-        // Date field EditText
-        EditText dateEdit = (EditText) findViewById(R.id.event_date);
-        dateEdit.setOnFocusChangeListener(focusListener);
+        // Set FocusListener on date field EditText
+        inputDate.setOnFocusChangeListener(focusListener);
+
+        // Get Realm handler
+        dbHandler = new DbHandler(this);
+
+        // Check if editing
+        editId = getIntent().getIntExtra("edit_id", -1);
+        if (editId > 0) {
+            // Editing existing event
+            isEditExistingEvent = true;
+
+            // Pre-fill existing values
+            inputName.setText(dbHandler.getEventById(editId).getName());
+            inputDate.setText(new DateHandler().dateToString(dbHandler.getEventById(editId).getDate()));
+            int period = dbHandler.getEventById(editId).getPeriod();
+            String periodStr;
+            if (period <=0) {
+                periodStr = "N/A";
+            } else {
+                periodStr = String.valueOf(period);
+            }
+            inputPeriod.setText(periodStr);
+            inputNotes.setText(dbHandler.getEventById(editId).getNotes());
+        } else {
+            // Creating new event
+            isEditExistingEvent = false;
+
+            // Default date to today
+            inputDate.setText(new DateHandler().dateToString(new Date()));
+        }
 
         // Floating action button
 //        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
@@ -67,7 +114,7 @@ public class EventActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_event, menu);
+        getMenuInflater().inflate(R.menu.menu_edit, menu);
         return true;
     }
 
@@ -92,27 +139,23 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void saveEvent() {
-        // Get handler
-        DbHandler dbHandler = new DbHandler(this);
-
         // Get data from fields
-        EditText inputName = (EditText) findViewById(R.id.event_name);
+        // Name and date
         String eventName = inputName.getText().toString();
-
-        EditText inputDate = (EditText) findViewById(R.id.event_date);
         String eventDate = inputDate.getText().toString();
 
-        EditText inputPeriod = (EditText) findViewById(R.id.event_period);
+        // Period
         int eventPeriod;
         try {
             eventPeriod = Integer.parseInt(inputPeriod.getText().toString());
         } catch (NumberFormatException e) {
-            eventPeriod = -1;   // Use a negative value to indicate no repeats
+            eventPeriod = 0;   // Use a zero value to indicate no repeats
         }
 
-        EditText inputNotes = (EditText) findViewById(R.id.event_notes);
+        // Notes
         String eventNotes = inputNotes.getText().toString();
 
+        // Check inputs here
         if (eventName.length() == 0 || eventDate.length() == 0) {
             Log.d(TAG, "A required field is empty");
             Toast.makeText(getApplicationContext(), "Event name and date must be filled in", Toast.LENGTH_SHORT).show();
@@ -120,10 +163,18 @@ public class EventActivity extends AppCompatActivity {
             Log.d(TAG, "Attempting to save event");
             DateHandler dh = new DateHandler();
 
-            // Save new event
+            // Save event
             Event event = new Event();
-            int id = dbHandler.getEventCount() + 1;
+
+            // ID depends on new or edit
+            int id;
+            if (isEditExistingEvent) {
+                id = dbHandler.getEventById(editId).getId();
+            } else {
+                id = dbHandler.getEventCount() + 1;
+            }
             event.setId(id);
+
             event.setName(eventName);
             event.setDate(dh.stringToDate(eventDate));
             event.setPeriod(eventPeriod);

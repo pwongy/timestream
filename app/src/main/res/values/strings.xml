@@ -1,14 +1,33 @@
 <resources>
+    <!--General-->
     <string name="app_name">Timestream</string>
+    <string name="build_date">21 January 2017</string>
+
+    <!--Main menu items-->
     <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+
+    <!--Edit screen-->
     <string name="new_event">New Event</string>
+    <string name="update_event">Update Event</string>
     <string name="action_save_event">Save</string>
     <string name="event_name_label">Event name</string>
     <string name="event_name_hint">Describe the task</string>
     <string name="event_date_label">Date</string>
-    <string name="event_date_hint">Today (default)</string>
     <string name="event_period_label">Repeat period</string>
     <string name="event_period_hint">[in days]</string>
     <string name="event_notes_label">Notes</string>
     <string name="event_notes_hint">Optional</string>
+
+    <!--Info screen-->
+    <string name="card_info">Info</string>
+    <string name="card_history">History</string>
+    <string name="action_mark_done">Mark as done</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+
+    <!--About screen-->
+    <string name="about_version">Version</string>
+    <string name="about_build_date">Build date</string>
+
 </resources>

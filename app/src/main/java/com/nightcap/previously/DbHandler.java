@@ -3,22 +3,27 @@ package com.nightcap.previously;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 class DbHandler {
     private String TAG = "DbHandler";
+    private Context appContext;
+    private DateHandler dateHandler;
     private Realm eventLog;    // Realm = database
-
     private SharedPreferences dataStore;
-    private String spDataFilename = "data";
     private String KEY_EVENT_COUNT = "event_count";
 
     DbHandler(Context appContext) {
+        this.appContext = appContext;
+        dateHandler = new DateHandler();
+
         // Initialise Realm
         Realm.init(appContext);
 
@@ -30,30 +35,75 @@ class DbHandler {
         // Use the config
         eventLog = Realm.getInstance(config);
 
-        // Get SharedPreferences file
-        dataStore = appContext.getSharedPreferences(spDataFilename, Context.MODE_PRIVATE);
+        // Get SharedPreferences file to support data management (not for settings)
+        String sharedPrefsFilename = "data";
+        dataStore = appContext.getSharedPreferences(sharedPrefsFilename, Context.MODE_PRIVATE);
     }
 
+    /**
+     * Saves an unmanaged event to the app's Realm database. Will check for existing events with the
+     * same name and date before saving (in this case, the event will not be saved).
+     * @param event    The unmanaged event to be saved
+     */
     void saveEvent(Event event) {
         // First, check if the event has already been added
-        boolean isEventExists = false;
         final RealmResults<Event> existingEvents = eventLog.where(Event.class)
                 .equalTo("name", event.getName())
+                .equalTo("date", event.getDate())
                 .findAll();
+//        Log.d(TAG, "Existing: " + existingEvents.toString());
+
         if (existingEvents.size() != 0) {
             Log.d(TAG, "Duplicate event.");
-            isEventExists = true;
+            Toast.makeText(appContext, "Event already exists", Toast.LENGTH_SHORT).show();
         } else {
+            Toast.makeText(appContext, "New event", Toast.LENGTH_SHORT).show();
 
+            // Persist data via transaction
+            eventLog.beginTransaction();
+            eventLog.copyToRealmOrUpdate(event);
+            eventLog.commitTransaction();
+            Log.d(TAG, "New event logged");
+
+            incrementEventCount();
         }
+    }
 
-        // Persist data via transaction
-        eventLog.beginTransaction();
-        eventLog.copyToRealmOrUpdate(event);
-        eventLog.commitTransaction();
-        Log.d(TAG, "Event added to DB.");
+    void markEventDoneToday(Event existingEvent) {
+        // Unmanaged event
+        Event event = new Event();
 
-        incrementEventCount();
+        // ID will be new
+        event.setId(getEventCount() + 1);
+        event.setName(existingEvent.getName());
+        event.setDate(dateHandler.getTodayDate());
+        event.setPeriod(existingEvent.getPeriod());
+        event.setNextDue(dateHandler.nextDueDate(dateHandler.getTodayDate(), existingEvent.getPeriod()));
+        event.setNotes("");
+        saveEvent(event);
+    }
+
+    /**
+     * Deletes a single event from the Realm.
+     * @param deleteId    The ID of the event record that is to be deleted
+     */
+    void deleteEvent(int deleteId) {
+        final RealmResults<Event> results = eventLog.where(Event.class)
+                .equalTo("id", deleteId)
+                .findAll();
+        if (results.size() == 1) {  // Check for unique identifier
+            // All changes to data must happen in a transaction
+            eventLog.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Event deleteEvent = results.first();
+                    deleteEvent.deleteFromRealm();
+                    Log.d(TAG, "Entry deleted");
+                }
+            });
+        } else {
+            Log.d(TAG, "Error during delete query.");
+        }
     }
 
     String getEventTypes() {
@@ -65,31 +115,41 @@ class DbHandler {
         return events.toString();
     }
 
-    public List<Event> getAllEvents() {
+    /**
+     * Gets all events logged in the app's Realm.
+     * @return A list of all logged events
+     */
+    List<Event> getAllEvents() {
+        // All events
         final RealmResults<Event> events = eventLog.where(Event.class).findAll();
-        // Add sorting logic here
+
+        // Sorted by performed date
+//        RealmResults<Event> events = eventLog.where(Event.class)
+//                .distinct("name")
+//                .sort("date", Sort.DESCENDING);
 
         List<Event> copied = eventLog.copyFromRealm(events);
-        Log.d(TAG, "Copied data: " + copied.toString());
+        Log.d(TAG, "All events: " + copied.toString());
         return copied;
     }
 
-    boolean resetDatabase() {
-        boolean isDbDeleted = false;
-        Realm db = eventLog;
+    List<Event> getEventsByName(String name) {
+        final RealmResults<Event> events = eventLog.where(Event.class)
+                .equalTo("name", name)
+                .findAllSorted("date", Sort.DESCENDING);
 
-        try {
-            db.close();
-            isDbDeleted = Realm.deleteRealm(eventLog.getConfiguration());
-            if (isDbDeleted) {
-                Log.d(TAG, "Realm file has been deleted.");
-            }
-        } catch (Exception ex){
-            ex.printStackTrace();
-            // No Realm file to remove.
-        }
+        List<Event> copied = eventLog.copyFromRealm(events);
+//        Log.d(TAG, "Events by name: " + copied.toString());
+        return copied;
+    }
 
-        return isDbDeleted;
+    Event getEventById(int id) {
+        final RealmResults<Event> event = eventLog.where(Event.class).equalTo("id", id).findAll();
+        // Add sorting logic here
+
+        Event copied = eventLog.copyFromRealm(event).get(0);
+        Log.d(TAG, "Event by ID: " + copied.getName());
+        return copied;
     }
 
     int getEventCount() {
@@ -97,7 +157,11 @@ class DbHandler {
         return dataStore.getInt(dateKey, 0);
     }
 
-    void incrementEventCount() {
+    /**
+     * Saves event count to a SharedPreferences object, providing a means of assigning unique
+     * primary keys for the Realm.
+     */
+    private void incrementEventCount() {
         SharedPreferences.Editor editor = dataStore.edit();
 
         String dateKey = KEY_EVENT_COUNT;   // Key

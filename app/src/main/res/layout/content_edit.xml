@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.nightcap.previously.EventActivity"
-    tools:showIn="@layout/activity_event">
+    tools:context="com.nightcap.previously.EditActivity"
+    tools:showIn="@layout/activity_edit">
 
 
     <RelativeLayout
@@ -65,12 +65,10 @@
             android:id="@+id/event_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:textAlignment="viewStart"
             android:layout_below="@+id/label_event_date"
             android:layout_alignParentStart="true"
             android:inputType="date"
-            android:hint="@string/event_date_hint"
             android:textColorHint="?android:attr/textColorHintInverse"
             android:focusable="true"
             android:onClick="showDatePickerDialog"
