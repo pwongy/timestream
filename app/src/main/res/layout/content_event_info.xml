@@ -98,26 +98,26 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/card_padding">
+            android:paddingTop="@dimen/card_padding">
 
             <!--App info-->
             <TextView
                 android:id="@+id/card_history_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/card_padding"
                 android:layout_marginBottom="@dimen/about_text_margin"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/card_history"
                 style="@style/TextAppearance.AppCompat.Title" />
-            <TextView
-                android:id="@+id/card_history_details"
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/history_recycler_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_below="@+id/card_history_title"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:text="History here" />
+                android:scrollbars="vertical"
+                android:layout_alignParentStart="true" />
 
         </RelativeLayout>
 

@@ -91,7 +91,18 @@ class DbHandler {
         // Add sorting logic here
 
         List<Event> copied = eventLog.copyFromRealm(events);
-        Log.d(TAG, "Copied data: " + copied.toString());
+        Log.d(TAG, "All events: " + copied.toString());
+        return copied;
+    }
+
+    public List<Event> getEventsByName(String name) {
+        final RealmResults<Event> events = eventLog.where(Event.class)
+                .equalTo("name", name)
+                .findAll();
+        // Add sorting logic here
+
+        List<Event> copied = eventLog.copyFromRealm(events);
+        Log.d(TAG, "Events by name: " + copied.toString());
         return copied;
     }
 
@@ -100,7 +111,7 @@ class DbHandler {
         // Add sorting logic here
 
         Event copied = eventLog.copyFromRealm(event).get(0);
-        Log.d(TAG, "Copied data: " + copied.getName());
+        Log.d(TAG, "Event by ID: " + copied.getName());
         return copied;
     }
 
