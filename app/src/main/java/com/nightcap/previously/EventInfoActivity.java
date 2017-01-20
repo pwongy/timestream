@@ -49,8 +49,9 @@ public class EventInfoActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Mark currently opened event as done
-                Toast.makeText(getApplicationContext(), "Mark as done", Toast.LENGTH_SHORT).show();
+                // Attempt to mark currently opened event as done
+                dbHandler.markEventDoneToday(selectedEvent);
+                prepareHistory();
             }
         });
 
@@ -93,7 +94,12 @@ public class EventInfoActivity extends AppCompatActivity {
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
+                        Toast.makeText(getApplicationContext(),
+                                "ID: " + historyList.get(position).getId()
+                                        + ", Name: " + historyList.get(position).getName()
+                                        + ", Date: " + historyList.get(position).getDate(),
+                                Toast.LENGTH_SHORT)
+                                .show();
                     }
                 }
         );

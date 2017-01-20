@@ -30,7 +30,6 @@ class DateHandler {
 
         try {
             date = df.parse(dateString);
-            System.out.println("Date ->" + date);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,6 +37,29 @@ class DateHandler {
         return date;
     }
 
+    /**
+     * Gets today's date, ignoring time fields.
+     * @return Today's date.
+     */
+    Date getTodayDate() {
+        Calendar cal = Calendar.getInstance();
+
+        // Reset hour, minutes, seconds, and millis
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        return cal.getTime();
+    }
+
+    /**
+     * Calculates the next due date given when the event was last performed and the desired repeat
+     * period.
+     * @param lastTime    The last date event was performed
+     * @param period      The repeat period (assumed in days)
+     * @return The next date on which event should be performed
+     */
     Date nextDueDate(Date lastTime, int period) {
         Date nextTime;
 

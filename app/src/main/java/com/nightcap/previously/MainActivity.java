@@ -9,7 +9,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "MainActivity created");
+//        Log.d(TAG, "MainActivity created");
 
         // Inflate xml layout
         setContentView(R.layout.activity_main);
@@ -124,16 +123,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-//    public void onClearButtonClick(View view) {
-//        boolean isDbDeleted = dbHandler.resetDatabase();
-//
-//        if (isDbDeleted){
-//            // Restart app
-//            Intent restartIntent = getIntent();
-//            restartIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//            startActivity(restartIntent);
-//        }
-//    }
 
 }
