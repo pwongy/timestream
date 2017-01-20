@@ -70,7 +70,8 @@
                     style="@style/TextAppearance.AppCompat.Small"
                     android:text="Latest notes"
                     android:textStyle="bold"
-                    android:layout_gravity="start"/>
+                    android:layout_gravity="start"
+                    android:paddingEnd="56dp"/>
                 <TextView
                     android:id="@+id/card_info_notes"
                     android:layout_width="match_parent"
