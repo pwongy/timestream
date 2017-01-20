@@ -25,6 +25,7 @@
     <string name="card_history">History</string>
     <string name="action_mark_done">Mark as done</string>
     <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
 
     <!--About screen-->
     <string name="about_version">Version</string>

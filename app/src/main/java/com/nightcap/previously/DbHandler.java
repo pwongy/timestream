@@ -15,7 +15,6 @@ class DbHandler {
     private Realm eventLog;    // Realm = database
 
     private SharedPreferences dataStore;
-    private String spDataFilename = "data";
     private String KEY_EVENT_COUNT = "event_count";
 
     DbHandler(Context appContext) {
@@ -30,8 +29,9 @@ class DbHandler {
         // Use the config
         eventLog = Realm.getInstance(config);
 
-        // Get SharedPreferences file
-        dataStore = appContext.getSharedPreferences(spDataFilename, Context.MODE_PRIVATE);
+        // Get SharedPreferences file to support data management (not for settings)
+        String sharedPrefsFilename = "data";
+        dataStore = appContext.getSharedPreferences(sharedPrefsFilename, Context.MODE_PRIVATE);
     }
 
     void saveEvent(Event event) {
@@ -54,6 +54,28 @@ class DbHandler {
         Log.d(TAG, "Event added to DB.");
 
         incrementEventCount();
+    }
+
+    void deleteEvent(int deleteId) {
+        final RealmResults<Event> results = eventLog.where(Event.class)
+                .equalTo("id", deleteId)
+                .findAll();
+        if (results.size() == 1) {
+            Log.d(TAG, "Want to delete: " + results.get(0).getName());
+
+            // All changes to data must happen in a transaction
+            eventLog.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    Event deleteEvent = results.first();
+                    deleteEvent.deleteFromRealm();
+                    Log.d(TAG, "Entry deleted");
+                }
+            });
+        } else {
+            Log.d(TAG, "Error during delete query.");
+        }
+
     }
 
     String getEventTypes() {

@@ -14,6 +14,7 @@
     tools:context="com.nightcap.previously.EventInfoActivity"
     tools:showIn="@layout/activity_event_info">
 
+    <!--First card-->
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,34 +22,71 @@
         android:elevation="@dimen/card_elevation"
         android:id="@+id/card_info">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:padding="@dimen/card_padding">
 
-            <!--App info-->
             <TextView
                 android:id="@+id/card_info_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/about_text_margin"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:text="@string/card_info"
                 style="@style/TextAppearance.AppCompat.Title" />
-            <TextView
-                android:id="@+id/card_info_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/card_info_title"
-                style="@style/TextAppearance.AppCompat.Small"
-                android:text="Details here" />
 
-        </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:text="Repeat period"
+                    android:textStyle="bold"
+                    android:layout_gravity="start"/>
+                <TextView
+                    android:id="@+id/card_info_period"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:text="[in days]"
+                    android:layout_gravity="end"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:text="Latest notes"
+                    android:textStyle="bold"
+                    android:layout_gravity="start"/>
+                <TextView
+                    android:id="@+id/card_info_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:text="[Notes]"
+                    android:layout_gravity="end"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
+    <!--Second card-->
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

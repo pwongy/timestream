@@ -13,13 +13,13 @@ public class Event extends RealmObject {
     @PrimaryKey
     private int id;
 
-    private String name;
+    private String name;            // Common
     private Date date;
-    private int periodInDays;
-    private Date nextDue;
+    private int periodInDays;       // Common
+    private Date nextDue;           // Common, dependent
     private String notes;
 
-    private boolean notifications;
+    private boolean notifications;  // Common
 
     public Event() {
 
@@ -58,7 +58,7 @@ public class Event extends RealmObject {
     }
 
     public boolean hasPeriod() {
-        return !(this.getPeriod() == -1);
+        return !(this.getPeriod() <= 0);
     }
 
     public Date getNextDue() {

@@ -65,7 +65,6 @@
             android:id="@+id/event_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
             android:textAlignment="viewStart"
             android:layout_below="@+id/label_event_date"
             android:layout_alignParentStart="true"
