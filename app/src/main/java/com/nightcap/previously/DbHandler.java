@@ -75,7 +75,6 @@ class DbHandler {
         } else {
             Log.d(TAG, "Error during delete query.");
         }
-
     }
 
     String getEventTypes() {

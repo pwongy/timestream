@@ -2,13 +2,14 @@ package com.nightcap.previously;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Activity for displaying event details.
@@ -19,19 +20,27 @@ public class EventInfoActivity extends AppCompatActivity {
     private DbHandler dbHandler;
     int eventId;
     Event selectedEvent;
-    CoordinatorLayout cl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
-        cl = (CoordinatorLayout) findViewById(R.id.event_info_coord);
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_info_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // FAB
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.event_info_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Mark opened event as done
+                Toast.makeText(getApplicationContext(), "Mark as done", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         // Get a Realm handler
         dbHandler = new DbHandler(this);
@@ -85,9 +94,6 @@ public class EventInfoActivity extends AppCompatActivity {
                 // If app icon in Action Bar clicked, go home
                 finish();
                 break;
-            case R.id.action_mark_done:
-//                markEventDone();
-                break;
             case R.id.action_edit:
                 // Intent to edit event
                 Intent edit = new Intent(getApplicationContext(), EditActivity.class);
@@ -96,8 +102,7 @@ public class EventInfoActivity extends AppCompatActivity {
                 break;
             case R.id.action_delete:
                 dbHandler.deleteEvent(eventId);
-                Snackbar.make(cl, "Event deleted", Snackbar.LENGTH_LONG).show();
-
+                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

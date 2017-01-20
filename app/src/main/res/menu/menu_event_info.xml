@@ -3,12 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.nightcap.previously.MainActivity">
     <item
-        android:id="@+id/action_mark_done"
-        android:orderInCategory="100"
-        android:title="@string/action_mark_done"
-        android:icon="@drawable/ic_action_done_light"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_edit"
         android:orderInCategory="101"
         android:title="@string/action_edit"
