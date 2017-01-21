@@ -2,8 +2,8 @@ package com.nightcap.previously;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -29,10 +29,14 @@ public class AboutActivity extends AppCompatActivity {
 //        }
 
         // Get reference to the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.about_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.about_toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeButtonEnabled(true);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
 
         // Version number
         TextView versionView = (TextView) findViewById(R.id.about_version);

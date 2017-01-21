@@ -108,7 +108,8 @@ public class EventInfoActivity extends AppCompatActivity {
         if (selectedEvent.getPeriod() <= 0) {
             periodView.setText("N/A");
         } else {
-            String period = String.valueOf(selectedEvent.getPeriod()) + " days";
+            String period = String.valueOf(selectedEvent.getPeriod()) + " "
+                    + getString(R.string.unit_suffix_days);
             periodView.setText(period);
         }
 
