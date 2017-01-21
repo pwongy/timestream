@@ -27,7 +27,8 @@ public class EventInfoActivity extends AppCompatActivity {
     private DbHandler dbHandler;
     int eventId;
     Event selectedEvent;
-
+    TextView periodView;
+    TextView notesView;
     private List<Event> historyList = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -65,16 +66,10 @@ public class EventInfoActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(selectedEvent.getName());
 
         // Card 1 - Info
-        TextView periodView = (TextView) findViewById(R.id.card_info_period);
-        if (selectedEvent.getPeriod() <= 0) {
-            periodView.setText("N/A");
-        } else {
-            String period = String.valueOf(selectedEvent.getPeriod()) + " days";
-            periodView.setText(period);
-        }
+        periodView = (TextView) findViewById(R.id.card_info_period);
+        notesView = (TextView) findViewById(R.id.card_info_notes);
 
-        TextView notesView = (TextView) findViewById(R.id.card_info_notes);
-        notesView.setText(selectedEvent.getNotes());
+        updateInfoCard();
 
         // Card 2 - History
         recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
@@ -98,12 +93,27 @@ public class EventInfoActivity extends AppCompatActivity {
                                 "ID: " + historyList.get(position).getId()
                                         + ", Name: " + historyList.get(position).getName()
                                         + ", Date: " + historyList.get(position).getDate(),
-                                Toast.LENGTH_SHORT)
+                                Toast.LENGTH_LONG)
                                 .show();
+
+                        selectedEvent = historyList.get(position);
+                        updateInfoCard();
                     }
                 }
         );
+    }
 
+    private void updateInfoCard() {
+        // Period
+        if (selectedEvent.getPeriod() <= 0) {
+            periodView.setText("N/A");
+        } else {
+            String period = String.valueOf(selectedEvent.getPeriod()) + " days";
+            periodView.setText(period);
+        }
+
+        // Notes
+        notesView.setText(selectedEvent.getNotes());
     }
 
     @Override
@@ -141,7 +151,7 @@ public class EventInfoActivity extends AppCompatActivity {
                 startActivity(edit);
                 break;
             case R.id.action_delete:
-                dbHandler.deleteEvent(eventId);
+                dbHandler.deleteEvent(selectedEvent.getId());
                 finish();
                 break;
         }
