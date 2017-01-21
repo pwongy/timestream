@@ -114,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
+
+                // Extras to skip headers screen
+                settings.putExtra(AppCompatPreferenceActivity.EXTRA_SHOW_FRAGMENT,
+                        SettingsActivity.GeneralPreferenceFragment.class.getName());
+                settings.putExtra(AppCompatPreferenceActivity.EXTRA_NO_HEADERS, true);
                 startActivity(settings);
                 break;
             case R.id.action_about:
