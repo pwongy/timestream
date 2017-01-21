@@ -53,19 +53,17 @@ class DbHandler {
                 .findAll();
 //        Log.d(TAG, "Existing: " + existingEvents.toString());
 
-        if (existingEvents.size() != 0) {
-            Log.d(TAG, "Duplicate event.");
-            Toast.makeText(appContext, "Event already exists", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(appContext, "New event", Toast.LENGTH_SHORT).show();
-
+        if ((existingEvents.size() == 0) || (event.getId() <= getEventCount())) {
             // Persist data via transaction
             eventLog.beginTransaction();
             eventLog.copyToRealmOrUpdate(event);
             eventLog.commitTransaction();
-            Log.d(TAG, "New event logged");
+            Log.d(TAG, "Event logged");
 
             incrementEventCount();
+        } else {
+            Log.d(TAG, "Duplicate event - ignored");
+            Toast.makeText(appContext, "Event already exists", Toast.LENGTH_SHORT).show();
         }
     }
 
