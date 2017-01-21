@@ -31,18 +31,18 @@
     <string name="about_build_date">Build date</string>
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Strings related to Settings -->
-    <string name="pref_title_mark_done">Default done date</string>
+    <!--Settings-->
+    <string name="pref_title_mark_done">Marking as done</string>
     <string-array name="pref_mark_done_titles">
-        <item>Mark as completed today</item>
-        <item>Select date</item>
+        <item>Default to today</item>
+        <item>Show date selector every time</item>
     </string-array>
     <string-array name="pref_mark_done_values">
         <item>1</item>
         <item>0</item>
     </string-array>
 
-
+    <!-- ************************************************************** Samples (can be deleted) -->
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
 

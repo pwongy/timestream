@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 settings.putExtra(AppCompatPreferenceActivity.EXTRA_SHOW_FRAGMENT,
                         SettingsActivity.GeneralPreferenceFragment.class.getName());
                 settings.putExtra(AppCompatPreferenceActivity.EXTRA_NO_HEADERS, true);
+
                 startActivity(settings);
                 break;
             case R.id.action_about:
