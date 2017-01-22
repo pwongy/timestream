@@ -91,8 +91,9 @@ public class EventInfoActivity extends AppCompatActivity {
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                         Toast.makeText(getApplicationContext(),
                                 "ID: " + historyList.get(position).getId()
-                                        + ", Name: " + historyList.get(position).getName()
-                                        + ", Date: " + historyList.get(position).getDate(),
+                                        + "\nName: " + historyList.get(position).getName()
+                                        + "\nDate: " + new DateHandler()
+                                                .dateToString(historyList.get(position).getDate()),
                                 Toast.LENGTH_LONG)
                                 .show();
 

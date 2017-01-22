@@ -91,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareData() {
         // Get data from Realm
-        eventList = dbHandler.getAllEvents();
+//        eventList = dbHandler.getAllEvents();
+        eventList = dbHandler.getLatestDistinctEvents();
 
         // Send to adapter
         eventAdapter.updateData(eventList);
