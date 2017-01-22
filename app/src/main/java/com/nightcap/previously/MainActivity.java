@@ -1,17 +1,21 @@
 package com.nightcap.previously;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (item.getItemId()) {
+            case R.id.action_sort:
+                showSortDialog();
+                break;
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
 
@@ -129,6 +136,48 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showSortDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.dialog_sort, null);
+        dialogBuilder.setView(dialogView);
+
+        final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
+        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
+
+        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_first));
+//        dialogBuilder.setMessage(getResources().getString(R.string.pref_title_sort_first));
+        dialogBuilder.setPositiveButton("Sort", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                int langpos = spinner1.getSelectedItemPosition();
+                switch(langpos) {
+                    case 0: //English
+//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+//                                .edit().putString("LANG", "en").commit();
+//                        setLangRecreate("en");
+                        return;
+                    case 1: //Hindi
+//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+//                                .edit().putString("LANG", "hi").commit();
+//                        setLangRecreate("hi");
+                        return;
+                    default: //By default set to english
+//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+//                                .edit().putString("LANG", "en").commit();
+//                        setLangRecreate("en");
+                        return;
+                }
+            }
+        });
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.show();
     }
 
 }
