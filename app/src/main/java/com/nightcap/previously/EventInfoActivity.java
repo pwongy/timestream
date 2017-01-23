@@ -3,6 +3,7 @@ package com.nightcap.previously;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,13 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Activity for displaying event details.
  */
 
-public class EventInfoActivity extends AppCompatActivity {
+public class EventInfoActivity extends AppCompatActivity implements DateInterface {
     private String TAG = "EventActivity";
     private DbHandler dbHandler;
     int eventId;
@@ -50,9 +52,7 @@ public class EventInfoActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Attempt to mark currently opened event as done
-                dbHandler.markEventDoneToday(selectedEvent);
-                prepareHistory();
+                showDatePickerDialog(view);
             }
         });
 
@@ -104,6 +104,12 @@ public class EventInfoActivity extends AppCompatActivity {
         );
     }
 
+    public void onReceiveDateFromDialog(Date date) {
+        // Attempt to mark currently opened event as done
+        dbHandler.markEventDone(selectedEvent, date);
+        prepareHistory();
+    }
+
     private void updateInfoCard() {
         // Period
         if (selectedEvent.getPeriod() <= 0) {
@@ -130,6 +136,11 @@ public class EventInfoActivity extends AppCompatActivity {
 
         // Send to adapter
         historyAdapter.updateData(historyList);
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerDialog();
+        newFragment.show(getSupportFragmentManager(), "datePickerDone");
     }
 
     @Override

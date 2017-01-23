@@ -15,20 +15,6 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="Sorting">
-
-        <ListPreference
-            android:key="sort_first"
-            android:defaultValue="1"
-            android:entries="@array/pref_sort_first_titles"
-            android:entryValues="@array/pref_sort_first_values"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_sort_first" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory
         android:title="Sample settings (to be deleted)">
 
     <SwitchPreference

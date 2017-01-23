@@ -177,7 +177,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("mark_done"));
-            bindPreferenceSummaryToValue(findPreference("sort_first"));
 
             // Samples (to be deleted)
             bindPreferenceSummaryToValue(findPreference("example_text"));

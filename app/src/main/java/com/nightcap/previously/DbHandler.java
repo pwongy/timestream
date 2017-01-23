@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
@@ -54,7 +55,8 @@ class DbHandler {
                 .findAll();
 //        Log.d(TAG, "Existing: " + existingEvents.toString());
 
-        if ((existingEvents.size() == 0) || (event.getId() <= getEventCount())) {
+        if ( (existingEvents.size() == 0)    // The event does not exist for this day
+                || (event.getId() <= getEventCount()) ) {  // Editing existing event
             // Persist data via transaction
             eventLog.beginTransaction();
             eventLog.copyToRealmOrUpdate(event);
@@ -68,14 +70,14 @@ class DbHandler {
         }
     }
 
-    void markEventDoneToday(Event existingEvent) {
+    void markEventDone(Event existingEvent, Date doneDate) {
         // Unmanaged event
         Event event = new Event();
 
         // ID will be new
         event.setId(getEventCount() + 1);
         event.setName(existingEvent.getName());
-        event.setDate(dateHandler.getTodayDate());
+        event.setDate(doneDate);
         event.setPeriod(existingEvent.getPeriod());
         event.setNextDue(dateHandler.nextDueDate(dateHandler.getTodayDate(), existingEvent.getPeriod()));
         event.setNotes("");

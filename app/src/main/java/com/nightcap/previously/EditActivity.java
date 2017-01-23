@@ -135,7 +135,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerDialog();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
+        newFragment.show(getSupportFragmentManager(), "datePickerEdit");
     }
 
     private void saveEvent() {
