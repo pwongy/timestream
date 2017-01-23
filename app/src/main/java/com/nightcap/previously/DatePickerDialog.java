@@ -1,8 +1,10 @@
 package com.nightcap.previously;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
@@ -13,6 +15,7 @@ import java.util.Calendar;
  */
 
 public class DatePickerDialog extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
+    private DateInterface dateListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -27,10 +30,40 @@ public class DatePickerDialog extends DialogFragment implements android.app.Date
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof DateInterface) {
+            dateListener = (DateInterface) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        dateListener = null;
+        super.onDetach();
+    }
+
+    @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Do something with the date chosen by the user
-        EditText dateField = (EditText) getActivity().findViewById(R.id.event_date);
-        dateField.setText(new DateHandler().dateToString(year, month, day));
+        FragmentManager fragMan = getActivity().getSupportFragmentManager();
+
+        if(fragMan.findFragmentByTag("datePickerEdit") != null) {
+//            Log.d("DIALOG", "Edit Activity");
+
+            // Update EditText in EditActivity
+            EditText dateField = (EditText) getActivity().findViewById(R.id.event_date);
+            dateField.setText(new DateHandler().dateToString(year, month, day));
+        }
+
+        if(fragMan.findFragmentByTag("datePickerDone") != null) {
+//            Log.d("DIALOG", "Marking done");
+
+            // Send date to calling Activity
+            dateListener.onReceiveDateFromDialog(new DateHandler().dateFromComponents(year, month, day));
+        }
+
+
+
     }
 
 }

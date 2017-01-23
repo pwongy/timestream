@@ -27,13 +27,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/action_settings"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_settings" />
         <activity
             android:name=".AboutActivity"
-            android:label="@string/action_about"
-            android:theme="@style/AppTheme.NoActionBar" />
-
+            android:label="@string/action_about" />
     </application>
 
 </manifest>

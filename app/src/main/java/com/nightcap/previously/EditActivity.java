@@ -135,7 +135,7 @@ public class EditActivity extends AppCompatActivity {
 
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerDialog();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
+        newFragment.show(getSupportFragmentManager(), "datePickerEdit");
     }
 
     private void saveEvent() {
@@ -158,7 +158,8 @@ public class EditActivity extends AppCompatActivity {
         // Check inputs here
         if (eventName.length() == 0 || eventDate.length() == 0) {
             Log.d(TAG, "A required field is empty");
-            Toast.makeText(getApplicationContext(), "Event name and date must be filled in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_check_inputs),
+                    Toast.LENGTH_SHORT).show();
         } else {
             Log.d(TAG, "Attempting to save event");
             DateHandler dh = new DateHandler();

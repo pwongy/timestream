@@ -24,7 +24,8 @@
     <dimen name="label_margin">16dp</dimen>
     <dimen name="label_adjustment">4dp</dimen>
     <dimen name="event_icon_margin">14dp</dimen>
-
+    <dimen name="dialog_text_padding">24dp</dimen>
+    <dimen name="dialog_button_padding">28dp</dimen>
 
     <dimen name="about_logo_size">80dp</dimen>
     <dimen name="about_text_margin">8dp</dimen>

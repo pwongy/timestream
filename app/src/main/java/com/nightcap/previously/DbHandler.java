@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
@@ -53,7 +55,9 @@ class DbHandler {
                 .findAll();
 //        Log.d(TAG, "Existing: " + existingEvents.toString());
 
-        if ((existingEvents.size() == 0) || (event.getId() <= getEventCount())) {
+        if ( (existingEvents.size() == 0)    // The event does not exist for this day
+                || (event.getId() <= getEventCount()) ) {  // Editing existing event
+
             // Persist data via transaction
             eventLog.beginTransaction();
             eventLog.copyToRealmOrUpdate(event);
@@ -67,14 +71,14 @@ class DbHandler {
         }
     }
 
-    void markEventDoneToday(Event existingEvent) {
+    void markEventDone(Event existingEvent, Date doneDate) {
         // Unmanaged event
         Event event = new Event();
 
         // ID will be new
         event.setId(getEventCount() + 1);
         event.setName(existingEvent.getName());
-        event.setDate(dateHandler.getTodayDate());
+        event.setDate(doneDate);
         event.setPeriod(existingEvent.getPeriod());
         event.setNextDue(dateHandler.nextDueDate(dateHandler.getTodayDate(), existingEvent.getPeriod()));
         event.setNotes("");
@@ -121,14 +125,36 @@ class DbHandler {
         // All events
         final RealmResults<Event> events = eventLog.where(Event.class).findAll();
 
-        // Sorted by performed date
-//        RealmResults<Event> events = eventLog.where(Event.class)
-//                .distinct("name")
-//                .sort("date", Sort.DESCENDING);
+        // TODO: Sorting
+        events.sort("nextDue", Sort.ASCENDING);
 
         List<Event> copied = eventLog.copyFromRealm(events);
         Log.d(TAG, "All events: " + copied.toString());
         return copied;
+    }
+
+    /**
+     * Gets the latest distinct events logged in the app's Realm.
+     * @return A list of matching events
+     */
+    List<Event> getLatestDistinctEvents() {
+        // Start with all distinct events
+        final RealmResults<Event> distinctEvents = eventLog.where(Event.class)
+                .distinct("name")
+                .sort("name");      // If sorting alphabetically
+
+        List<Event> latestDistinctEvents = new ArrayList<>();
+        for (Event e : distinctEvents) {
+            RealmResults<Event> result = eventLog.where(Event.class)
+                    .equalTo("name", e.getName())
+                    .findAllSorted("date", Sort.DESCENDING);
+//            Log.d(TAG, result.first().getName() + ": "
+//                    + new DateHandler().dateToString(result.first().getDate())
+//                    + " (latest of " + result.size() + ")");
+            latestDistinctEvents.add(result.first());
+        }
+
+        return latestDistinctEvents;
     }
 
     List<Event> getEventsByName(String name) {
