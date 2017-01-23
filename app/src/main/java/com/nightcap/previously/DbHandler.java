@@ -57,6 +57,7 @@ class DbHandler {
 
         if ( (existingEvents.size() == 0)    // The event does not exist for this day
                 || (event.getId() <= getEventCount()) ) {  // Editing existing event
+
             // Persist data via transaction
             eventLog.beginTransaction();
             eventLog.copyToRealmOrUpdate(event);
