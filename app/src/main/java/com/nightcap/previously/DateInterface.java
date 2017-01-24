@@ -7,5 +7,8 @@ import java.util.Date;
  */
 
 public interface DateInterface {
+
+    // Idea from:
+    //    http://stackoverflow.com/questions/35091857/passing-object-from-fragment-to-activity
     void onReceiveDateFromDialog(Date date);
 }

@@ -1,7 +1,7 @@
 <resources>
     <!--General-->
-    <string name="app_name">Timestream</string>
-    <string name="build_date">22 January 2017</string>
+    <string name="app_name">Previously</string>
+    <string name="build_date">24 January 2017</string>
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
@@ -35,25 +35,26 @@
     <string name="title_activity_settings">Settings</string>
 
     <!--Settings-->
-    <string name="pref_title_mark_done">Marking as done</string>
-    <string-array name="pref_mark_done_titles">
-        <item>Default to today</item>
+    <string name="pref_title_default_done_today">Marking as done</string>
+    <string-array name="pref_default_done_today_titles">
         <item>Show date selector every time</item>
+        <item>Default to today</item>
     </string-array>
-    <string-array name="pref_mark_done_values">
-        <item>1</item>
+    <string-array name="pref_default_done_today_values">
         <item>0</item>
+        <item>1</item>
     </string-array>
 
-    <string name="pref_title_sort_first">Sort events</string>
-    <string-array name="pref_sort_first_titles">
+    <string name="pref_title_sort_field">Sort events</string>
+    <string-array name="pref_sort_field_titles">
         <item>Event name</item>
         <item>Last performed date</item>
         <item>Next due date</item>
     </string-array>
-    <string-array name="pref_sort_first_values">
-        <item>1</item>
-        <item>0</item>
+    <string-array name="pref_sort_field_values">
+        <item>name</item>
+        <item>date</item>
+        <item>nextDue</item>
     </string-array>
 
     <!-- ************************************************************** Samples (can be deleted) -->

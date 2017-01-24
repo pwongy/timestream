@@ -1,7 +1,9 @@
 package com.nightcap.previously;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -80,8 +82,16 @@ public class EditActivity extends AppCompatActivity {
             // Creating new event
             isEditExistingEvent = false;
 
-            // Default date to today
-            inputDate.setText(new DateHandler().dateToString(new Date()));
+            // Default date to today if preferred
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            final String doneDatePref = prefs.getString("default_done_today", "0");
+
+            if (doneDatePref.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                inputDate.setText(new DateHandler().dateToString(new Date()));
+            } else {
+                inputDate.setHint(new DateHandler().dateToString(new Date()));
+            }
         }
 
         // Floating action button

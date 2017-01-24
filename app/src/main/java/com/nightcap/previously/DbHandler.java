@@ -137,20 +137,33 @@ class DbHandler {
      * Gets the latest distinct events logged in the app's Realm.
      * @return A list of matching events
      */
-    List<Event> getLatestDistinctEvents() {
-        // Start with all distinct events
+    List<Event> getLatestDistinctEvents(String sortField, boolean isSortAscending) {
+        Sort sortOrder;
+        if (isSortAscending) {
+            sortOrder = Sort.ASCENDING;
+        } else {
+            sortOrder = Sort.DESCENDING;
+        }
+
+//        final RealmResults<Event> prelim = eventLog.where(Event.class)
+//                .findAllSorted(sortField, sortOrder);
+//        List<Event> matchEvents = new ArrayList<>();
+//        for (Event e : prelim) {
+//            if (matchEvents.)
+//        }
+
+        // Get all distinct events
         final RealmResults<Event> distinctEvents = eventLog.where(Event.class)
                 .distinct("name")
-                .sort("name");      // If sorting alphabetically
+                .sort("name", sortOrder);
 
         List<Event> latestDistinctEvents = new ArrayList<>();
         for (Event e : distinctEvents) {
+            // Get latest instance
             RealmResults<Event> result = eventLog.where(Event.class)
                     .equalTo("name", e.getName())
                     .findAllSorted("date", Sort.DESCENDING);
-//            Log.d(TAG, result.first().getName() + ": "
-//                    + new DateHandler().dateToString(result.first().getDate())
-//                    + " (latest of " + result.size() + ")");
+
             latestDistinctEvents.add(result.first());
         }
 

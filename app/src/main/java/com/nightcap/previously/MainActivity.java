@@ -2,7 +2,9 @@ package com.nightcap.previously;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -26,7 +29,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
+
+    // Realm database
     private DbHandler dbHandler;
+
+    // User preferences
+    private SharedPreferences prefs;
+    final String SORT_FIELD_KEY = "sort_primary_field";
+    final String SORT_ORDER_ASCENDING_KEY = "sort_primary_ascending";
+//    final String SORT_SECONDARY_KEY = "sort_secondary_ascending";
 
     // RecyclerView
     private List<Event> eventList = new ArrayList<>();
@@ -37,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Log.d(TAG, "MainActivity created");
+
+        // User settings
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Inflate xml layout
         setContentView(R.layout.activity_main);
@@ -96,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
     private void prepareData() {
         // Get data from Realm
 //        eventList = dbHandler.getAllEvents();
-        eventList = dbHandler.getLatestDistinctEvents();
+        eventList = dbHandler.getLatestDistinctEvents(prefs.getString(SORT_FIELD_KEY, "name"),
+                prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true));
 
         // Send to adapter
         eventAdapter.updateData(eventList);
@@ -141,34 +155,71 @@ public class MainActivity extends AppCompatActivity {
     public void showSortDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_sort, null);
+        View dialogView = inflater.inflate(R.layout.dialog_sort, null);
         dialogBuilder.setView(dialogView);
 
         final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
-        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
+//        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
 
-        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_first));
+        // Sort order - button 1
+        final ImageButton ib1 = (ImageButton) dialogView.findViewById(R.id.image_button_1);
+
+        if (prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true)) {
+            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+        } else {
+            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+        }
+
+        ib1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true)) {
+                    // Currently set as ascending, so switch to descending
+                    setBooleanPreference(SORT_ORDER_ASCENDING_KEY, false);
+                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+                } else {
+                    // Currently set as descending, so switch to ascending
+                    setBooleanPreference(SORT_ORDER_ASCENDING_KEY, true);
+                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+                }
+            }
+        });
+
+        // Sort order - button 2
+//        final ImageButton ib2 = (ImageButton) dialogView.findViewById(R.id.image_button_2);
+//
+//        if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
+//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+//        } else {
+//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+//        }
+//
+//        ib2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
+//                    // Currently set as ascending, so switch to descending
+//                    setBooleanPreference(SORT_SECONDARY_KEY, false);
+//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+//                } else {
+//                    // Currently set as descending, so switch to ascending
+//                    setBooleanPreference(SORT_SECONDARY_KEY, true);
+//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+//                }
+//            }
+//        });
+
+        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
 //        dialogBuilder.setMessage(getResources().getString(R.string.pref_title_sort_first));
         dialogBuilder.setPositiveButton("Sort", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                int langpos = spinner1.getSelectedItemPosition();
-                switch(langpos) {
-                    case 0: //English
-//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-//                                .edit().putString("LANG", "en").commit();
-//                        setLangRecreate("en");
-                        return;
-                    case 1: //Hindi
-//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-//                                .edit().putString("LANG", "hi").commit();
-//                        setLangRecreate("hi");
-                        return;
-                    default: //By default set to english
-//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-//                                .edit().putString("LANG", "en").commit();
-//                        setLangRecreate("en");
-                        return;
-                }
+                // Get spinner position and set sort preference to corresponding value
+                int spinnerPosition = spinner1.getSelectedItemPosition();
+                setStringPreference(SORT_FIELD_KEY, getResources()
+                        .getStringArray(R.array.pref_sort_field_values)[spinnerPosition]);
+
+                // Update data
+                prepareData();
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -179,5 +230,20 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog b = dialogBuilder.create();
         b.show();
     }
+
+    // For sort field
+    private void setStringPreference(String key, String pref) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, pref);
+        editor.apply();
+    }
+
+    // For sort order
+    private void setBooleanPreference(String key, boolean pref) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, pref);
+        editor.apply();
+    }
+
 
 }

@@ -1,7 +1,9 @@
 package com.nightcap.previously;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,6 +44,10 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
+        // User settings
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final String doneDatePref = prefs.getString("default_done_today", "0");
+
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_info_toolbar);
         setSupportActionBar(toolbar);
@@ -52,7 +59,17 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDatePickerDialog(view);
+                Log.d(TAG, doneDatePref);
+
+                if (doneDatePref.equalsIgnoreCase(getResources()
+                        .getStringArray(R.array.pref_default_done_today_values)[0])) {
+                    showDatePickerDialog(view);
+                } else if (doneDatePref.equalsIgnoreCase(getResources()
+                        .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                    // Mark currently opened event as done today
+                    dbHandler.markEventDone(selectedEvent, new DateHandler().getTodayDate());
+                    prepareHistory();
+                }
             }
         });
 
