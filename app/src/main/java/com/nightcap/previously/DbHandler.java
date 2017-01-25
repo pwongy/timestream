@@ -6,6 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -145,13 +147,6 @@ class DbHandler {
             sortOrder = Sort.DESCENDING;
         }
 
-//        final RealmResults<Event> prelim = eventLog.where(Event.class)
-//                .findAllSorted(sortField, sortOrder);
-//        List<Event> matchEvents = new ArrayList<>();
-//        for (Event e : prelim) {
-//            if (matchEvents.)
-//        }
-
         // Get all distinct events
         final RealmResults<Event> distinctEvents = eventLog.where(Event.class)
                 .distinct("name")
@@ -166,6 +161,11 @@ class DbHandler {
 
             latestDistinctEvents.add(result.first());
         }
+
+        // Sorting
+        Comparator<Event> cp = Event.getComparator(Event.SortParameter.DATE_DESCENDING,
+                Event.SortParameter.NAME_ASCENDING);
+        Collections.sort(latestDistinctEvents, cp);
 
         return latestDistinctEvents;
     }

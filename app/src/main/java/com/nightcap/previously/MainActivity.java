@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Event> eventList = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
-    private EventAdapter eventAdapter;
+    private EventLogAdapter eventLogAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
-        eventAdapter = new EventAdapter(eventList);
-        recyclerView.setAdapter(eventAdapter);
+        eventLogAdapter = new EventLogAdapter(eventList);
+        recyclerView.setAdapter(eventLogAdapter);
 
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(
                 new ItemClickSupport.OnItemClickListener() {
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true));
 
         // Send to adapter
-        eventAdapter.updateData(eventList);
+        eventLogAdapter.updateData(eventList);
     }
 
     @Override

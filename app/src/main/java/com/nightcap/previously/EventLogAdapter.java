@@ -12,7 +12,7 @@ import java.util.List;
  * Adapter for sending database events to RecyclerView.
  */
 
-class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
+class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     String TAG = "EventAdapter";
     private List<Event> eventList;
 
@@ -28,7 +28,7 @@ class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     }
 
     // Constructor
-    EventAdapter(List<Event> list) {
+    EventLogAdapter(List<Event> list) {
         this.eventList = list;
     }
 
@@ -46,7 +46,7 @@ class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
 
     // To inflate the item layout and create the ViewHolder
     @Override
-    public EventAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EventLogAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_event, parent, false);
         ViewHolder vh = new ViewHolder(itemView);
