@@ -1,7 +1,9 @@
 package com.nightcap.previously;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -52,11 +53,11 @@ public class EditActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
 
-        // Set FocusListener on date field EditText
-        inputDate.setOnFocusChangeListener(focusListener);
-
         // Get Realm handler
         dbHandler = new DbHandler(this);
+
+        // Set FocusListener on date field EditText
+        inputDate.setOnFocusChangeListener(focusListener);
 
         // Check if editing
         editId = getIntent().getIntExtra("edit_id", -1);
@@ -80,8 +81,16 @@ public class EditActivity extends AppCompatActivity {
             // Creating new event
             isEditExistingEvent = false;
 
-            // Default date to today
-            inputDate.setText(new DateHandler().dateToString(new Date()));
+            // Default date to today if preferred
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            final String doneDatePref = prefs.getString("default_done_today", "0");
+
+            if (doneDatePref.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                inputDate.setText(new DateHandler().dateToString(new Date()));
+            } else {
+                inputDate.setHint(new DateHandler().dateToString(new Date()));
+            }
         }
 
         // Floating action button
@@ -93,20 +102,14 @@ public class EditActivity extends AppCompatActivity {
 //            }
 //        });
 
-        // Change editText underline colour
-//        EditText nameEditText = (EditText) findViewById(R.id.event_name);
-//        nameEditText.getBackground().mutate()
-//                .setColorFilter(getResources().getColor(R.color.colorEditTextUnderline),
-//                        PorterDuff.Mode.SRC_ATOP);
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        RelativeLayout header = (RelativeLayout) findViewById(R.id.detail_head_space);
-        Log.i(TAG, "Header height: " + header.getHeight());
+//        RelativeLayout header = (RelativeLayout) findViewById(R.id.detail_head_space);
+//        Log.i(TAG, "Header height: " + header.getHeight());
 //        fab.setY(header.getHeight());
 
     }
@@ -164,10 +167,10 @@ public class EditActivity extends AppCompatActivity {
             Log.d(TAG, "Attempting to save event");
             DateHandler dh = new DateHandler();
 
-            // Save event
+            // Create unmanaged event
             Event event = new Event();
 
-            // ID depends on new or edit
+            // ID depends on whether we are creating a new event or editing an existing one
             int id;
             if (isEditExistingEvent) {
                 id = dbHandler.getEventById(editId).getId();
@@ -176,11 +179,14 @@ public class EditActivity extends AppCompatActivity {
             }
             event.setId(id);
 
+            // TODO: Set common values for similar events
             event.setName(eventName);
             event.setDate(dh.stringToDate(eventDate));
             event.setPeriod(eventPeriod);
             event.setNextDue(dh.nextDueDate(dh.stringToDate(eventDate), eventPeriod));
             event.setNotes(eventNotes);
+
+            // Save the unmanaged event to Realm
             dbHandler.saveEvent(event);
 
             // Return to main screen

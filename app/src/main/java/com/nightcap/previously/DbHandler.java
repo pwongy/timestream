@@ -6,6 +6,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -108,6 +110,7 @@ class DbHandler {
         }
     }
 
+    @Deprecated
     String getEventTypes() {
         // Check for emptiness
         boolean isEmpty = eventLog.where(Event.class).findAll().isEmpty();
@@ -121,6 +124,7 @@ class DbHandler {
      * Gets all events logged in the app's Realm.
      * @return A list of all logged events
      */
+    @Deprecated
     List<Event> getAllEvents() {
         // All events
         final RealmResults<Event> events = eventLog.where(Event.class).findAll();
@@ -137,22 +141,37 @@ class DbHandler {
      * Gets the latest distinct events logged in the app's Realm.
      * @return A list of matching events
      */
-    List<Event> getLatestDistinctEvents() {
-        // Start with all distinct events
+    List<Event> getLatestDistinctEvents(String sortField, boolean isSortAscending) {
+        // Get all distinct events
         final RealmResults<Event> distinctEvents = eventLog.where(Event.class)
-                .distinct("name")
-                .sort("name");      // If sorting alphabetically
+                .distinct("name");
 
+        // Find latest instance of each event
         List<Event> latestDistinctEvents = new ArrayList<>();
         for (Event e : distinctEvents) {
+            // Get latest instance
             RealmResults<Event> result = eventLog.where(Event.class)
                     .equalTo("name", e.getName())
                     .findAllSorted("date", Sort.DESCENDING);
-//            Log.d(TAG, result.first().getName() + ": "
-//                    + new DateHandler().dateToString(result.first().getDate())
-//                    + " (latest of " + result.size() + ")");
             latestDistinctEvents.add(result.first());
         }
+
+        // Determine correct sort parameters
+        Event.SortParameter order = Event.SortParameter.NAME_ASCENDING; // Default value
+        if (sortField.equalsIgnoreCase("name")) {
+            if (isSortAscending) order = Event.SortParameter.NAME_ASCENDING;
+            else order = Event.SortParameter.NAME_DESCENDING;
+        } else if (sortField.equalsIgnoreCase("date")) {
+            if (isSortAscending) order = Event.SortParameter.DATE_ASCENDING;
+            else order = Event.SortParameter.DATE_DESCENDING;
+        } else if (sortField.equalsIgnoreCase("nextDue")) {
+            if (isSortAscending) order = Event.SortParameter.NEXT_DUE_ASCENDING;
+            else order = Event.SortParameter.NEXT_DUE_DESCENDING;
+        }
+
+        // Sort events
+        Comparator<Event> cp = Event.getComparator(order);
+        Collections.sort(latestDistinctEvents, cp);
 
         return latestDistinctEvents;
     }
@@ -163,7 +182,7 @@ class DbHandler {
                 .findAllSorted("date", Sort.DESCENDING);
 
         List<Event> copied = eventLog.copyFromRealm(events);
-//        Log.d(TAG, "Events by name: " + copied.toString());
+        Log.d(TAG, "Events by name: " + copied.toString());
         return copied;
     }
 

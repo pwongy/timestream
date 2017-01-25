@@ -2,7 +2,9 @@ package com.nightcap.previously;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -26,18 +29,26 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "MainActivity";
+
+    // Realm database
     private DbHandler dbHandler;
+
+    // User preferences
+    private SharedPreferences prefs;
+    final String KEY_SORT_FIELD = "sort_primary_field";
+    final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
+//    final String SORT_SECONDARY_KEY = "sort_secondary_ascending";
 
     // RecyclerView
     private List<Event> eventList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
-    private EventAdapter eventAdapter;
+    private EventLogAdapter eventLogAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Log.d(TAG, "MainActivity created");
+
+        // User settings
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Inflate xml layout
         setContentView(R.layout.activity_main);
@@ -47,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // FAB
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.main_fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.main_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
         dbHandler = new DbHandler(this);
 
         // Recycler view
-        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
-        layoutManager = new LinearLayoutManager(this);                          // LayoutManager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
@@ -71,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
-        eventAdapter = new EventAdapter(eventList);
-        recyclerView.setAdapter(eventAdapter);
+        eventLogAdapter = new EventLogAdapter(eventList);
+        recyclerView.setAdapter(eventLogAdapter);
 
         ItemClickSupport.addTo(recyclerView).setOnItemClickListener(
                 new ItemClickSupport.OnItemClickListener() {
@@ -85,6 +96,27 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        // Hide FAB on scroll
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 && fab.isShown()) {
+                    fab.hide();
+                } else if (dy < -10) {
+                    fab.show();
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    fab.show();
+                }
+
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
     }
 
     @Override
@@ -95,11 +127,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareData() {
         // Get data from Realm
-//        eventList = dbHandler.getAllEvents();
-        eventList = dbHandler.getLatestDistinctEvents();
+        eventList = dbHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
+                prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true));
 
-        // Send to adapter
-        eventAdapter.updateData(eventList);
+        // Send list to adapter
+        eventLogAdapter.updateData(eventList);
     }
 
     @Override
@@ -114,8 +146,6 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         switch (item.getItemId()) {
             case R.id.action_sort:
                 showSortDialog();
@@ -138,46 +168,115 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Dialog for setting event sort order.
+     */
     public void showSortDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_sort, null);
+        View dialogView = inflater.inflate(R.layout.dialog_sort, null);
         dialogBuilder.setView(dialogView);
 
-        final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
-        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
+//        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
 
-        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_first));
-//        dialogBuilder.setMessage(getResources().getString(R.string.pref_title_sort_first));
+        // Set initial spinner selection
+        final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
+        String[] sortFields = getResources().getStringArray(R.array.pref_sort_field_values);
+        int sortFieldIndex = -1;
+        for (int i = 0; i < sortFields.length; i++) {
+            if (sortFields[i].equalsIgnoreCase(prefs.getString(KEY_SORT_FIELD, "name"))) {
+                sortFieldIndex = i;
+                break;
+            }
+        }
+
+        if (sortFieldIndex >= 0) {
+            spinner1.setSelection(sortFieldIndex);
+        } else {
+            spinner1.setSelection(0);   // Default to event name
+        }
+
+        // Set initial sort order image from preferences
+        final ImageButton ib1 = (ImageButton) dialogView.findViewById(R.id.image_button_1);
+        if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
+            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+        } else {
+            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+        }
+
+        // Switch order on click
+        ib1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
+                    // Currently set as ascending, so switch to descending
+                    setBooleanPreference(KEY_SORT_ORDER_ASCENDING, false);
+                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+                } else {
+                    // Currently set as descending, so switch to ascending
+                    setBooleanPreference(KEY_SORT_ORDER_ASCENDING, true);
+                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+                }
+            }
+        });
+
+        // Sort order - button 2
+//        final ImageButton ib2 = (ImageButton) dialogView.findViewById(R.id.image_button_2);
+//
+//        if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
+//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+//        } else {
+//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+//        }
+//
+//        ib2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
+//                    // Currently set as ascending, so switch to descending
+//                    setBooleanPreference(SORT_SECONDARY_KEY, false);
+//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+//                } else {
+//                    // Currently set as descending, so switch to ascending
+//                    setBooleanPreference(SORT_SECONDARY_KEY, true);
+//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+//                }
+//            }
+//        });
+
+        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
         dialogBuilder.setPositiveButton("Sort", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                int langpos = spinner1.getSelectedItemPosition();
-                switch(langpos) {
-                    case 0: //English
-//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-//                                .edit().putString("LANG", "en").commit();
-//                        setLangRecreate("en");
-                        return;
-                    case 1: //Hindi
-//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-//                                .edit().putString("LANG", "hi").commit();
-//                        setLangRecreate("hi");
-                        return;
-                    default: //By default set to english
-//                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-//                                .edit().putString("LANG", "en").commit();
-//                        setLangRecreate("en");
-                        return;
-                }
+                // Get spinner position and set sort preference to corresponding value
+                int spinnerPosition = spinner1.getSelectedItemPosition();
+                setStringPreference(KEY_SORT_FIELD, getResources()
+                        .getStringArray(R.array.pref_sort_field_values)[spinnerPosition]);
+
+                // Update data
+                prepareData();
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                //pass
+                // Pass
             }
         });
         AlertDialog b = dialogBuilder.create();
         b.show();
+    }
+
+    // For sort field
+    private void setStringPreference(String key, String pref) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, pref);
+        editor.apply();
+    }
+
+    // For sort order
+    private void setBooleanPreference(String key, boolean pref) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, pref);
+        editor.apply();
     }
 
 }
