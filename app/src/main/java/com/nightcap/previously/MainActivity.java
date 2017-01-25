@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         eventList = dbHandler.getLatestDistinctEvents(prefs.getString(SORT_FIELD_KEY, "name"),
                 prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true));
 
-        // Send to adapter
+        // Send list to adapter
         eventLogAdapter.updateData(eventList);
     }
 
@@ -128,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
         switch (item.getItemId()) {
             case R.id.action_sort:
                 showSortDialog();
@@ -161,15 +160,20 @@ public class MainActivity extends AppCompatActivity {
         final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
 //        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
 
-        // Sort order - button 1
-        final ImageButton ib1 = (ImageButton) dialogView.findViewById(R.id.image_button_1);
+        // Set initial spinner selection
+        int position1 = Arrays.asList(getResources().getStringArray(R.array.pref_sort_field_values))
+                .indexOf(prefs.getString(SORT_FIELD_KEY, "name"));
+        spinner1.setSelection(position1);
 
+        // Set initial sort order image from preferences
+        final ImageButton ib1 = (ImageButton) dialogView.findViewById(R.id.image_button_1);
         if (prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true)) {
             ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
         } else {
             ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
         }
 
+        // Switch order on click
         ib1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
 //        });
 
         dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
-//        dialogBuilder.setMessage(getResources().getString(R.string.pref_title_sort_first));
         dialogBuilder.setPositiveButton("Sort", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Get spinner position and set sort preference to corresponding value

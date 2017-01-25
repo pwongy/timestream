@@ -140,31 +140,32 @@ class DbHandler {
      * @return A list of matching events
      */
     List<Event> getLatestDistinctEvents(String sortField, boolean isSortAscending) {
-        Sort sortOrder;
-        if (isSortAscending) {
-            sortOrder = Sort.ASCENDING;
-        } else {
-            sortOrder = Sort.DESCENDING;
-        }
-
         // Get all distinct events
         final RealmResults<Event> distinctEvents = eventLog.where(Event.class)
-                .distinct("name")
-                .sort("name", sortOrder);
+                .distinct("name");
 
+        // Find latest instance of each event
         List<Event> latestDistinctEvents = new ArrayList<>();
         for (Event e : distinctEvents) {
             // Get latest instance
             RealmResults<Event> result = eventLog.where(Event.class)
                     .equalTo("name", e.getName())
                     .findAllSorted("date", Sort.DESCENDING);
-
             latestDistinctEvents.add(result.first());
         }
 
-        // Sorting
-        Comparator<Event> cp = Event.getComparator(Event.SortParameter.DATE_DESCENDING,
-                Event.SortParameter.NAME_ASCENDING);
+        // Determine correct sort parameters
+        Event.SortParameter order = Event.SortParameter.NAME_ASCENDING; // Default value
+        if (sortField.equalsIgnoreCase("name")) {
+            if (isSortAscending) order = Event.SortParameter.NAME_ASCENDING;
+            else order = Event.SortParameter.NAME_DESCENDING;
+        } else if (sortField.equalsIgnoreCase("date")) {
+            if (isSortAscending) order = Event.SortParameter.DATE_ASCENDING;
+            else order = Event.SortParameter.DATE_DESCENDING;
+        }
+
+        // Sort events
+        Comparator<Event> cp = Event.getComparator(order);
         Collections.sort(latestDistinctEvents, cp);
 
         return latestDistinctEvents;
