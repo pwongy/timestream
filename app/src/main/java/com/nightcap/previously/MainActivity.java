@@ -101,9 +101,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0 && fab.isShown()) {
+                if (dy > 10 && fab.isShown()) {
                     fab.hide();
-                } else if (dy < -10) {
+                } else if (dy < -10 && !fab.isShown()) {
                     fab.show();
                 }
             }

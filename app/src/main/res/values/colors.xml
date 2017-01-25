@@ -7,7 +7,7 @@
     <!-- Timeline -->
     <color name="colorTimeline">#BDBDBD</color>
 
-    <color name="colorEditTextUnderline">#FFFFFF</color>
+    <color name="colorDateText">#999999</color>
     <color name="colorCardBackground">#DFDFDF</color>
 
 </resources>

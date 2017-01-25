@@ -17,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,13 +105,13 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Toast.makeText(getApplicationContext(),
-                                "ID: " + historyList.get(position).getId()
-                                        + "\nName: " + historyList.get(position).getName()
-                                        + "\nDate: " + new DateHandler()
-                                                .dateToString(historyList.get(position).getDate()),
-                                Toast.LENGTH_LONG)
-                                .show();
+//                        Toast.makeText(getApplicationContext(),
+//                                "ID: " + historyList.get(position).getId()
+//                                        + "\nName: " + historyList.get(position).getName()
+//                                        + "\nDate: " + new DateHandler()
+//                                                .dateToString(historyList.get(position).getDate()),
+//                                Toast.LENGTH_LONG)
+//                                .show();
 
                         selectedEvent = historyList.get(position);
                         updateInfoCard();

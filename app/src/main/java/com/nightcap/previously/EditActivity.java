@@ -23,11 +23,14 @@ import java.util.Date;
 public class EditActivity extends AppCompatActivity {
     private String TAG = "EventActivity";
 
+    // Get a Realm handler, since we are editing the event log
+    DbHandler dbHandler;
+
+    // Editing
     private boolean isEditExistingEvent;
     int editId;
-
-    DbHandler dbHandler;
-//    FloatingActionButton fab;
+    String oldName;
+    int oldPeriod;
 
     // Input fields
     EditText inputName;
@@ -65,8 +68,11 @@ public class EditActivity extends AppCompatActivity {
             // Editing existing event
             isEditExistingEvent = true;
 
+            // TODO: Keep track of old values
+            oldName = dbHandler.getEventById(editId).getName();
+
             // Pre-fill existing values
-            inputName.setText(dbHandler.getEventById(editId).getName());
+            inputName.setText(oldName);
             inputDate.setText(new DateHandler().dateToString(dbHandler.getEventById(editId).getDate()));
             int period = dbHandler.getEventById(editId).getPeriod();
             String periodStr;
@@ -179,7 +185,6 @@ public class EditActivity extends AppCompatActivity {
             }
             event.setId(id);
 
-            // TODO: Set common values for similar events
             event.setName(eventName);
             event.setDate(dh.stringToDate(eventDate));
             event.setPeriod(eventPeriod);
@@ -188,6 +193,12 @@ public class EditActivity extends AppCompatActivity {
 
             // Save the unmanaged event to Realm
             dbHandler.saveEvent(event);
+
+            // TODO: Set common values for similar events
+            if (!eventName.equals(oldName)) {
+                Log.d(TAG, "Event name has changed.");
+                dbHandler.updateNameField(oldName, eventName);
+            }
 
             // Return to main screen
             Intent homeIntent = new Intent(this, MainActivity.class);
@@ -203,6 +214,5 @@ public class EditActivity extends AppCompatActivity {
             }
         }
     };
-
 
 }
