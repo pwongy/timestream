@@ -4,7 +4,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -17,16 +19,28 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     private List<Event> eventList;
 
     // ViewHolder pattern as required
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView nameView, dateView;
+        ImageButton imageButton;
+//        http://stackoverflow.com/questions/30284067/handle-button-click-inside-a-row-in-recyclerview
 
         ViewHolder(View view) {
             super(view);
             nameView = (TextView) view.findViewById(R.id.list_event_name);
             dateView = (TextView) view.findViewById(R.id.list_event_date);
+
+            imageButton = (ImageButton) view.findViewById(R.id.list_item_image_button);
+            imageButton.setOnClickListener(this);
         }
 
-//        http://stackoverflow.com/questions/30284067/handle-button-click-inside-a-row-in-recyclerview
+        @Override
+        public void onClick(View view) {
+            if (view.getId() == imageButton.getId()) {
+                String event = eventList.get(getAdapterPosition()).getName();
+                Toast.makeText(view.getContext(), "Item pressed: " + event, Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     // Constructor
