@@ -1,7 +1,7 @@
 <resources>
     <!--General-->
     <string name="app_name">Previously</string>
-    <string name="build_date">24 January 2017</string>
+    <string name="build_date">25 January 2017</string>
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
