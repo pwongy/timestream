@@ -110,6 +110,7 @@ class DbHandler {
         }
     }
 
+    @Deprecated
     String getEventTypes() {
         // Check for emptiness
         boolean isEmpty = eventLog.where(Event.class).findAll().isEmpty();
@@ -123,6 +124,7 @@ class DbHandler {
      * Gets all events logged in the app's Realm.
      * @return A list of all logged events
      */
+    @Deprecated
     List<Event> getAllEvents() {
         // All events
         final RealmResults<Event> events = eventLog.where(Event.class).findAll();
@@ -162,6 +164,9 @@ class DbHandler {
         } else if (sortField.equalsIgnoreCase("date")) {
             if (isSortAscending) order = Event.SortParameter.DATE_ASCENDING;
             else order = Event.SortParameter.DATE_DESCENDING;
+        } else if (sortField.equalsIgnoreCase("nextDue")) {
+            if (isSortAscending) order = Event.SortParameter.NEXT_DUE_ASCENDING;
+            else order = Event.SortParameter.NEXT_DUE_DESCENDING;
         }
 
         // Sort events
@@ -177,7 +182,7 @@ class DbHandler {
                 .findAllSorted("date", Sort.DESCENDING);
 
         List<Event> copied = eventLog.copyFromRealm(events);
-//        Log.d(TAG, "Events by name: " + copied.toString());
+        Log.d(TAG, "Events by name: " + copied.toString());
         return copied;
     }
 

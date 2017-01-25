@@ -21,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,14 +35,12 @@ public class MainActivity extends AppCompatActivity {
 
     // User preferences
     private SharedPreferences prefs;
-    final String SORT_FIELD_KEY = "sort_primary_field";
-    final String SORT_ORDER_ASCENDING_KEY = "sort_primary_ascending";
+    final String KEY_SORT_FIELD = "sort_primary_field";
+    final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
 //    final String SORT_SECONDARY_KEY = "sort_secondary_ascending";
 
     // RecyclerView
     private List<Event> eventList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private EventLogAdapter eventLogAdapter;
 
     @Override
@@ -75,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
         dbHandler = new DbHandler(this);
 
         // Recycler view
-        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
-        layoutManager = new LinearLayoutManager(this);                          // LayoutManager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
@@ -109,9 +106,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareData() {
         // Get data from Realm
-//        eventList = dbHandler.getAllEvents();
-        eventList = dbHandler.getLatestDistinctEvents(prefs.getString(SORT_FIELD_KEY, "name"),
-                prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true));
+        eventList = dbHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
+                prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true));
 
         // Send list to adapter
         eventLogAdapter.updateData(eventList);
@@ -151,23 +147,37 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Dialog for setting event sort order.
+     */
     public void showSortDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_sort, null);
         dialogBuilder.setView(dialogView);
 
-        final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
 //        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
 
         // Set initial spinner selection
-        int position1 = Arrays.asList(getResources().getStringArray(R.array.pref_sort_field_values))
-                .indexOf(prefs.getString(SORT_FIELD_KEY, "name"));
-        spinner1.setSelection(position1);
+        final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
+        String[] sortFields = getResources().getStringArray(R.array.pref_sort_field_values);
+        int sortFieldIndex = -1;
+        for (int i = 0; i < sortFields.length; i++) {
+            if (sortFields[i].equalsIgnoreCase(prefs.getString(KEY_SORT_FIELD, "name"))) {
+                sortFieldIndex = i;
+                break;
+            }
+        }
+
+        if (sortFieldIndex >= 0) {
+            spinner1.setSelection(sortFieldIndex);
+        } else {
+            spinner1.setSelection(0);   // Default to event name
+        }
 
         // Set initial sort order image from preferences
         final ImageButton ib1 = (ImageButton) dialogView.findViewById(R.id.image_button_1);
-        if (prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true)) {
+        if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
             ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
         } else {
             ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
@@ -177,13 +187,13 @@ public class MainActivity extends AppCompatActivity {
         ib1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (prefs.getBoolean(SORT_ORDER_ASCENDING_KEY, true)) {
+                if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
                     // Currently set as ascending, so switch to descending
-                    setBooleanPreference(SORT_ORDER_ASCENDING_KEY, false);
+                    setBooleanPreference(KEY_SORT_ORDER_ASCENDING, false);
                     ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
                 } else {
                     // Currently set as descending, so switch to ascending
-                    setBooleanPreference(SORT_ORDER_ASCENDING_KEY, true);
+                    setBooleanPreference(KEY_SORT_ORDER_ASCENDING, true);
                     ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
                 }
             }
@@ -218,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Get spinner position and set sort preference to corresponding value
                 int spinnerPosition = spinner1.getSelectedItemPosition();
-                setStringPreference(SORT_FIELD_KEY, getResources()
+                setStringPreference(KEY_SORT_FIELD, getResources()
                         .getStringArray(R.array.pref_sort_field_values)[spinnerPosition]);
 
                 // Update data
@@ -227,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                //pass
+                // Pass
             }
         });
         AlertDialog b = dialogBuilder.create();
@@ -247,6 +257,5 @@ public class MainActivity extends AppCompatActivity {
         editor.putBoolean(key, pref);
         editor.apply();
     }
-
 
 }

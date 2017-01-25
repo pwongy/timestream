@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
-    String TAG = "EventAdapter";
+    String TAG = "EventLogAdapter";
     private List<Event> eventList;
 
     // ViewHolder pattern as required
@@ -25,6 +25,8 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             nameView = (TextView) view.findViewById(R.id.list_event_name);
             dateView = (TextView) view.findViewById(R.id.list_event_date);
         }
+
+//        http://stackoverflow.com/questions/30284067/handle-button-click-inside-a-row-in-recyclerview
     }
 
     // Constructor

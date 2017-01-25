@@ -62,7 +62,7 @@ public class Event extends RealmObject {
     }
 
     public boolean hasPeriod() {
-        return !(this.getPeriod() <= 0);
+        return (this.getPeriod() > 0);
     }
 
     public Date getNextDue() {
