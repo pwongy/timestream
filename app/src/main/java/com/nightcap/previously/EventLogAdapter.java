@@ -1,5 +1,6 @@
 package com.nightcap.previously;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,14 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
 
         ViewHolder(View view) {
             super(view);
+
+            // Get relevant views
             nameView = (TextView) view.findViewById(R.id.list_event_name);
             dateView = (TextView) view.findViewById(R.id.list_event_date);
-
             imageButton = (ImageButton) view.findViewById(R.id.list_item_image_button);
+
+            // Set listeners
+            view.setOnClickListener(this);
             imageButton.setOnClickListener(this);
         }
 
@@ -37,7 +42,14 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
         public void onClick(View view) {
             if (view.getId() == imageButton.getId()) {
                 String event = eventList.get(getAdapterPosition()).getName();
-                Toast.makeText(view.getContext(), "Item pressed: " + event, Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), "Tick pressed: " + event, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(view.getContext(), "Row pressed: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
+
+                // Intent to show event info
+                Intent info = new Intent(view.getContext(), EventInfoActivity.class);
+                info.putExtra("event_id", eventList.get(getAdapterPosition()).getId());
+                view.getContext().getApplicationContext().startActivity(info);
             }
         }
 

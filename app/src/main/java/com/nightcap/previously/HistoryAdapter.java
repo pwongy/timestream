@@ -14,21 +14,31 @@ import java.util.List;
 
 class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     String TAG = "HistoryAdapter";
+    private ReceiveEventInterface eventListener;
     private List<Event> historyList;
 
     // ViewHolder pattern as required
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView dateView;
 
         ViewHolder(View view) {
             super(view);
             dateView = (TextView) view.findViewById(R.id.list_history_date);
+
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            // Send date to calling Activity (when the list view row is clicked)
+            eventListener.onReceiveEventFromAdapter(historyList.get(getAdapterPosition()));
         }
     }
 
     // Constructor
-    HistoryAdapter(List<Event> list) {
+    HistoryAdapter(EventInfoActivity parent, List<Event> list) {
         this.historyList = list;
+        eventListener = parent;
     }
 
     // Updating the list data

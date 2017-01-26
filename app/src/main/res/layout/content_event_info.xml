@@ -64,7 +64,8 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     style="@style/TextAppearance.AppCompat.Small"
                     android:text="@string/event_notes_label"
@@ -73,7 +74,8 @@
                     android:paddingEnd="56dp"/>
                 <TextView
                     android:id="@+id/card_info_notes"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
                     android:layout_height="wrap_content"
                     style="@style/TextAppearance.AppCompat.Small"
                     android:layout_gravity="end"
@@ -89,9 +91,9 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:elevation="@dimen/card_elevation"
         android:layout_below="@+id/card_info">
+        <!--android:layout_marginBottom="@dimen/activity_vertical_margin"-->
 
         <RelativeLayout
             android:layout_width="match_parent"

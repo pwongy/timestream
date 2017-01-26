@@ -26,7 +26,7 @@ import java.util.List;
  * Activity for displaying event details.
  */
 
-public class EventInfoActivity extends AppCompatActivity implements DateInterface {
+public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "EventActivity";
     private DbHandler dbHandler;
     int eventId;
@@ -34,8 +34,6 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
     TextView periodView;
     TextView notesView;
     private List<Event> historyList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private HistoryAdapter historyAdapter;
 
     @Override
@@ -88,9 +86,9 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
         updateInfoCard();
 
         // Card 2 - History
-        recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
 
-        layoutManager = new LinearLayoutManager(this);                          // LayoutManager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
@@ -98,32 +96,20 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
-        historyAdapter = new HistoryAdapter(historyList);
+        historyAdapter = new HistoryAdapter(this, historyList);
         recyclerView.setAdapter(historyAdapter);
-
-        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-//                        Toast.makeText(getApplicationContext(),
-//                                "ID: " + historyList.get(position).getId()
-//                                        + "\nName: " + historyList.get(position).getName()
-//                                        + "\nDate: " + new DateHandler()
-//                                                .dateToString(historyList.get(position).getDate()),
-//                                Toast.LENGTH_LONG)
-//                                .show();
-
-                        selectedEvent = historyList.get(position);
-                        updateInfoCard();
-                    }
-                }
-        );
     }
 
     public void onReceiveDateFromDialog(Date date) {
         // Attempt to mark currently opened event as done
         dbHandler.markEventDone(selectedEvent, date);
         prepareHistory();
+    }
+
+    public void onReceiveEventFromAdapter(Event event) {
+        // Update info on cards to match the selected event from history
+        selectedEvent = event;
+        updateInfoCard();
     }
 
     private void updateInfoCard() {

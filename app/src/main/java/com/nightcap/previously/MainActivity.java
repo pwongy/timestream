@@ -85,18 +85,6 @@ public class MainActivity extends AppCompatActivity {
         eventLogAdapter = new EventLogAdapter(eventList);
         recyclerView.setAdapter(eventLogAdapter);
 
-        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        // Intent to show event info
-                        Intent info = new Intent(getApplicationContext(), EventInfoActivity.class);
-                        info.putExtra("event_id", eventList.get(position).getId());
-                        startActivity(info);
-                    }
-                }
-        );
-
         // Hide FAB on scroll
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
