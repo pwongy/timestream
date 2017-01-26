@@ -16,7 +16,7 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-class DbHandler {
+class DatabaseHandler {
     private String TAG = "DbHandler";
     private Context appContext;
     private DateHandler dateHandler;
@@ -24,7 +24,7 @@ class DbHandler {
     private SharedPreferences dataStore;
     private String KEY_EVENT_COUNT = "event_count";
 
-    DbHandler(Context appContext) {
+    DatabaseHandler(Context appContext) {
         this.appContext = appContext;
         dateHandler = new DateHandler();
 

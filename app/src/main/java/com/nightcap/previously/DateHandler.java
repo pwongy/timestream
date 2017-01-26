@@ -1,5 +1,8 @@
 package com.nightcap.previously;
 
+import android.text.format.DateUtils;
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +12,7 @@ import java.util.Date;
  */
 
 class DateHandler {
+    String TAG = "DateHandler";
 
     DateHandler() {
 
@@ -85,6 +89,36 @@ class DateHandler {
 
         nextTime = cal.getTime();
         return nextTime;
+    }
+
+    long getDaysBetween(Date earlyDate, Date lateDate) {
+        // Compute elapsed time since the latest data record
+        String relativeDays = DateUtils.getRelativeTimeSpanString(earlyDate.getTime(),
+                lateDate.getTime(), DateUtils.DAY_IN_MILLIS).toString();
+        Log.d(TAG, "String: " + relativeDays);
+
+//        if (relativeDays.substring(relativeDays.length() - 4).equalsIgnoreCase("days")) {
+//            Log.d(TAG, "")
+//        }
+
+        // Time difference in millis
+        long difference = earlyDate.getTime() - lateDate.getTime();
+        long days = difference / DateUtils.DAY_IN_MILLIS;
+        long remainder = difference % DateUtils.DAY_IN_MILLIS;
+
+        Log.d(TAG, "Relative days: " + days);
+//        Log.d(TAG, " -- Remainder: " + remainder);
+
+//        if (relativeDays.equalsIgnoreCase("Yesterday")) {
+//            daysBetween = 1;
+//        } else {
+//            // Get the number of days since the latest stored data.
+//            // Smallest number expected is 2, representing the day before yesterday.
+//            // Use this to determine the number of new data points to shift and add.
+//            int firstSpaceIndex = relativeDays.indexOf(' ');
+//            daysBetween = Integer.parseInt(relativeDays.substring(0, firstSpaceIndex));
+//        }
+        return days;
     }
 
 }

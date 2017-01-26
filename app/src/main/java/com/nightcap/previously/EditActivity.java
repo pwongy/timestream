@@ -24,7 +24,7 @@ public class EditActivity extends AppCompatActivity {
     private String TAG = "EventActivity";
 
     // Get a Realm handler, since we are editing the event log
-    DbHandler dbHandler;
+    DatabaseHandler databaseHandler;
 
     // Editing
     private boolean isEditExistingEvent;
@@ -57,7 +57,7 @@ public class EditActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);
 
         // Get Realm handler
-        dbHandler = new DbHandler(this);
+        databaseHandler = new DatabaseHandler(this);
 
         // Set FocusListener on date field EditText
         inputDate.setOnFocusChangeListener(focusListener);
@@ -69,12 +69,12 @@ public class EditActivity extends AppCompatActivity {
             isEditExistingEvent = true;
 
             // TODO: Keep track of old values
-            oldName = dbHandler.getEventById(editId).getName();
+            oldName = databaseHandler.getEventById(editId).getName();
 
             // Pre-fill existing values
             inputName.setText(oldName);
-            inputDate.setText(new DateHandler().dateToString(dbHandler.getEventById(editId).getDate()));
-            int period = dbHandler.getEventById(editId).getPeriod();
+            inputDate.setText(new DateHandler().dateToString(databaseHandler.getEventById(editId).getDate()));
+            int period = databaseHandler.getEventById(editId).getPeriod();
             String periodStr;
             if (period <=0) {
                 periodStr = "N/A";
@@ -82,7 +82,7 @@ public class EditActivity extends AppCompatActivity {
                 periodStr = String.valueOf(period);
             }
             inputPeriod.setText(periodStr);
-            inputNotes.setText(dbHandler.getEventById(editId).getNotes());
+            inputNotes.setText(databaseHandler.getEventById(editId).getNotes());
         } else {
             // Creating new event
             isEditExistingEvent = false;
@@ -179,9 +179,9 @@ public class EditActivity extends AppCompatActivity {
             // ID depends on whether we are creating a new event or editing an existing one
             int id;
             if (isEditExistingEvent) {
-                id = dbHandler.getEventById(editId).getId();
+                id = databaseHandler.getEventById(editId).getId();
             } else {
-                id = dbHandler.getEventCount() + 1;
+                id = databaseHandler.getEventCount() + 1;
             }
             event.setId(id);
 
@@ -192,12 +192,12 @@ public class EditActivity extends AppCompatActivity {
             event.setNotes(eventNotes);
 
             // Save the unmanaged event to Realm
-            dbHandler.saveEvent(event);
+            databaseHandler.saveEvent(event);
 
             // TODO: Set common values for similar events
             if (!eventName.equals(oldName)) {
                 Log.d(TAG, "Event name has changed.");
-                dbHandler.updateNameField(oldName, eventName);
+                databaseHandler.updateNameField(oldName, eventName);
             }
 
             // Return to main screen

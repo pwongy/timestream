@@ -1,6 +1,8 @@
 package com.nightcap.previously;
 
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import java.util.List;
 
 class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     String TAG = "EventLogAdapter";
+    private Context context;
     private ReceiveEventInterface eventListener;
     private List<Event> eventList;
 
@@ -57,6 +60,7 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     EventLogAdapter(MainActivity parent, List<Event> list) {
         this.eventList = list;
         eventListener = parent;
+        context = parent.getApplicationContext();
     }
 
     // Updating the list data
@@ -82,16 +86,33 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        DateHandler dh = new DateHandler();
         Event event = eventList.get(position);
+
+        // Set name
         holder.nameView.setText(event.getName());
 
+        long relativeDays = dh.getDaysBetween(event.getNextDue(), dh.getTodayDate());
+
+        // Mark overdue events
+        if (event.hasPeriod()) {
+            if (relativeDays <= 7) {
+                holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorWarning));
+            }
+            if (relativeDays <= 0) {
+                holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorOverdue));
+            }
+            // XXX: Recycled views have color applied [BUG]
+        }
+
         // Build date string
-        DateHandler dh = new DateHandler();
         StringBuilder sb = new StringBuilder(dh.dateToString(event.getDate()));
         if (event.hasPeriod()) {
             sb.append("  ➡  ");
             sb.append(dh.dateToString(event.getNextDue()));
         }
+
+        // Set date
         holder.dateView.setText(sb.toString());
     }
 

@@ -28,7 +28,7 @@ import java.util.List;
 
 public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "EventActivity";
-    private DbHandler dbHandler;
+    private DatabaseHandler databaseHandler;
     int eventId;
     Event selectedEvent;
     TextView periodView;
@@ -64,18 +64,18 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
                 } else if (doneDatePref.equalsIgnoreCase(getResources()
                         .getStringArray(R.array.pref_default_done_today_values)[1])) {
                     // Mark currently opened event as done today
-                    dbHandler.markEventDone(selectedEvent, new DateHandler().getTodayDate());
+                    databaseHandler.markEventDone(selectedEvent, new DateHandler().getTodayDate());
                     prepareHistory();
                 }
             }
         });
 
         // Get a Realm handler
-        dbHandler = new DbHandler(this);
+        databaseHandler = new DatabaseHandler(this);
 
         // Get selected event
         eventId = getIntent().getIntExtra("event_id", 0);
-        selectedEvent = dbHandler.getEventById(eventId);
+        selectedEvent = databaseHandler.getEventById(eventId);
 
         getSupportActionBar().setTitle(selectedEvent.getName());
 
@@ -100,7 +100,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
 
     public void onReceiveDateFromDialog(Date date) {
         // Attempt to mark currently opened event as done
-        dbHandler.markEventDone(selectedEvent, date);
+        databaseHandler.markEventDone(selectedEvent, date);
         prepareHistory();
     }
 
@@ -132,7 +132,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
 
     private void prepareHistory() {
         // Get data from Realm
-        historyList = dbHandler.getEventsByName(selectedEvent.getName());
+        historyList = databaseHandler.getEventsByName(selectedEvent.getName());
 
         // Send to adapter
         historyAdapter.updateData(historyList);
@@ -168,7 +168,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
                 startActivity(edit);
                 break;
             case R.id.action_delete:
-                dbHandler.deleteEvent(selectedEvent.getId());
+                databaseHandler.deleteEvent(selectedEvent.getId());
                 finish();
                 break;
         }

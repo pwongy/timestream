@@ -142,8 +142,14 @@ public class Event extends RealmObject {
                             proxy2 = distantFuture;
                         }
 
-                        // Compare via the proxies
-                        comparison = proxy1.compareTo(proxy2);
+                        // If both have no period, order by name
+                        if (!e1.hasPeriod() && !e2.hasPeriod()) {
+                            comparison = e1.name.compareTo(e2.name);
+                        } else {
+                            // Compare via the proxy dates
+                            comparison = proxy1.compareTo(proxy2);
+                        }
+
                         if (comparison != 0) return comparison;
                         break;
                     case NEXT_DUE_DESCENDING:
@@ -159,8 +165,14 @@ public class Event extends RealmObject {
                             proxy2 = distantPast;
                         }
 
-                        // Compare the proxies
-                        comparison = proxy2.compareTo(proxy1);
+                        // If both have no period, order by name
+                        if (!e1.hasPeriod() && !e2.hasPeriod()) {
+                            comparison = e1.name.compareTo(e2.name);
+                        } else {
+                            // Compare via the proxy dates
+                            comparison = proxy2.compareTo(proxy1);
+                        }
+
                         if (comparison != 0) return comparison;
                         break;
                 }

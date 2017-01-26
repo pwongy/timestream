@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     private String TAG = "MainActivity";
 
     // Realm database
-    private DbHandler dbHandler;
+    private DatabaseHandler databaseHandler;
 
     // User preferences
     private SharedPreferences prefs;
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         });
 
         // Get a data handler, which initialises Realm during construction
-        dbHandler = new DbHandler(this);
+        databaseHandler = new DatabaseHandler(this);
 
         // Recycler view
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
     private void prepareData() {
         // Get data from Realm
-        eventList = dbHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
+        eventList = databaseHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
                 prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true));
 
         // Send list to adapter
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         } else if (doneDatePref.equalsIgnoreCase(getResources()
                 .getStringArray(R.array.pref_default_done_today_values)[1])) {
             // Mark currently opened event as done today
-            dbHandler.markEventDone(event, new DateHandler().getTodayDate());
+            databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
             prepareData();
         }
     }
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     @Override
     public void onReceiveDateFromDialog(Date date) {
         // Attempt to mark currently opened event as done
-        dbHandler.markEventDone(selectedEvent, date);
+        databaseHandler.markEventDone(selectedEvent, date);
         prepareData();
     }
 }
