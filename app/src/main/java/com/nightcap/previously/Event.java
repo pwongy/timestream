@@ -1,5 +1,6 @@
 package com.nightcap.previously;
 
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -99,6 +100,16 @@ public class Event extends RealmObject {
 
         public int compare(Event e1, Event e2) {
             int comparison;
+            Date proxy1, proxy2;
+
+            // For events without a next due date, use a distant future or past date
+            // to put them at the end of the list
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new DateHandler().getTodayDate());
+            cal.set(Calendar.YEAR, 5000);
+            Date distantFuture = cal.getTime();
+            cal.set(Calendar.YEAR, 0);
+            Date distantPast = cal.getTime();
 
             for (SortParameter parameter : parameters) {
                 switch (parameter) {
@@ -119,11 +130,37 @@ public class Event extends RealmObject {
                         if (comparison != 0) return comparison;
                         break;
                     case NEXT_DUE_ASCENDING:
-                        comparison = e1.nextDue.compareTo(e2.nextDue);
+                        if (e1.hasPeriod()) {
+                            proxy1 = e1.nextDue;
+                        } else {
+                            proxy1 = distantFuture;
+                        }
+
+                        if (e2.hasPeriod()) {
+                            proxy2 = e2.nextDue;
+                        } else {
+                            proxy2 = distantFuture;
+                        }
+
+                        // Compare via the proxies
+                        comparison = proxy1.compareTo(proxy2);
                         if (comparison != 0) return comparison;
                         break;
                     case NEXT_DUE_DESCENDING:
-                        comparison = e2.nextDue.compareTo(e1.nextDue);
+                        if (e1.hasPeriod()) {
+                            proxy1 = e1.nextDue;
+                        } else {
+                            proxy1 = distantPast;
+                        }
+
+                        if (e2.hasPeriod()) {
+                            proxy2 = e2.nextDue;
+                        } else {
+                            proxy2 = distantPast;
+                        }
+
+                        // Compare the proxies
+                        comparison = proxy2.compareTo(proxy1);
                         if (comparison != 0) return comparison;
                         break;
                 }
