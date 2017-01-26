@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,13 +22,14 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Main Activity. Displays existing database events.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "MainActivity";
 
     // Realm database
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     // RecyclerView
     private List<Event> eventList = new ArrayList<>();
     private EventLogAdapter eventLogAdapter;
+
+    Event selectedEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
-        eventLogAdapter = new EventLogAdapter(eventList);
+        eventLogAdapter = new EventLogAdapter(this, eventList);
         recyclerView.setAdapter(eventLogAdapter);
 
         // Hide FAB on scroll
@@ -267,4 +271,32 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    @Override
+    public void onReceiveEventFromAdapter(Event event) {
+        selectedEvent = event;
+        String doneDatePref = prefs.getString("default_done_today", "0");
+
+        // Mark event as done
+        if (doneDatePref.equalsIgnoreCase(getResources()
+                .getStringArray(R.array.pref_default_done_today_values)[0])) {
+            showDatePickerDialog(getCurrentFocus());
+        } else if (doneDatePref.equalsIgnoreCase(getResources()
+                .getStringArray(R.array.pref_default_done_today_values)[1])) {
+            // Mark currently opened event as done today
+            dbHandler.markEventDone(event, new DateHandler().getTodayDate());
+            prepareData();
+        }
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerDialog();
+        newFragment.show(getSupportFragmentManager(), "datePickerDone");
+    }
+
+    @Override
+    public void onReceiveDateFromDialog(Date date) {
+        // Attempt to mark currently opened event as done
+        dbHandler.markEventDone(selectedEvent, date);
+        prepareData();
+    }
 }

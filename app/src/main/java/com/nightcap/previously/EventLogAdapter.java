@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -17,6 +16,7 @@ import java.util.List;
 
 class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     String TAG = "EventLogAdapter";
+    private ReceiveEventInterface eventListener;
     private List<Event> eventList;
 
     // ViewHolder pattern as required
@@ -41,11 +41,9 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             if (view.getId() == imageButton.getId()) {
-                String event = eventList.get(getAdapterPosition()).getName();
-                Toast.makeText(view.getContext(), "Tick pressed: " + event, Toast.LENGTH_SHORT).show();
+                // Tick is clicked, so send the event to MainActivity
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()));
             } else {
-                Toast.makeText(view.getContext(), "Row pressed: " + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-
                 // Intent to show event info
                 Intent info = new Intent(view.getContext(), EventInfoActivity.class);
                 info.putExtra("event_id", eventList.get(getAdapterPosition()).getId());
@@ -56,8 +54,9 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     }
 
     // Constructor
-    EventLogAdapter(List<Event> list) {
+    EventLogAdapter(MainActivity parent, List<Event> list) {
         this.eventList = list;
+        eventListener = parent;
     }
 
     // Updating the list data
@@ -77,8 +76,7 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     public EventLogAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_event, parent, false);
-        ViewHolder vh = new ViewHolder(itemView);
-        return vh;
+        return new ViewHolder(itemView);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
