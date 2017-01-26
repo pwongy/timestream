@@ -83,8 +83,6 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         periodView = (TextView) findViewById(R.id.card_info_period);
         notesView = (TextView) findViewById(R.id.card_info_notes);
 
-        updateInfoCard();
-
         // Card 2 - History
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
 
@@ -138,6 +136,10 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
 
         // Send to adapter
         historyAdapter.updateData(historyList);
+
+        // Update info card for selected event
+        selectedEvent = historyList.get(0);
+        updateInfoCard();
     }
 
     public void showDatePickerDialog(View v) {
@@ -162,7 +164,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
             case R.id.action_edit:
                 // Intent to edit event
                 Intent edit = new Intent(getApplicationContext(), EditActivity.class);
-                edit.putExtra("edit_id", selectedEvent.getId());   // TODO: Default to latest instance?
+                edit.putExtra("edit_id", selectedEvent.getId());
                 startActivity(edit);
                 break;
             case R.id.action_delete:
