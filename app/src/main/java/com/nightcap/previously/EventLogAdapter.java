@@ -21,6 +21,7 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     private Context context;
     private ReceiveEventInterface eventListener;
     private List<Event> eventList;
+    private DateHandler dh = new DateHandler();
 
     // ViewHolder pattern as required
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -73,6 +74,21 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             eventList = list;
         }
         notifyDataSetChanged();
+
+//        for (Event e : list) {
+//            if (e.hasPeriod()) {
+//                View v = rv.getLayoutManager().findViewByPosition(list.indexOf(e)).getRootView();
+//                TextView nameView = (TextView) v.findViewById(R.id.list_event_name);
+//                long relativeDays = dh.getDaysBetween(e.getNextDue(), dh.getTodayDate());
+//
+//                if (relativeDays <= 7) {
+//                    nameView.setTextColor(ContextCompat.getColor(context, R.color.colorWarning));
+//                }
+//                if (relativeDays <= 0) {
+//                    nameView.setTextColor(ContextCompat.getColor(context, R.color.colorOverdue));
+//                }
+//            }
+//        }
     }
 
     // To inflate the item layout and create the ViewHolder
@@ -86,11 +102,11 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        DateHandler dh = new DateHandler();
         Event event = eventList.get(position);
 
         // Set name
         holder.nameView.setText(event.getName());
+        holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorText));
 
         long relativeDays = dh.getDaysBetween(event.getNextDue(), dh.getTodayDate());
 

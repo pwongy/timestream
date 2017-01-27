@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 //    final String SORT_SECONDARY_KEY = "sort_secondary_ascending";
 
     // RecyclerView
+    RecyclerView recyclerView;
     private List<Event> eventList = new ArrayList<>();
     private EventLogAdapter eventLogAdapter;
 
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         databaseHandler = new DatabaseHandler(this);
 
         // Recycler view
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -271,6 +272,10 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         editor.apply();
     }
 
+    /**
+     * The tick button has been pressed, indicating an event is to be marked as done.
+     * @param event The event that was done.
+     */
     @Override
     public void onReceiveEventFromAdapter(Event event) {
         selectedEvent = event;
@@ -284,7 +289,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 .getStringArray(R.array.pref_default_done_today_values)[1])) {
             // Mark currently opened event as done today
             databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+
             prepareData();
+//            eventLogAdapter.notifyItemChanged(eventList.indexOf(selectedEvent));
         }
     }
 
@@ -293,10 +300,16 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         newFragment.show(getSupportFragmentManager(), "datePickerDone");
     }
 
+    /**
+     * The tick button has been pressed and the event to be marked done now has an associated done
+     * date from the dialog.
+     * @param date The date the event was done.
+     */
     @Override
     public void onReceiveDateFromDialog(Date date) {
         // Attempt to mark currently opened event as done
         databaseHandler.markEventDone(selectedEvent, date);
         prepareData();
+//        eventLogAdapter.notifyItemChanged(eventList.indexOf(selectedEvent));
     }
 }
