@@ -93,23 +93,26 @@ public class Event extends RealmObject {
 
     private static class EventComparator implements Comparator<Event> {
         private SortParameter[] parameters;
+        DateHandler dh = new DateHandler();
+        Calendar cal = Calendar.getInstance();
+        Date distantFuture, distantPast;
 
         private EventComparator(SortParameter[] parameters) {
             this.parameters = parameters;
+            cal.setTime(dh.getTodayDate());
+
+            // For events without a next due date, use an arbitrary date in the distant future
+            // or past to put them at the end of the list
+            cal.set(Calendar.YEAR, 5000);
+            distantFuture = cal.getTime();
+
+            cal.set(Calendar.YEAR, 0);
+            distantPast = cal.getTime();
         }
 
         public int compare(Event e1, Event e2) {
             int comparison;
             Date proxy1, proxy2;
-
-            // For events without a next due date, use a distant future or past date
-            // to put them at the end of the list
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(new DateHandler().getTodayDate());
-            cal.set(Calendar.YEAR, 5000);
-            Date distantFuture = cal.getTime();
-            cal.set(Calendar.YEAR, 0);
-            Date distantPast = cal.getTime();
 
             for (SortParameter parameter : parameters) {
                 switch (parameter) {
@@ -142,7 +145,7 @@ public class Event extends RealmObject {
                             proxy2 = distantFuture;
                         }
 
-                        // If both have no period, order by name
+                        // If both events do not repeat, order by name instead
                         if (!e1.hasPeriod() && !e2.hasPeriod()) {
                             comparison = e1.name.compareTo(e2.name);
                         } else {
@@ -165,7 +168,7 @@ public class Event extends RealmObject {
                             proxy2 = distantPast;
                         }
 
-                        // If both have no period, order by name
+                        // If both events do not repeat, order by name instead
                         if (!e1.hasPeriod() && !e2.hasPeriod()) {
                             comparison = e1.name.compareTo(e2.name);
                         } else {
