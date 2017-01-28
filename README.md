@@ -1,7 +1,7 @@
 # Timestream
 
 ## About
-Timestream is an Android app for recording **irregularly recurring events**, often of low priority and without specific deadlines. We humans tend to forget these easily, so Timestream helps users keep track of these events and provides reminders when they are "due".
+Timestream is an Android app for recording **irregularly recurring events**, often of low priority and without strict deadlines. We humans tend to forget these easily, so Timestream helps users keep track of these events and provides reminders when they should be done again.
 
 Examples of things you may want to log include:
 - Recording medical symptoms (e.g. migraines, back pain) or periods (to check for regularity)
