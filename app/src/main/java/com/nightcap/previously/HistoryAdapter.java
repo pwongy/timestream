@@ -1,5 +1,7 @@
 package com.nightcap.previously;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,21 +16,41 @@ import java.util.List;
 
 class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     String TAG = "HistoryAdapter";
+    private Context context;
+    private TextView selectedTextView;
+    private ReceiveEventInterface eventListener;
     private List<Event> historyList;
 
     // ViewHolder pattern as required
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView dateView;
 
         ViewHolder(View view) {
             super(view);
             dateView = (TextView) view.findViewById(R.id.list_history_date);
+
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            // Send date to calling Activity (when the list view row is clicked)
+            eventListener.onReceiveEventFromAdapter(historyList.get(getAdapterPosition()));
+
+            // Update highlighted view
+            selectedTextView.setTextColor(ContextCompat.getColor(context, R.color.colorDateText));
+            dateView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+
+            // Register new selected view
+            selectedTextView = dateView;
         }
     }
 
     // Constructor
-    HistoryAdapter(List<Event> list) {
+    HistoryAdapter(EventInfoActivity parent, List<Event> list) {
+        this.eventListener = parent;
         this.historyList = list;
+        context = parent.getApplicationContext();
     }
 
     // Updating the list data
@@ -60,6 +82,14 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
         // Build date string
         DateHandler dh = new DateHandler();
         holder.dateView.setText(dh.dateToString(event.getDate()));
+
+        // Set initial selection
+        if (position == 0) {
+            holder.dateView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            selectedTextView = holder.dateView;
+        } else {
+            holder.dateView.setTextColor(ContextCompat.getColor(context, R.color.colorDateText));
+        }
     }
 
     // To determine the number of items

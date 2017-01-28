@@ -177,9 +177,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("default_done_today"));
+            bindPreferenceSummaryToValue(findPreference("warning_period"));
 
             // Samples (to be deleted)
-            bindPreferenceSummaryToValue(findPreference("example_text"));
             bindPreferenceSummaryToValue(findPreference("example_list"));
         }
 

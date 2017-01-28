@@ -16,15 +16,15 @@ import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-class DbHandler {
-    private String TAG = "DbHandler";
+class DatabaseHandler {
+    private String TAG = "DatabaseHandler";
     private Context appContext;
     private DateHandler dateHandler;
     private Realm eventLog;    // Realm = database
     private SharedPreferences dataStore;
     private String KEY_EVENT_COUNT = "event_count";
 
-    DbHandler(Context appContext) {
+    DatabaseHandler(Context appContext) {
         this.appContext = appContext;
         dateHandler = new DateHandler();
 
@@ -66,7 +66,10 @@ class DbHandler {
             eventLog.commitTransaction();
             Log.d(TAG, "Event logged");
 
-            incrementEventCount();
+            // Only increment event counter if it's a new instance (i.e. not editing)
+            if (existingEvents.size() == 0) {
+                incrementEventCount();
+            }
         } else {
             Log.d(TAG, "Duplicate event - ignored");
             Toast.makeText(appContext, "Event already exists", Toast.LENGTH_SHORT).show();
@@ -128,10 +131,6 @@ class DbHandler {
     List<Event> getAllEvents() {
         // All events
         final RealmResults<Event> events = eventLog.where(Event.class).findAll();
-
-        // TODO: Sorting
-        events.sort("nextDue", Sort.ASCENDING);
-
         List<Event> copied = eventLog.copyFromRealm(events);
         Log.d(TAG, "All events: " + copied.toString());
         return copied;
@@ -174,6 +173,21 @@ class DbHandler {
         Collections.sort(latestDistinctEvents, cp);
 
         return latestDistinctEvents;
+    }
+
+    /**
+     * Method for propagating updated event name through to other records in the Realm.
+     * @param oldName The old event name.
+     * @param newName The new event name.
+     */
+    void updateNameField(String oldName, String newName) {
+        List<Event> sameEvents = getEventsByName(oldName);
+
+        for (Event e : sameEvents) {
+            e.setName(newName);
+            saveEvent(e);
+        }
+
     }
 
     List<Event> getEventsByName(String name) {

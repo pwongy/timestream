@@ -15,7 +15,7 @@ import java.util.Calendar;
  */
 
 public class DatePickerDialog extends DialogFragment implements android.app.DatePickerDialog.OnDateSetListener {
-    private DateInterface dateListener;
+    private ReceiveDateInterface dateListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -32,8 +32,8 @@ public class DatePickerDialog extends DialogFragment implements android.app.Date
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof DateInterface) {
-            dateListener = (DateInterface) context;
+        if (context instanceof ReceiveDateInterface) {
+            dateListener = (ReceiveDateInterface) context;
         }
     }
 

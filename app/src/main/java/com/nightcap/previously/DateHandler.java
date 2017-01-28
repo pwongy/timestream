@@ -1,14 +1,18 @@
 package com.nightcap.previously;
 
+import android.text.format.DateUtils;
+import android.util.Log;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Support class for converting between Dates, Calendars, and Strings.
+ * Helper class for converting between Dates, Calendars, and Strings.
  */
 
 class DateHandler {
+    String TAG = "DateHandler";
 
     DateHandler() {
 
@@ -85,6 +89,54 @@ class DateHandler {
 
         nextTime = cal.getTime();
         return nextTime;
+    }
+
+    long getDaysBetween(Date relativeDate, Date anchorDate) {
+        // Compute elapsed time since the latest data record
+        String relativeDays = DateUtils.getRelativeTimeSpanString(relativeDate.getTime(),
+                anchorDate.getTime(), DateUtils.DAY_IN_MILLIS).toString();
+        Log.d(TAG, "String: " + relativeDays);
+
+//        if (relativeDays.substring(relativeDays.length() - 4).equalsIgnoreCase("days")) {
+//            Log.d(TAG, "")
+//        }
+
+        // Time difference in millis
+        long difference = relativeDate.getTime() - anchorDate.getTime();
+        long days = difference / DateUtils.DAY_IN_MILLIS;
+//        long remainder = difference % DateUtils.DAY_IN_MILLIS;
+
+//        Log.d(TAG, "Relative days: " + days);
+//        Log.d(TAG, " -- Remainder: " + remainder);
+
+//        if (relativeDays.equalsIgnoreCase("Yesterday")) {
+//            daysBetween = 1;
+//        } else {
+//            // Get the number of days since the latest stored data.
+//            // Smallest number expected is 2, representing the day before yesterday.
+//            // Use this to determine the number of new data points to shift and add.
+//            int firstSpaceIndex = relativeDays.indexOf(' ');
+//            daysBetween = Integer.parseInt(relativeDays.substring(0, firstSpaceIndex));
+//        }
+        return days;
+    }
+
+    String getRelativeDaysString(long daysBetween) {
+        String relativeDays = "";
+
+        if (daysBetween > 1) {
+            relativeDays = "In " + daysBetween + " days";
+        } else if (daysBetween == 1) {
+            relativeDays = "Tomorrow";
+        } else if (daysBetween == 0) {
+            relativeDays = "Today";
+        } else if (daysBetween == -1) {
+            relativeDays = "Yesterday";
+        } else if (daysBetween < -1) {
+            relativeDays = -daysBetween + " days ago";
+        }
+
+        return relativeDays;
     }
 
 }

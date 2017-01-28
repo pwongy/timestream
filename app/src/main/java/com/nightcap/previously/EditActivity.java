@@ -23,11 +23,14 @@ import java.util.Date;
 public class EditActivity extends AppCompatActivity {
     private String TAG = "EventActivity";
 
+    // Get a Realm handler, since we are editing the event log
+    DatabaseHandler databaseHandler;
+
+    // Editing
     private boolean isEditExistingEvent;
     int editId;
-
-    DbHandler dbHandler;
-//    FloatingActionButton fab;
+    String oldName;
+    int oldPeriod;
 
     // Input fields
     EditText inputName;
@@ -54,7 +57,7 @@ public class EditActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(null);
 
         // Get Realm handler
-        dbHandler = new DbHandler(this);
+        databaseHandler = new DatabaseHandler(this);
 
         // Set FocusListener on date field EditText
         inputDate.setOnFocusChangeListener(focusListener);
@@ -65,10 +68,13 @@ public class EditActivity extends AppCompatActivity {
             // Editing existing event
             isEditExistingEvent = true;
 
+            // TODO: Keep track of old values
+            oldName = databaseHandler.getEventById(editId).getName();
+
             // Pre-fill existing values
-            inputName.setText(dbHandler.getEventById(editId).getName());
-            inputDate.setText(new DateHandler().dateToString(dbHandler.getEventById(editId).getDate()));
-            int period = dbHandler.getEventById(editId).getPeriod();
+            inputName.setText(oldName);
+            inputDate.setText(new DateHandler().dateToString(databaseHandler.getEventById(editId).getDate()));
+            int period = databaseHandler.getEventById(editId).getPeriod();
             String periodStr;
             if (period <=0) {
                 periodStr = "N/A";
@@ -76,7 +82,7 @@ public class EditActivity extends AppCompatActivity {
                 periodStr = String.valueOf(period);
             }
             inputPeriod.setText(periodStr);
-            inputNotes.setText(dbHandler.getEventById(editId).getNotes());
+            inputNotes.setText(databaseHandler.getEventById(editId).getNotes());
         } else {
             // Creating new event
             isEditExistingEvent = false;
@@ -86,7 +92,7 @@ public class EditActivity extends AppCompatActivity {
             final String doneDatePref = prefs.getString("default_done_today", "0");
 
             if (doneDatePref.equalsIgnoreCase(getResources()
-                    .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                    .getStringArray(R.array.pref_default_date_values)[1])) {
                 inputDate.setText(new DateHandler().dateToString(new Date()));
             } else {
                 inputDate.setHint(new DateHandler().dateToString(new Date()));
@@ -173,13 +179,12 @@ public class EditActivity extends AppCompatActivity {
             // ID depends on whether we are creating a new event or editing an existing one
             int id;
             if (isEditExistingEvent) {
-                id = dbHandler.getEventById(editId).getId();
+                id = databaseHandler.getEventById(editId).getId();
             } else {
-                id = dbHandler.getEventCount() + 1;
+                id = databaseHandler.getEventCount() + 1;
             }
             event.setId(id);
 
-            // TODO: Set common values for similar events
             event.setName(eventName);
             event.setDate(dh.stringToDate(eventDate));
             event.setPeriod(eventPeriod);
@@ -187,7 +192,13 @@ public class EditActivity extends AppCompatActivity {
             event.setNotes(eventNotes);
 
             // Save the unmanaged event to Realm
-            dbHandler.saveEvent(event);
+            databaseHandler.saveEvent(event);
+
+            // TODO: Set common values for similar events
+            if (!eventName.equals(oldName)) {
+                Log.d(TAG, "Event name has changed.");
+                databaseHandler.updateNameField(oldName, eventName);
+            }
 
             // Return to main screen
             Intent homeIntent = new Intent(this, MainActivity.class);
@@ -203,6 +214,5 @@ public class EditActivity extends AppCompatActivity {
             }
         }
     };
-
 
 }

@@ -2,6 +2,7 @@ package com.nightcap.previously;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,16 +27,14 @@ import java.util.List;
  * Activity for displaying event details.
  */
 
-public class EventInfoActivity extends AppCompatActivity implements DateInterface {
+public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "EventActivity";
-    private DbHandler dbHandler;
+    private DatabaseHandler databaseHandler;
+    private DateHandler dh = new DateHandler();
     int eventId;
     Event selectedEvent;
-    TextView periodView;
-    TextView notesView;
+    TextView periodView, nextDueView, notesView;
     private List<Event> historyList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private HistoryAdapter historyAdapter;
 
     @Override
@@ -62,36 +60,35 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
                 Log.d(TAG, doneDatePref);
 
                 if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_done_today_values)[0])) {
+                        .getStringArray(R.array.pref_default_date_values)[0])) {
                     showDatePickerDialog(view);
                 } else if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                        .getStringArray(R.array.pref_default_date_values)[1])) {
                     // Mark currently opened event as done today
-                    dbHandler.markEventDone(selectedEvent, new DateHandler().getTodayDate());
+                    databaseHandler.markEventDone(selectedEvent, dh.getTodayDate());
                     prepareHistory();
                 }
             }
         });
 
         // Get a Realm handler
-        dbHandler = new DbHandler(this);
+        databaseHandler = new DatabaseHandler(this);
 
         // Get selected event
         eventId = getIntent().getIntExtra("event_id", 0);
-        selectedEvent = dbHandler.getEventById(eventId);
+        selectedEvent = databaseHandler.getEventById(eventId);
 
         getSupportActionBar().setTitle(selectedEvent.getName());
 
         // Card 1 - Info
-        periodView = (TextView) findViewById(R.id.card_info_period);
+        periodView = (TextView) findViewById(R.id.card_info_period_value);
+        nextDueView = (TextView) findViewById(R.id.card_info_next_due_value);
         notesView = (TextView) findViewById(R.id.card_info_notes);
 
-        updateInfoCard();
-
         // Card 2 - History
-        recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
 
-        layoutManager = new LinearLayoutManager(this);                          // LayoutManager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
@@ -99,46 +96,46 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
-        historyAdapter = new HistoryAdapter(historyList);
+        historyAdapter = new HistoryAdapter(this, historyList);
         recyclerView.setAdapter(historyAdapter);
-
-        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Toast.makeText(getApplicationContext(),
-                                "ID: " + historyList.get(position).getId()
-                                        + "\nName: " + historyList.get(position).getName()
-                                        + "\nDate: " + new DateHandler()
-                                                .dateToString(historyList.get(position).getDate()),
-                                Toast.LENGTH_LONG)
-                                .show();
-
-                        selectedEvent = historyList.get(position);
-                        updateInfoCard();
-                    }
-                }
-        );
     }
 
     public void onReceiveDateFromDialog(Date date) {
         // Attempt to mark currently opened event as done
-        dbHandler.markEventDone(selectedEvent, date);
+        databaseHandler.markEventDone(selectedEvent, date);
         prepareHistory();
     }
 
+    public void onReceiveEventFromAdapter(Event event) {
+        // Update info on cards to match the selected event from history
+        selectedEvent = event;
+        updateInfoCard();
+    }
+
     private void updateInfoCard() {
-        // Period
+        // Period and next due date
         if (selectedEvent.getPeriod() <= 0) {
-            periodView.setText("N/A");
+            periodView.setText(getString(R.string.event_no_repeat));
+            periodView.setTypeface(periodView.getTypeface(), Typeface.ITALIC);
+
+            nextDueView.setText("N/A");
+            nextDueView.setTypeface(nextDueView.getTypeface(), Typeface.ITALIC);
         } else {
             String period = String.valueOf(selectedEvent.getPeriod()) + " "
                     + getString(R.string.unit_suffix_days);
             periodView.setText(period);
+            periodView.setTypeface(null, Typeface.NORMAL);
+
+            nextDueView.setText(dh.dateToString(selectedEvent.getNextDue()));
+            nextDueView.setTypeface(null, Typeface.NORMAL);
         }
 
         // Notes
         notesView.setText(selectedEvent.getNotes());
+        if (selectedEvent.getNotes().equalsIgnoreCase("")) {
+            notesView.setText(getString(R.string.event_notes_blank));
+            notesView.setTypeface(notesView.getTypeface(), Typeface.ITALIC);
+        }
     }
 
     @Override
@@ -149,10 +146,14 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
 
     private void prepareHistory() {
         // Get data from Realm
-        historyList = dbHandler.getEventsByName(selectedEvent.getName());
+        historyList = databaseHandler.getEventsByName(selectedEvent.getName());
 
         // Send to adapter
         historyAdapter.updateData(historyList);
+
+        // Update info card for selected event
+        selectedEvent = historyList.get(0);
+        updateInfoCard();
     }
 
     public void showDatePickerDialog(View v) {
@@ -177,11 +178,11 @@ public class EventInfoActivity extends AppCompatActivity implements DateInterfac
             case R.id.action_edit:
                 // Intent to edit event
                 Intent edit = new Intent(getApplicationContext(), EditActivity.class);
-                edit.putExtra("edit_id", selectedEvent.getId());   // TODO: Default to latest instance?
+                edit.putExtra("edit_id", selectedEvent.getId());
                 startActivity(edit);
                 break;
             case R.id.action_delete:
-                dbHandler.deleteEvent(selectedEvent.getId());
+                databaseHandler.deleteEvent(selectedEvent.getId());
                 finish();
                 break;
         }

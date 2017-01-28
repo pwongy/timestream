@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -21,17 +22,18 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Main Activity. Displays existing database events.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "MainActivity";
 
     // Realm database
-    private DbHandler dbHandler;
+    private DatabaseHandler databaseHandler;
 
     // User preferences
     private SharedPreferences prefs;
@@ -40,8 +42,11 @@ public class MainActivity extends AppCompatActivity {
 //    final String SORT_SECONDARY_KEY = "sort_secondary_ascending";
 
     // RecyclerView
+    RecyclerView recyclerView;
     private List<Event> eventList = new ArrayList<>();
     private EventLogAdapter eventLogAdapter;
+
+    Event selectedEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Get a data handler, which initialises Realm during construction
-        dbHandler = new DbHandler(this);
+        databaseHandler = new DatabaseHandler(this);
 
         // Recycler view
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -82,28 +87,16 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
-        eventLogAdapter = new EventLogAdapter(eventList);
+        eventLogAdapter = new EventLogAdapter(this, eventList);
         recyclerView.setAdapter(eventLogAdapter);
-
-        ItemClickSupport.addTo(recyclerView).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        // Intent to show event info
-                        Intent info = new Intent(getApplicationContext(), EventInfoActivity.class);
-                        info.putExtra("event_id", eventList.get(position).getId());
-                        startActivity(info);
-                    }
-                }
-        );
 
         // Hide FAB on scroll
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0 && fab.isShown()) {
+                if (dy > 10 && fab.isShown()) {
                     fab.hide();
-                } else if (dy < -10) {
+                } else if (dy < -10 && !fab.isShown()) {
                     fab.show();
                 }
             }
@@ -127,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void prepareData() {
         // Get data from Realm
-        eventList = dbHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
+        eventList = databaseHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
                 prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true));
 
         // Send list to adapter
@@ -279,4 +272,42 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * The tick button has been pressed, indicating an event is to be marked as done.
+     * @param event The event that was done.
+     */
+    @Override
+    public void onReceiveEventFromAdapter(Event event) {
+        selectedEvent = event;
+        String doneDatePref = prefs.getString("default_done_today", "0");
+
+        // Mark event as done
+        if (doneDatePref.equalsIgnoreCase(getResources()
+                .getStringArray(R.array.pref_default_date_values)[0])) {
+            showDatePickerDialog(getCurrentFocus());
+        } else if (doneDatePref.equalsIgnoreCase(getResources()
+                .getStringArray(R.array.pref_default_date_values)[1])) {
+            // Mark currently opened event as done today
+            databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+
+            prepareData();
+        }
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerDialog();
+        newFragment.show(getSupportFragmentManager(), "datePickerDone");
+    }
+
+    /**
+     * The tick button has been pressed and the event to be marked done now has an associated done
+     * date from the dialog.
+     * @param date The date the event was done.
+     */
+    @Override
+    public void onReceiveDateFromDialog(Date date) {
+        // Attempt to mark currently opened event as done
+        databaseHandler.markEventDone(selectedEvent, date);
+        prepareData();
+    }
 }
