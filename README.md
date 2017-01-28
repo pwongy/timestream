@@ -8,18 +8,11 @@ Examples of things you may want to log include:
 - Logging check-ups with your doctor/dentist (e.g. blood tests)
 - Tracking sobriety
 - Replacing your Britta filter
-- Updating account passwords
-- Clearing cookies/internet cache
 - Calling your mum/dad
 - Buying flowers for your girlfriend
 - Starting a new toothbrush/razor blade/contact lenses
-- Getting a haircut
 - Washing the car
-
-## Development Plan
-Subject to change. Current thoughts as follows:
-- We are using Realm for data storage. Tables will be queried on the fly for displaying the data.
-- The home screen will show a list of logged events, perhaps in a form similar to [Material Design steppers](https://material.io/guidelines/components/steppers.html).
-- Events will be added via a separate Activity or using a BottomSheet, similar to the Todoist Android app.
+- Updating account passwords
+- Clearing cookies/internet cache
 
 *A Nightcap Initiative*
