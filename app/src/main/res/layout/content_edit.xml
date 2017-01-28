@@ -117,6 +117,7 @@
                 android:ems="10"
                 android:inputType="number"
                 android:hint="@string/event_period_hint"
+                android:selectAllOnFocus="true"
                 android:textColorHint="?android:attr/textColorHint"/>
         </RelativeLayout>
 

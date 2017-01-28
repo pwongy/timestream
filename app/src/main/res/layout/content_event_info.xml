@@ -50,7 +50,31 @@
                     android:textStyle="bold"
                     android:layout_gravity="start"/>
                 <TextView
-                    android:id="@+id/card_info_period"
+                    android:id="@+id/card_info_period_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:layout_gravity="end"
+                    android:textSize="16sp"
+                    android:gravity="end"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/TextAppearance.AppCompat.Small"
+                    android:text="@string/event_next_due_label"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="start"/>
+                <TextView
+                    android:id="@+id/card_info_next_due_value"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/TextAppearance.AppCompat.Small"

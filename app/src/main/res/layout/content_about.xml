@@ -55,7 +55,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/about_name"
                 style="@style/TextAppearance.AppCompat.Small"
-                android:text="Version number" />
+                android:text="@string/about_version" />
             <TextView
                 android:id="@+id/about_build_date"
                 android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/about_version"
                 style="@style/TextAppearance.AppCompat.Small"
-                android:text="Build date" />
+                android:text="@string/about_build_date" />
 
             <!--Copyright-->
             <TextView

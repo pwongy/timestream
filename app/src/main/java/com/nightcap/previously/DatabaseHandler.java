@@ -17,7 +17,7 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 
 class DatabaseHandler {
-    private String TAG = "DbHandler";
+    private String TAG = "DatabaseHandler";
     private Context appContext;
     private DateHandler dateHandler;
     private Realm eventLog;    // Realm = database

@@ -20,7 +20,7 @@
         </activity>
         <activity
             android:name=".EditActivity"
-            android:label="@string/new_event"
+            android:label="@string/edit_event"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".EventInfoActivity"

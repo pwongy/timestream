@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Support class for converting between Dates, Calendars, and Strings.
+ * Helper class for converting between Dates, Calendars, and Strings.
  */
 
 class DateHandler {

@@ -283,10 +283,10 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
         // Mark event as done
         if (doneDatePref.equalsIgnoreCase(getResources()
-                .getStringArray(R.array.pref_default_done_today_values)[0])) {
+                .getStringArray(R.array.pref_default_date_values)[0])) {
             showDatePickerDialog(getCurrentFocus());
         } else if (doneDatePref.equalsIgnoreCase(getResources()
-                .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                .getStringArray(R.array.pref_default_date_values)[1])) {
             // Mark currently opened event as done today
             databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
 

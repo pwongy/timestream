@@ -2,6 +2,7 @@ package com.nightcap.previously;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -29,10 +30,10 @@ import java.util.List;
 public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "EventActivity";
     private DatabaseHandler databaseHandler;
+    private DateHandler dh = new DateHandler();
     int eventId;
     Event selectedEvent;
-    TextView periodView;
-    TextView notesView;
+    TextView periodView, nextDueView, notesView;
     private List<Event> historyList = new ArrayList<>();
     private HistoryAdapter historyAdapter;
 
@@ -59,12 +60,12 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
                 Log.d(TAG, doneDatePref);
 
                 if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_done_today_values)[0])) {
+                        .getStringArray(R.array.pref_default_date_values)[0])) {
                     showDatePickerDialog(view);
                 } else if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                        .getStringArray(R.array.pref_default_date_values)[1])) {
                     // Mark currently opened event as done today
-                    databaseHandler.markEventDone(selectedEvent, new DateHandler().getTodayDate());
+                    databaseHandler.markEventDone(selectedEvent, dh.getTodayDate());
                     prepareHistory();
                 }
             }
@@ -80,7 +81,8 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         getSupportActionBar().setTitle(selectedEvent.getName());
 
         // Card 1 - Info
-        periodView = (TextView) findViewById(R.id.card_info_period);
+        periodView = (TextView) findViewById(R.id.card_info_period_value);
+        nextDueView = (TextView) findViewById(R.id.card_info_next_due_value);
         notesView = (TextView) findViewById(R.id.card_info_notes);
 
         // Card 2 - History
@@ -111,17 +113,24 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     }
 
     private void updateInfoCard() {
-        // Period
+        // Period and next due date
         if (selectedEvent.getPeriod() <= 0) {
             periodView.setText("N/A");
+            nextDueView.setText("N/A");
         } else {
             String period = String.valueOf(selectedEvent.getPeriod()) + " "
                     + getString(R.string.unit_suffix_days);
             periodView.setText(period);
+            String nextDue = dh.dateToString(selectedEvent.getNextDue());
+            nextDueView.setText(nextDue);
         }
 
         // Notes
         notesView.setText(selectedEvent.getNotes());
+        if (selectedEvent.getNotes().equalsIgnoreCase("")) {
+            notesView.setText(getString(R.string.event_notes_blank));
+            notesView.setTypeface(notesView.getTypeface(), Typeface.ITALIC);
+        }
     }
 
     @Override

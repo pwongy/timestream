@@ -2,6 +2,8 @@ package com.nightcap.previously;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -104,6 +106,10 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Event event = eventList.get(position);
 
+        // Get preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        int warningPeriod = Integer.parseInt(prefs.getString("warning_period", "7"));
+
         // Set name
         holder.nameView.setText(event.getName());
         holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorText));
@@ -112,7 +118,7 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
 
         // Mark overdue events
         if (event.hasPeriod()) {
-            if (relativeDays <= 7) {
+            if (relativeDays <= warningPeriod) {
                 holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorWarning));
             }
             if (relativeDays <= 0) {

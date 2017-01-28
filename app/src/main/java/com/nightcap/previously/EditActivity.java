@@ -92,7 +92,7 @@ public class EditActivity extends AppCompatActivity {
             final String doneDatePref = prefs.getString("default_done_today", "0");
 
             if (doneDatePref.equalsIgnoreCase(getResources()
-                    .getStringArray(R.array.pref_default_done_today_values)[1])) {
+                    .getStringArray(R.array.pref_default_date_values)[1])) {
                 inputDate.setText(new DateHandler().dateToString(new Date()));
             } else {
                 inputDate.setHint(new DateHandler().dateToString(new Date()));

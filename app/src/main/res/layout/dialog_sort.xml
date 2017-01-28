@@ -5,12 +5,13 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="First by&#8230;"
+        android:text="@string/dialog_sort_field_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="viewStart"
         android:textColor="@color/colorAccent"
         android:paddingStart="@dimen/dialog_text_padding"
+        android:paddingEnd="@dimen/dialog_text_padding"
         android:paddingTop="@dimen/dialog_text_padding"/>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,6 +35,7 @@
             android:background="?android:selectableItemBackgroundBorderless"
             android:layout_gravity="end"
             android:padding="@dimen/sort_dialog_button_padding"
+            android:layout_marginStart="4dp"
             android:layout_marginEnd="@dimen/sort_dialog_button_margin_end"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"

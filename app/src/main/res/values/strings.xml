@@ -1,50 +1,15 @@
 <resources>
     <!--General-->
     <string name="app_name">Previously</string>
-    <string name="build_date">26 January 2017</string>
+    <string name="build_date">28 January 2017</string>
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
 
-    <!--Edit screen-->
-    <string name="new_event">New Event</string>
-    <string name="update_event">Update Event</string>
-    <string name="action_save_event">Save</string>
-    <string name="event_name_label">Event name</string>
-    <string name="event_name_hint">Describe the task</string>
-    <string name="event_date_label">Date</string>
-    <string name="event_period_label">Repeat period</string>
-    <string name="event_period_hint">[in days]</string>
-    <string name="event_notes_label">Notes</string>
-    <string name="event_notes_hint">Optional</string>
-    <string name="toast_check_inputs">Event name and date must be filled in</string>
-
-    <!--Info screen-->
-    <string name="card_info">Info</string>
-    <string name="card_history">History</string>
-    <string name="action_mark_done">Mark as done</string>
-    <string name="action_edit">Edit</string>
-    <string name="action_delete">Delete latest instance</string>
-    <string name="unit_suffix_days">days</string>
-
-    <!--About screen-->
-    <string name="about_version">Version</string>
-    <string name="about_build_date">Build date</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <!--Settings-->
-    <string name="pref_title_default_done_today">Marking as done</string>
-    <string-array name="pref_default_done_today_titles">
-        <item>Show date selector every time</item>
-        <item>Default to today</item>
-    </string-array>
-    <string-array name="pref_default_done_today_values">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
-
+    <!--Sort dialog-->
+    <string name="dialog_sort_field_label">Sort by&#8230;</string>
     <string name="pref_title_sort_field">Sort events</string>
     <string-array name="pref_sort_field_titles">
         <item>Event name</item>
@@ -57,17 +22,60 @@
         <item>nextDue</item>
     </string-array>
 
+    <!--Edit screen-->
+    <string name="edit_event">Edit event</string>
+    <string name="update_event">Update event</string>
+    <string name="action_save_event">Save</string>
+    <string name="event_name_label">Event name</string>
+    <string name="event_name_hint">Describe the task</string>
+    <string name="event_date_label">Date</string>
+    <string name="event_period_label">Repeat period</string>
+    <string name="event_period_hint">[in days]</string>
+    <string name="event_notes_label">Notes</string>
+    <string name="event_notes_hint">Optional</string>
+    <string name="toast_check_inputs">Event name and date must be filled in</string>
+
+    <!--Info screen-->
+    <string name="card_info">Info</string>
+    <string name="event_next_due_label">Next due</string>
+    <string name="event_notes_blank">(Blank)</string>
+
+    <string name="card_history">History</string>
+    <string name="action_mark_done">Mark as done</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete latest instance</string>
+    <string name="unit_suffix_days">days</string>
+
+    <!--About screen-->
+    <string name="about_version">Version</string>
+    <string name="about_build_date">Build date</string>
+    <string name="about_copyright">Copyright © 2016–17</string>
+    <string name="author">Paul Wong</string>
+
+    <!--Settings-->
+    <string name="title_activity_settings">Settings</string>
+    <string name="pref_display_label">Display</string>
+    <string name="pref_title_warning_period">Warning period in days</string>
+    <string name="pref_default_warning_period">7</string>
+
+    <string name="pref_save_label">Saving events</string>
+    <string name="pref_title_default_date">Default date</string>
+    <string-array name="pref_default_date_titles">
+        <item>Show date selector every time</item>
+        <item>Default to today</item>
+    </string-array>
+    <string-array name="pref_default_date_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="pref_notifications_label">Notifications</string>
+    <string name="pref_title_notifications">Enable notifications*</string>
+    <string name="pref_description_notifications">Show event reminders</string>
+
     <!-- ************************************************************** Samples (can be deleted) -->
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
 
     <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
