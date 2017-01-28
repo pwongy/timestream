@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/about_name"
-                style="@style/TextAppearance.AppCompat.Small"
+                android:textSize="@dimen/text_size_normal"
                 android:text="@string/about_version" />
             <TextView
                 android:id="@+id/about_build_date"
@@ -63,7 +63,7 @@
                 android:layout_marginBottom="@dimen/about_text_margin"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/about_version"
-                style="@style/TextAppearance.AppCompat.Small"
+                android:textSize="@dimen/text_size_normal"
                 android:text="@string/about_build_date" />
 
             <!--Copyright-->
@@ -74,7 +74,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/about_build_date"
                 android:text="@string/about_copyright"
-                style="@style/TextAppearance.AppCompat.Small" />
+                android:textSize="@dimen/text_size_normal" />
             <TextView
                 android:id="@+id/about_author"
                 android:layout_width="wrap_content"
@@ -82,7 +82,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/about_copyright"
                 android:text="@string/author"
-                style="@style/TextAppearance.AppCompat.Small" />
+                android:textSize="@dimen/text_size_normal" />
 
         </RelativeLayout>
 
