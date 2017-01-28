@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:focusable="true"
@@ -15,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginEnd="20dp"
         android:layout_toStartOf="@+id/list_item_image_button">
 
         <TextView
@@ -22,16 +24,48 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="16sp"
-            android:paddingBottom="2dp"
+            android:textSize="17sp"
+            android:layout_marginBottom="4dp"
             android:textColor="@color/colorText"/>
 
-        <TextView
-            android:id="@+id/list_event_date"
+        <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+            android:id="@+id/list_item_progress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/colorDateText"/>
+            android:layout_height="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            app:rcProgress="110.0"
+            app:rcMax="100.0"
+            app:rcRadius="10dp"
+            app:rcBackgroundPadding="2dp"
+            app:rcReverse="false"
+            app:rcProgressColor="@color/colorDateText"
+            app:rcBackgroundColor="@color/colorCardBackground" />
+
+        <!--app:rcSecondaryProgress="float"-->
+        <!--app:rcSecondaryProgressColor="color"-->
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/list_event_previous_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/colorDateText" />
+            <TextView
+                android:id="@+id/list_event_next_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/colorDateText"
+                android:gravity="end"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 
     <ImageButton
@@ -45,6 +79,7 @@
         android:padding="@dimen/sort_dialog_button_padding"
         android:focusable="true"
         android:backgroundTint="@color/colorPrimary"
+        android:layout_marginEnd="4dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 

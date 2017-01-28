@@ -291,7 +291,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
 
             prepareData();
-//            eventLogAdapter.notifyItemChanged(eventList.indexOf(selectedEvent));
         }
     }
 
@@ -310,6 +309,5 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         // Attempt to mark currently opened event as done
         databaseHandler.markEventDone(selectedEvent, date);
         prepareData();
-//        eventLogAdapter.notifyItemChanged(eventList.indexOf(selectedEvent));
     }
 }

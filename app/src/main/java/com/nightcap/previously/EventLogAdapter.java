@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+
 import java.util.List;
 
 /**
@@ -27,7 +29,8 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
 
     // ViewHolder pattern as required
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView nameView, dateView;
+        TextView nameView, previousDateView, nextDateView;
+        RoundCornerProgressBar progressBar;
         ImageButton imageButton;
 //        http://stackoverflow.com/questions/30284067/handle-button-click-inside-a-row-in-recyclerview
 
@@ -36,7 +39,9 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
 
             // Get relevant views
             nameView = (TextView) view.findViewById(R.id.list_event_name);
-            dateView = (TextView) view.findViewById(R.id.list_event_date);
+            previousDateView = (TextView) view.findViewById(R.id.list_event_previous_date);
+            nextDateView = (TextView) view.findViewById(R.id.list_event_next_date);
+            progressBar = (RoundCornerProgressBar) view.findViewById(R.id.list_item_progress);
             imageButton = (ImageButton) view.findViewById(R.id.list_item_image_button);
 
             // Set listeners
@@ -110,32 +115,49 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int warningPeriod = Integer.parseInt(prefs.getString("warning_period", "7"));
 
-        // Set name
+        // Set name and previous date (always available)
         holder.nameView.setText(event.getName());
+
+        // Calculate relative days
+        long relativeDaysPrevious = dh.getDaysBetween(event.getDate(), dh.getTodayDate());
+        long relativeDaysNext = dh.getDaysBetween(event.getNextDue(), dh.getTodayDate());
+
+        // Force resets
         holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorText));
+        holder.progressBar.setVisibility(View.GONE);
+        holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorDateText));
+        holder.progressBar.setProgress(0);
+        holder.progressBar.setMax(100);
 
-        long relativeDays = dh.getDaysBetween(event.getNextDue(), dh.getTodayDate());
+        holder.previousDateView.setText(dh.dateToString(event.getDate())
+                + "\n(" + dh.getRelativeDaysString(relativeDaysPrevious) + ")");
 
-        // Mark overdue events
+        // These fields depend on whether an event is set to repeat
         if (event.hasPeriod()) {
-            if (relativeDays <= warningPeriod) {
+            holder.progressBar.setVisibility(View.VISIBLE);
+            holder.nextDateView.setVisibility(View.VISIBLE);
+
+            // Highlight upcoming and overdue events
+            if (relativeDaysNext <= warningPeriod) {
                 holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorWarning));
+                holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorWarning));
             }
-            if (relativeDays <= 0) {
+            if (relativeDaysNext <= 0) {
                 holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorOverdue));
+                holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorOverdue));
             }
-            // XXX: Recycled views have color applied [BUG]
+
+            holder.progressBar.setProgress((float) -relativeDaysPrevious);
+            holder.progressBar.setMax((float) event.getPeriod());
+
+            // Add next due date
+            holder.nextDateView.setText(dh.dateToString(event.getNextDue())
+                    + "\n(" + dh.getRelativeDaysString(relativeDaysNext) + ")");
+        } else {
+            holder.nextDateView.setVisibility(View.GONE);
+            holder.nextDateView.setText(null);
         }
 
-        // Build date string
-        StringBuilder sb = new StringBuilder(dh.dateToString(event.getDate()));
-        if (event.hasPeriod()) {
-            sb.append("  ➡  ");
-            sb.append(dh.dateToString(event.getNextDue()));
-        }
-
-        // Set date
-        holder.dateView.setText(sb.toString());
     }
 
     // To determine the number of items

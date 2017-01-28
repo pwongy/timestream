@@ -115,14 +115,19 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     private void updateInfoCard() {
         // Period and next due date
         if (selectedEvent.getPeriod() <= 0) {
-            periodView.setText("N/A");
+            periodView.setText(getString(R.string.event_no_repeat));
+            periodView.setTypeface(periodView.getTypeface(), Typeface.ITALIC);
+
             nextDueView.setText("N/A");
+            nextDueView.setTypeface(nextDueView.getTypeface(), Typeface.ITALIC);
         } else {
             String period = String.valueOf(selectedEvent.getPeriod()) + " "
                     + getString(R.string.unit_suffix_days);
             periodView.setText(period);
-            String nextDue = dh.dateToString(selectedEvent.getNextDue());
-            nextDueView.setText(nextDue);
+            periodView.setTypeface(null, Typeface.NORMAL);
+
+            nextDueView.setText(dh.dateToString(selectedEvent.getNextDue()));
+            nextDueView.setTypeface(null, Typeface.NORMAL);
         }
 
         // Notes

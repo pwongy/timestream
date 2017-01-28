@@ -91,10 +91,10 @@ class DateHandler {
         return nextTime;
     }
 
-    long getDaysBetween(Date earlyDate, Date lateDate) {
+    long getDaysBetween(Date relativeDate, Date anchorDate) {
         // Compute elapsed time since the latest data record
-        String relativeDays = DateUtils.getRelativeTimeSpanString(earlyDate.getTime(),
-                lateDate.getTime(), DateUtils.DAY_IN_MILLIS).toString();
+        String relativeDays = DateUtils.getRelativeTimeSpanString(relativeDate.getTime(),
+                anchorDate.getTime(), DateUtils.DAY_IN_MILLIS).toString();
         Log.d(TAG, "String: " + relativeDays);
 
 //        if (relativeDays.substring(relativeDays.length() - 4).equalsIgnoreCase("days")) {
@@ -102,11 +102,11 @@ class DateHandler {
 //        }
 
         // Time difference in millis
-        long difference = earlyDate.getTime() - lateDate.getTime();
+        long difference = relativeDate.getTime() - anchorDate.getTime();
         long days = difference / DateUtils.DAY_IN_MILLIS;
-        long remainder = difference % DateUtils.DAY_IN_MILLIS;
+//        long remainder = difference % DateUtils.DAY_IN_MILLIS;
 
-        Log.d(TAG, "Relative days: " + days);
+//        Log.d(TAG, "Relative days: " + days);
 //        Log.d(TAG, " -- Remainder: " + remainder);
 
 //        if (relativeDays.equalsIgnoreCase("Yesterday")) {
@@ -119,6 +119,24 @@ class DateHandler {
 //            daysBetween = Integer.parseInt(relativeDays.substring(0, firstSpaceIndex));
 //        }
         return days;
+    }
+
+    String getRelativeDaysString(long daysBetween) {
+        String relativeDays = "";
+
+        if (daysBetween > 1) {
+            relativeDays = "In " + daysBetween + " days";
+        } else if (daysBetween == 1) {
+            relativeDays = "Tomorrow";
+        } else if (daysBetween == 0) {
+            relativeDays = "Today";
+        } else if (daysBetween == -1) {
+            relativeDays = "Yesterday";
+        } else if (daysBetween < -1) {
+            relativeDays = -daysBetween + " days ago";
+        }
+
+        return relativeDays;
     }
 
 }
