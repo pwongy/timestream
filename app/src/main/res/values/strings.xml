@@ -58,6 +58,7 @@
     <string name="pref_display_label">Display</string>
     <string name="pref_title_warning_period">Warning period in days</string>
     <string name="pref_default_warning_period">7</string>
+    <string name="action_email_feedback">Contact developer</string>
 
     <string name="pref_save_label">Saving events</string>
     <string name="pref_title_default_date">Default date</string>

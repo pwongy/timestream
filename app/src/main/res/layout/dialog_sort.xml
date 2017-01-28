@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:textAlignment="viewStart"
         android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_size_normal"
         android:paddingStart="@dimen/dialog_text_padding"
         android:paddingEnd="@dimen/dialog_text_padding"
         android:paddingTop="@dimen/dialog_text_padding"/>
