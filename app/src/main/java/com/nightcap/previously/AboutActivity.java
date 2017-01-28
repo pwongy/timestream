@@ -1,5 +1,6 @@
 package com.nightcap.previously;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -13,6 +14,7 @@ import android.widget.TextView;
  */
 public class AboutActivity extends AppCompatActivity {
     private String TAG = "AboutActivity";
+    String versionNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +35,7 @@ public class AboutActivity extends AppCompatActivity {
 
         // Version number
         TextView versionView = (TextView) findViewById(R.id.about_version);
-        String versionNumber = "<Unknown>";
+        versionNumber = "<Unknown>";
 
         try {
             versionNumber = getApplicationContext().getPackageManager()
@@ -60,7 +62,7 @@ public class AboutActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_about, menu);
+        getMenuInflater().inflate(R.menu.menu_about, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -71,6 +73,26 @@ public class AboutActivity extends AppCompatActivity {
             case android.R.id.home:
                 // If app icon in Action Bar clicked, go home
                 finish();
+                return true;
+            case R.id.action_email_feedback:
+                // Intent to send feedback via email
+                final Intent emailFeedback = new Intent(android.content.Intent.ACTION_SEND);
+                String devEmails[] = { "paul.wong.88@gmail.com", "andrian.sue@outlook.com",
+                        "williamxn.z@gmail.com" };
+
+                emailFeedback.setType("plain/text");
+                emailFeedback.putExtra(android.content.Intent.EXTRA_EMAIL, devEmails);
+                emailFeedback.putExtra(android.content.Intent.EXTRA_SUBJECT, "Feedback for " +
+                        getString(R.string.app_name) + " | Version " + versionNumber);
+                emailFeedback.putExtra(android.content.Intent.EXTRA_TEXT,
+                        "General comments:\n" +
+                                "> \n\n" +
+                                "Bugs:\n" +
+                                "> \n\n" +
+                                "Suggestions:\n" +
+                                ">" + " ");
+
+                startActivity(emailFeedback);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

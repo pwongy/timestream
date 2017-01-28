@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:layout_marginBottom="4dp"
             android:textColor="@color/colorText"/>
 
@@ -53,13 +53,13 @@
                 android:id="@+id/list_event_previous_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_size_normal"
                 android:textColor="@color/colorDateText" />
             <TextView
                 android:id="@+id/list_event_next_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15sp"
+                android:textSize="@dimen/text_size_normal"
                 android:textColor="@color/colorDateText"
                 android:gravity="end"
                 android:layout_alignParentEnd="true" />
