@@ -147,8 +147,9 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
                 holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorOverdue));
             }
 
-            holder.progressBar.setProgress((float) -relativeDaysPrevious);
+            // Set progress bar
             holder.progressBar.setMax((float) event.getPeriod());
+            holder.progressBar.setProgress(-relativeDaysPrevious);
 
             // Add next due date
             holder.nextDateView.setText(dh.dateToString(event.getNextDue())
