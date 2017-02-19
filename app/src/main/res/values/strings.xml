@@ -1,7 +1,7 @@
 <resources>
-    <!--General-->
+    <!--Meta-->
     <string name="app_name">Previously</string>
-    <string name="build_date">28 January 2017</string>
+    <string name="build_date">19 February 2017</string>
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
@@ -9,8 +9,8 @@
     <string name="action_about">About</string>
 
     <!--Sort dialog-->
-    <string name="dialog_sort_field_label">Sort by&#8230;</string>
-    <string name="pref_title_sort_field">Sort events</string>
+    <!--<string name="pref_title_sort_field">Sort events</string>-->
+    <string name="dialog_sort_field_label">Sort events by&#8230;</string>
     <string-array name="pref_sort_field_titles">
         <item>Event name</item>
         <item>Last performed date</item>
@@ -21,6 +21,8 @@
         <item>date</item>
         <item>nextDue</item>
     </string-array>
+    <string name="dialog_sort_button_text">Sort</string>
+    <string name="dialog_cancel_button_text">Cancel</string>
 
     <!--Edit screen-->
     <string name="edit_event">Edit event</string>

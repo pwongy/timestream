@@ -237,8 +237,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 //            }
 //        });
 
-        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
-        dialogBuilder.setPositiveButton("Sort", new DialogInterface.OnClickListener() {
+//        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
+        dialogBuilder.setPositiveButton(getString(R.string.dialog_sort_button_text), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Get spinner position and set sort preference to corresponding value
                 int spinnerPosition = spinner1.getSelectedItemPosition();
@@ -249,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 prepareData();
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button_text), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Pass
             }

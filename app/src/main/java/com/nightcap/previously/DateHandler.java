@@ -1,7 +1,6 @@
 package com.nightcap.previously;
 
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -55,7 +54,7 @@ class DateHandler {
     }
 
     /**
-     * Gets today's date, ignoring time fields.
+     * Convenience method of getting today's date, ignoring time fields.
      * @return Today's date.
      */
     Date getTodayDate() {
@@ -95,11 +94,7 @@ class DateHandler {
         // Compute elapsed time since the latest data record
         String relativeDays = DateUtils.getRelativeTimeSpanString(relativeDate.getTime(),
                 anchorDate.getTime(), DateUtils.DAY_IN_MILLIS).toString();
-        Log.d(TAG, "String: " + relativeDays);
-
-//        if (relativeDays.substring(relativeDays.length() - 4).equalsIgnoreCase("days")) {
-//            Log.d(TAG, "")
-//        }
+//        Log.d(TAG, "String: " + relativeDays);
 
         // Time difference in millis
         long difference = relativeDate.getTime() - anchorDate.getTime();
