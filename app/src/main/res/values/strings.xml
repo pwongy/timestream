@@ -1,7 +1,8 @@
 <resources>
-    <!--Meta-->
+    <!--Metadata-->
     <string name="app_name">Previously</string>
-    <string name="build_date">19 February 2017</string>
+    <string name="build_date">21 February 2017</string>
+    <string name="author">Paul Wong</string>
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
@@ -53,7 +54,6 @@
     <string name="about_version">Version</string>
     <string name="about_build_date">Build date</string>
     <string name="about_copyright">Copyright © 2016–17</string>
-    <string name="author">Paul Wong</string>
 
     <!--Settings-->
     <string name="title_activity_settings">Settings</string>
