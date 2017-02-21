@@ -16,6 +16,7 @@ Example use cases include:
 **Social**
 - Calling your mum/dad
 - Buying flowers for your girlfriend
+- Meeting a stranger
 
 **Maintenance**
 - Replacing your Britta filter
