@@ -23,12 +23,7 @@ public class AboutActivity extends AppCompatActivity {
         // Inflate xml layout
         setContentView(R.layout.activity_about);
 
-        // Get reference to the toolbar
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.about_toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeButtonEnabled(true);
-
+        // Get reference to the actionbar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);

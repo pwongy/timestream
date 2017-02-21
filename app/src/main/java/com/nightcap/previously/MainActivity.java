@@ -291,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     @Override
     public void onReceiveEventFromAdapter(Event event) {
         selectedEvent = event;
-        String doneDatePref = prefs.getString("default_done_today", "0");
+        String doneDatePref = prefs.getString("date_behaviour", "0");
 
         // Mark event as done
         if (doneDatePref.equalsIgnoreCase(getResources()

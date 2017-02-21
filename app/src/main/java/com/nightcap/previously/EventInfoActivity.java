@@ -44,7 +44,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
 
         // User settings
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String doneDatePref = prefs.getString("default_done_today", "0");
+        final String doneDatePref = prefs.getString("date_behaviour", "0");
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_info_toolbar);
@@ -118,11 +118,11 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
             periodView.setText(getString(R.string.event_no_repeat));
             periodView.setTypeface(periodView.getTypeface(), Typeface.ITALIC);
 
-            nextDueView.setText("N/A");
+            nextDueView.setText(getString(R.string.event_not_applicable));
             nextDueView.setTypeface(nextDueView.getTypeface(), Typeface.ITALIC);
         } else {
-            String period = String.valueOf(selectedEvent.getPeriod()) + " "
-                    + getString(R.string.unit_suffix_days);
+            String period = String.format(getString(R.string.event_period),
+                    selectedEvent.getPeriod(), getString(R.string.unit_days));
             periodView.setText(period);
             periodView.setTypeface(null, Typeface.NORMAL);
 

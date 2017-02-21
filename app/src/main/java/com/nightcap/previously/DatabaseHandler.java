@@ -64,7 +64,10 @@ class DatabaseHandler {
             eventLog.beginTransaction();
             eventLog.copyToRealmOrUpdate(event);
             eventLog.commitTransaction();
-            Log.d(TAG, "Event logged");
+
+            String logMsg = "Event logged (%s)";
+            logMsg = String.format(logMsg, event.getName());
+            Log.d(TAG, logMsg);
 
             // Only increment event counter if it's a new instance (i.e. not editing)
             if (existingEvents.size() == 0) {
