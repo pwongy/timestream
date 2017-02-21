@@ -1,5 +1,8 @@
 package com.nightcap.previously;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +17,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +26,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     private SharedPreferences prefs;
     final String KEY_SORT_FIELD = "sort_primary_field";
     final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
-//    final String SORT_SECONDARY_KEY = "sort_secondary_ascending";
+    final String KEY_NOTIFICATIONS = "notifications_toggle";
 
     // RecyclerView
     RecyclerView recyclerView;
@@ -47,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     private EventLogAdapter eventLogAdapter;
 
     Event selectedEvent;
+
+    // Alarm type codes
+    final int ALARM_DEFAULT = 0;
+    final int ALARM_TEST_DELAYED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +119,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+
+        // Notification (currently testing)
+        scheduleNotification(ALARM_DEFAULT);
     }
 
     @Override
@@ -309,5 +321,50 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         // Attempt to mark currently opened event as done
         databaseHandler.markEventDone(selectedEvent, date);
         prepareData();
+    }
+
+    public void scheduleNotification(int alarmType) {
+        // Get notifications preference
+        boolean showNotifications = prefs.getBoolean(KEY_NOTIFICATIONS, true);
+
+        if (showNotifications) {
+            // Intent to schedule notifications
+            Intent notifyIntent = new Intent(getApplicationContext(), NotificationService.class);
+//        notifyIntent.putExtra(NotificationService.EXTRA_ALARM_TRIGGERED, true);
+//        notifyIntent.putExtra(NotificationService.EXTRA_UPDATE_CITY, getCityName());
+//        notifyIntent.putExtra(NotificationService.EXTRA_UPDATE_FUEL, getFuelType());
+            PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0,
+                    notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            // Set the alarm time
+            Calendar alarmTime = Calendar.getInstance();
+            int alarmHour = 17;     // At 7:00 AM, or TODO: by preference
+
+            if (alarmType == ALARM_DEFAULT) {
+                alarmTime.set(Calendar.HOUR_OF_DAY, alarmHour);
+                alarmTime.set(Calendar.MINUTE, 0);
+                alarmTime.set(Calendar.SECOND, 0);
+
+                // If current time is after today's alarm, set it for tomorrow
+                Calendar now = Calendar.getInstance();
+                if (now.get(Calendar.HOUR_OF_DAY) >= alarmHour) {
+                    alarmTime.add(Calendar.DAY_OF_YEAR, 1);
+                }
+            } else if (alarmType == ALARM_TEST_DELAYED) {
+                alarmTime.setTimeInMillis(System.currentTimeMillis());
+                alarmTime.add(Calendar.SECOND, 3);
+            }
+
+            Log.d(TAG, "Alarm set for: " + alarmTime.getTime().toString());
+
+            // With setInexactRepeating(), you have to use one of the AlarmManager interval
+            // constants - in this case, AlarmManager.INTERVAL_DAY.
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            // TODO: Switch this after testing phase
+//            am.setInexactRepeating(AlarmManager.RTC, alarmTime.getTimeInMillis(),
+//                    AlarmManager.INTERVAL_DAY, pendingIntent);
+            am.setExact(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+        }
     }
 }

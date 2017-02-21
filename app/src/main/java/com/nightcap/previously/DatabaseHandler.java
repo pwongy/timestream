@@ -113,15 +113,15 @@ class DatabaseHandler {
         }
     }
 
-    @Deprecated
-    String getEventTypes() {
-        // Check for emptiness
-        boolean isEmpty = eventLog.where(Event.class).findAll().isEmpty();
-        Log.d(TAG, "Database is empty: " + isEmpty);
-
-        final RealmResults<Event> events = eventLog.where(Event.class).findAll();
-        return events.toString();
-    }
+//    @Deprecated
+//    String getEventTypes() {
+//        // Check for emptiness
+//        boolean isEmpty = eventLog.where(Event.class).findAll().isEmpty();
+//        Log.d(TAG, "Database is empty: " + isEmpty);
+//
+//        final RealmResults<Event> events = eventLog.where(Event.class).findAll();
+//        return events.toString();
+//    }
 
     /**
      * Gets all events logged in the app's Realm.
@@ -129,11 +129,12 @@ class DatabaseHandler {
      */
     @Deprecated
     List<Event> getAllEvents() {
-        // All events
-        final RealmResults<Event> events = eventLog.where(Event.class).findAll();
-        List<Event> copied = eventLog.copyFromRealm(events);
-        Log.d(TAG, "All events: " + copied.toString());
-        return copied;
+        // Query the Realm for all event instances (unsorted)
+        final RealmResults<Event> queryResult = eventLog.where(Event.class)
+                .findAll();
+        List<Event> allEvents = eventLog.copyFromRealm(queryResult);
+        Log.d(TAG, "All events: " + allEvents.toString());
+        return allEvents;
     }
 
     /**
@@ -176,37 +177,74 @@ class DatabaseHandler {
     }
 
     /**
+     * Gets a list of overdue events.
+     * @return The list of events that have passed their nextDue date.
+     */
+    List<Event> getOverdueEvents() {
+        List<Event> overdueEvents = new ArrayList<>();
+        List<Event> distinctEvents = getLatestDistinctEvents("name", true);
+
+        for (Event e : distinctEvents) {
+            // Get latest instance of each distinct event from event log
+            RealmResults<Event> result = eventLog.where(Event.class)
+                    .equalTo("name", e.getName())
+                    .findAllSorted("nextDue", Sort.DESCENDING);
+            Event candidate = result.first();
+
+            // Check if event is overdue; if so, add it to the list
+            if (candidate.hasPeriod() && !candidate.getNextDue().after(new DateHandler().getTodayDate())) {
+                Log.d(TAG, candidate.getName() + " is overdue");
+                overdueEvents.add(candidate);
+            }
+        }
+
+        return overdueEvents;
+    }
+
+    /**
      * Method for propagating updated event name through to other records in the Realm.
      * @param oldName The old event name.
      * @param newName The new event name.
      */
     void updateNameField(String oldName, String newName) {
+        // Get list of events matching the old name
         List<Event> sameEvents = getEventsByName(oldName);
 
+        // Update each event with the new name
         for (Event e : sameEvents) {
             e.setName(newName);
             saveEvent(e);
         }
-
     }
 
+    /**
+     * Find all events in the log that match a particular name.
+     * @param name    The event name for which to search.
+     * @return The list of matching events.
+     */
     List<Event> getEventsByName(String name) {
-        final RealmResults<Event> events = eventLog.where(Event.class)
+        final RealmResults<Event> queryResults = eventLog.where(Event.class)
                 .equalTo("name", name)
                 .findAllSorted("date", Sort.DESCENDING);
 
-        List<Event> copied = eventLog.copyFromRealm(events);
-        Log.d(TAG, "Events by name: " + copied.toString());
-        return copied;
+        List<Event> eventsMatchingName = eventLog.copyFromRealm(queryResults);
+        Log.d(TAG, "Events by name: " + eventsMatchingName.toString());
+        return eventsMatchingName;
     }
 
+    /**
+     * Find all events in the log that match a particular ID.
+     * @param id    The event id for which to search.
+     * @return The matching event (should be singular).
+     */
     Event getEventById(int id) {
-        final RealmResults<Event> event = eventLog.where(Event.class).equalTo("id", id).findAll();
-        // Add sorting logic here
+        final RealmResults<Event> queryResults = eventLog.where(Event.class)
+                .equalTo("id", id)
+                .findAll();
 
-        Event copied = eventLog.copyFromRealm(event).get(0);
-        Log.d(TAG, "Event by ID: " + copied.getName());
-        return copied;
+        Event eventMatchingId = eventLog.copyFromRealm(queryResults).get(0);
+        Log.d(TAG, "Event by ID: " + eventMatchingId.getName());
+        return eventMatchingId;
     }
 
     int getEventCount() {
@@ -221,6 +259,7 @@ class DatabaseHandler {
     private void incrementEventCount() {
         SharedPreferences.Editor editor = dataStore.edit();
 
+        // Store this as a key-value pair
         String dateKey = KEY_EVENT_COUNT;   // Key
         int count = getEventCount();
         count++;

@@ -90,12 +90,14 @@ class DateHandler {
         return nextTime;
     }
 
+    /**
+     * Compute elapsed time between two days.
+     *
+     * @param relativeDate    The day of interest.
+     * @param anchorDate      The fixed day for comparison.
+     * @return The number of days in between the two specified days.
+     */
     long getDaysBetween(Date relativeDate, Date anchorDate) {
-        // Compute elapsed time since the latest data record
-        String relativeDays = DateUtils.getRelativeTimeSpanString(relativeDate.getTime(),
-                anchorDate.getTime(), DateUtils.DAY_IN_MILLIS).toString();
-//        Log.d(TAG, "String: " + relativeDays);
-
         // Time difference in millis
         long difference = relativeDate.getTime() - anchorDate.getTime();
         long days = difference / DateUtils.DAY_IN_MILLIS;
@@ -104,15 +106,6 @@ class DateHandler {
 //        Log.d(TAG, "Relative days: " + days);
 //        Log.d(TAG, " -- Remainder: " + remainder);
 
-//        if (relativeDays.equalsIgnoreCase("Yesterday")) {
-//            daysBetween = 1;
-//        } else {
-//            // Get the number of days since the latest stored data.
-//            // Smallest number expected is 2, representing the day before yesterday.
-//            // Use this to determine the number of new data points to shift and add.
-//            int firstSpaceIndex = relativeDays.indexOf(' ');
-//            daysBetween = Integer.parseInt(relativeDays.substring(0, firstSpaceIndex));
-//        }
         return days;
     }
 
