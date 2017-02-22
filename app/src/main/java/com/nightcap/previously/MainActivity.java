@@ -25,10 +25,14 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Main Activity. Displays existing database events.
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
 
         // User settings
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -155,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             case R.id.action_sort:
                 showSortDialog();
                 break;
+            case R.id.action_crash:
+                throw new RuntimeException("This is a crash");
+//                break;
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
 

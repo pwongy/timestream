@@ -6,6 +6,7 @@
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
+    <string name="action_crash">Force crash</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
 
@@ -61,7 +62,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="pref_category_display">Display</string>
     <string name="pref_title_warning_period">Warning period (in days)</string>
-    <string name="pref_default_warning_period">7</string>
+    <string name="pref_default_warning_period" translatable="false">7</string>
     <string name="action_email_feedback">Contact developer</string>
 
     <string name="pref_category_saving">Saving events</string>
