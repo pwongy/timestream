@@ -74,32 +74,46 @@ class DatabaseHandler {
             logMsg = String.format(logMsg, event.getName());
             Log.d(TAG, logMsg);
 
-            // Track for insights via Answers
-            Answers.getInstance().logCustom(new CustomEvent("[TESTING] Logged event")
-                    .putCustomAttribute("Event name", event.getName())
-                    .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
-
             // Only increment event counter if it's a new instance (i.e. not editing)
             if (existingEvents.size() == 0) {
                 incrementEventCount();
             }
+
+            // Track for insights via Answers
+            Answers.getInstance().logCustom(new CustomEvent("[TESTING] Logged event")
+                    .putCustomAttribute("Event name", event.getName())
+                    .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
+            Log.i(TAG, "Logged to Answers");
+
         } else {
             Log.d(TAG, "Duplicate event - ignored");
-            Toast.makeText(appContext, "Event already exists", Toast.LENGTH_SHORT).show();
+            Toast.makeText(appContext, "Event already logged on " + dateHandler.dateToString(event.getDate()),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     void markEventDone(Event existingEvent, Date doneDate) {
-        // Unmanaged event
+        // Create an unmanaged event.
+        // This is like a variable. We need to set the event attributes before it is fully defined.
+        // Only then should it be saved to the log.
         Event event = new Event();
 
-        // ID will be new
+        // Since this is a new entry in the log, the event ID should be new
         event.setId(getEventCount() + 1);
+
+        // The event name is carried over from previous entries, while the date is set per user input
         event.setName(existingEvent.getName());
         event.setDate(doneDate);
+
+        // The event period is also carried over
         event.setPeriod(existingEvent.getPeriod());
-        event.setNextDue(dateHandler.nextDueDate(dateHandler.getTodayDate(), existingEvent.getPeriod()));
+        // The next due date is then calculated relative to the last time the event was done
+        event.setNextDue(dateHandler.nextDueDate(doneDate, existingEvent.getPeriod()));
+
+        // Notes are blank until added manually
         event.setNotes("");
+
+        // Once all the attribute fields are filled, we can save the event to the Realm
         saveEvent(event);
     }
 
@@ -108,15 +122,16 @@ class DatabaseHandler {
      * @param deleteId    The ID of the event record that is to be deleted
      */
     void deleteEvent(int deleteId) {
-        final RealmResults<Event> results = eventLog.where(Event.class)
+        // Query the Realm for a matching event ID
+        final RealmResults<Event> deleteQuery = eventLog.where(Event.class)
                 .equalTo("id", deleteId)
                 .findAll();
-        if (results.size() == 1) {  // Check for unique identifier
+        if (deleteQuery.size() == 1) {  // Check for unique identifier
             // All changes to data must happen in a transaction
             eventLog.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    Event deleteEvent = results.first();
+                    Event deleteEvent = deleteQuery.first();
                     deleteEvent.deleteFromRealm();
                     Log.d(TAG, "Entry deleted");
                 }
@@ -125,16 +140,6 @@ class DatabaseHandler {
             Log.d(TAG, "Error during delete query.");
         }
     }
-
-//    @Deprecated
-//    String getEventTypes() {
-//        // Check for emptiness
-//        boolean isEmpty = eventLog.where(Event.class).findAll().isEmpty();
-//        Log.d(TAG, "Database is empty: " + isEmpty);
-//
-//        final RealmResults<Event> events = eventLog.where(Event.class).findAll();
-//        return events.toString();
-//    }
 
     /**
      * Gets all events logged in the app's Realm.
@@ -203,6 +208,7 @@ class DatabaseHandler {
                     .equalTo("name", e.getName())
                     .findAllSorted("nextDue", Sort.DESCENDING);
             Event candidate = result.first();
+            // FIXME: Is this even necessary?
 
             // Check if event is overdue; if so, add it to the list
             if (candidate.hasPeriod() && !candidate.getNextDue().after(new DateHandler().getTodayDate())) {
