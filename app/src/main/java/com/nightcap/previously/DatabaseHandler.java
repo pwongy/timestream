@@ -5,12 +5,16 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
@@ -26,6 +30,7 @@ class DatabaseHandler {
 
     DatabaseHandler(Context appContext) {
         this.appContext = appContext;
+        Fabric.with(this.appContext, new Answers());
         dateHandler = new DateHandler();
 
         // Initialise Realm
@@ -68,6 +73,11 @@ class DatabaseHandler {
             String logMsg = "Event logged (%s)";
             logMsg = String.format(logMsg, event.getName());
             Log.d(TAG, logMsg);
+
+            // Track for insights via Answers
+            Answers.getInstance().logCustom(new CustomEvent("[TESTING] Logged event")
+                    .putCustomAttribute("Event name", event.getName())
+                    .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
 
             // Only increment event counter if it's a new instance (i.e. not editing)
             if (existingEvents.size() == 0) {

@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
             // Set the alarm time
             Calendar alarmTime = Calendar.getInstance();
-            int alarmHour = 17;     // At 7:00 AM, or TODO: by preference
+            int alarmHour = 7;     // At 7:00 AM, or TODO: by preference
 
             if (alarmType == ALARM_DEFAULT) {
                 alarmTime.set(Calendar.HOUR_OF_DAY, alarmHour);
