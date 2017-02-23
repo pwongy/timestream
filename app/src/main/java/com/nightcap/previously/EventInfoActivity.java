@@ -13,7 +13,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,10 +41,6 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
-        // User settings
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String doneDatePref = prefs.getString("date_behaviour", "0");
-
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_info_toolbar);
         setSupportActionBar(toolbar);
@@ -57,17 +52,10 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, doneDatePref);
-
-                if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_date_values)[0])) {
-                    showDatePickerDialog(view);
-                } else if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_date_values)[1])) {
-                    // Mark currently opened event as done today
-                    databaseHandler.markEventDone(selectedEvent, dh.getTodayDate());
-                    prepareHistory();
-                }
+                // Intent to edit event
+                Intent edit = new Intent(getApplicationContext(), EditActivity.class);
+                edit.putExtra("edit_id", selectedEvent.getId());
+                startActivity(edit);
             }
         });
 
@@ -175,11 +163,21 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
                 // If app icon in Action Bar clicked, go home
                 finish();
                 break;
-            case R.id.action_edit:
-                // Intent to edit event
-                Intent edit = new Intent(getApplicationContext(), EditActivity.class);
-                edit.putExtra("edit_id", selectedEvent.getId());
-                startActivity(edit);
+            case R.id.action_mark_done:
+                // User settings
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                final String doneDatePref = prefs.getString("date_behaviour", "0");
+
+                if (doneDatePref.equalsIgnoreCase(getResources()
+                        .getStringArray(R.array.pref_default_date_values)[0])) {
+                    // Show date picker
+                    showDatePickerDialog(getCurrentFocus());
+                } else if (doneDatePref.equalsIgnoreCase(getResources()
+                        .getStringArray(R.array.pref_default_date_values)[1])) {
+                    // Mark currently opened event as done today
+                    databaseHandler.markEventDone(selectedEvent, dh.getTodayDate());
+                    prepareHistory();
+                }
                 break;
             case R.id.action_delete:
                 databaseHandler.deleteEvent(selectedEvent.getId());
