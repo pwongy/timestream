@@ -43,23 +43,25 @@ import io.fabric.sdk.android.Fabric;
 public class MainActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "MainActivity";
 
-    // Realm database
+    // A handler to access the Realm (database).
+    // Any interactions with the Realm should go through this.
     private DatabaseHandler databaseHandler;
 
-    // User preferences
+    // Variables to access user preferences, defined in the app settings.
     private SharedPreferences prefs;
     final String KEY_SORT_FIELD = "sort_primary_field";
     final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
     final String KEY_NOTIFICATIONS = "notifications_toggle";
 
-    // RecyclerView
+    // RecyclerView for displaying the log, and associated adapter.
     RecyclerView recyclerView;
     private List<Event> eventList = new ArrayList<>();
     private EventLogAdapter eventLogAdapter;
 
+    // The currently selected event.
     Event selectedEvent;
 
-    // Alarm type codes
+    // Alarm type codes for scheduling the (background) notification service.
     final int ALARM_DEFAULT = 0;
     final int ALARM_TEST_DELAYED = 1;
 
@@ -67,21 +69,21 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Tracking via Fabric
+        // Track crashes and usage stats using Fabric
         Fabric.with(this, new Crashlytics());
         Fabric.with(this, new Answers());
 
-        // User settings
+        // Get user settings
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Inflate xml layout
         setContentView(R.layout.activity_main);
 
-        // Toolbar
+        // Get the Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        // FAB
+        // Set up the FAB
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.main_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,17 +94,20 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             }
         });
 
-        // Get a data handler, which initialises Realm during construction
+        // Get a database handler
+        // (Realm is initialised during its construction so no need to do that here.)
         databaseHandler = new DatabaseHandler(this);
 
-        // Recycler view
+        // Set up the RecyclerView
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
+        // LayoutManager must be set before adapter
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator line
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
@@ -145,6 +150,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         prepareData();
     }
 
+    /**
+     * Get data items from the Realm and apply to the adapter.
+     */
     private void prepareData() {
         // Get data from Realm
         eventList = databaseHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
@@ -154,6 +162,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         eventLogAdapter.updateData(eventList);
     }
 
+    /*
+     * Here we create and handle actions from the overflow menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -302,8 +313,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     }
 
     /**
-     * The tick button has been pressed, indicating an event is to be marked as done.
-     * @param event The event that was done.
+     * An event item has been pressed, and needs to be handled.
+     * @param event The event that was pressed.
+     * @param flag  A flag to indicate what action to take on the event.
      */
     @Override
     public void onReceiveEventFromAdapter(Event event, String flag) {
@@ -313,14 +325,16 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             String doneDatePref = prefs.getString("date_behaviour", "0");
 
             // Mark event as done
+            // Need to consider date behaviour preference.
             if (doneDatePref.equalsIgnoreCase(getResources()
                     .getStringArray(R.array.pref_default_date_values)[0])) {
+                // Show the date picker and save event after a date is selected and received
+                // (See associated methods below).
                 showDatePickerDialog(getCurrentFocus());
             } else if (doneDatePref.equalsIgnoreCase(getResources()
                     .getStringArray(R.array.pref_default_date_values)[1])) {
                 // Mark currently opened event as done today
                 databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
-
                 prepareData();
             }
         } else if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_SHOW_EVENT_INFO)) {
@@ -338,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     }
 
     /**
-     * The tick button has been pressed and the event to be marked done now has an associated done
+     * The tick button was pressed and the event to be marked done now has an associated done
      * date from the dialog.
      * @param date The date the event was done.
      */
