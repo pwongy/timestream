@@ -172,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 break;
             case R.id.action_crash:
                 throw new RuntimeException("This is a crash");
-//                break;
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
 

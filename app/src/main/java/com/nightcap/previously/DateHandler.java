@@ -17,16 +17,33 @@ class DateHandler {
 
     }
 
+    /**
+     * Provides a formatted string corresponding to date components.
+     * @param year     Year
+     * @param month    Month
+     * @param day      Day of month
+     * @return The corresponding date string.
+     */
     String dateToString(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
         return DateFormat.getDateInstance().format(cal.getTime());
     }
 
+    /**
+     * Provides a formatted string corresponding to a Date.
+     * @param date      Date
+     * @return The corresponding date string.
+     */
     String dateToString(Date date) {
         return DateFormat.getDateInstance().format(date);
     }
 
+    /**
+     * Provides a date corresponding to a formatted string.
+     * @param dateString      The date string
+     * @return The corresponding date object.
+     */
     Date stringToDate(String dateString) {
         DateFormat df = DateFormat.getDateInstance();
         Date date = new Date();
@@ -40,6 +57,13 @@ class DateHandler {
         return date;
     }
 
+    /**
+     * Provides a date corresponding to specified date components.
+     * @param year     Year
+     * @param month    Month
+     * @param day      Day of month
+     * @return The corresponding date object.
+     */
     Date dateFromComponents(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
@@ -100,15 +124,21 @@ class DateHandler {
     long getDaysBetween(Date relativeDate, Date anchorDate) {
         // Time difference in millis
         long difference = relativeDate.getTime() - anchorDate.getTime();
-        long days = difference / DateUtils.DAY_IN_MILLIS;
+        long daysBetween = difference / DateUtils.DAY_IN_MILLIS;
 //        long remainder = difference % DateUtils.DAY_IN_MILLIS;
 
 //        Log.d(TAG, "Relative days: " + days);
 //        Log.d(TAG, " -- Remainder: " + remainder);
 
-        return days;
+        return daysBetween;
     }
 
+    /**
+     * Format the day difference into the desired string format.
+     *
+     * @param daysBetween    The number of days difference.
+     * @return String corresponding to the difference.
+     */
     String getRelativeDaysString(long daysBetween) {
         String relativeDays = "";
 

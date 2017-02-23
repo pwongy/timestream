@@ -30,8 +30,8 @@ class DatabaseHandler {
 
     DatabaseHandler(Context appContext) {
         this.appContext = appContext;
-        Fabric.with(this.appContext, new Answers());
         dateHandler = new DateHandler();
+        Fabric.with(this.appContext, new Answers());
 
         // Initialise Realm
         Realm.init(appContext);
@@ -92,6 +92,11 @@ class DatabaseHandler {
         }
     }
 
+    /**
+     * Marks an existing event as done via a new entry in the event log.
+     * @param existingEvent    The event that was completed.
+     * @param doneDate         The date the event was completed.
+     */
     void markEventDone(Event existingEvent, Date doneDate) {
         // Create an unmanaged event.
         // This is like a variable. We need to set the event attributes before it is fully defined.
