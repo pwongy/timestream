@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
         // Insight tracking via Answers
         Answers.getInstance().logCustom(new CustomEvent("[TESTING] Opened app"));
-        Log.i(TAG, "Logged to Answers");
+        Log.i(TAG, "Logged app opening to Answers");
 
     }
 
@@ -307,21 +307,30 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
      * @param event The event that was done.
      */
     @Override
-    public void onReceiveEventFromAdapter(Event event) {
+    public void onReceiveEventFromAdapter(Event event, String flag) {
         selectedEvent = event;
-        String doneDatePref = prefs.getString("date_behaviour", "0");
 
-        // Mark event as done
-        if (doneDatePref.equalsIgnoreCase(getResources()
-                .getStringArray(R.array.pref_default_date_values)[0])) {
-            showDatePickerDialog(getCurrentFocus());
-        } else if (doneDatePref.equalsIgnoreCase(getResources()
-                .getStringArray(R.array.pref_default_date_values)[1])) {
-            // Mark currently opened event as done today
-            databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+        if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_MARK_EVENT_DONE)) {
+            String doneDatePref = prefs.getString("date_behaviour", "0");
 
-            prepareData();
+            // Mark event as done
+            if (doneDatePref.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[0])) {
+                showDatePickerDialog(getCurrentFocus());
+            } else if (doneDatePref.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[1])) {
+                // Mark currently opened event as done today
+                databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+
+                prepareData();
+            }
+        } else if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_SHOW_EVENT_INFO)) {
+            // Intent to show event info
+            Intent info = new Intent(this, EventInfoActivity.class);
+            info.putExtra("event_id", event.getId());
+            startActivity(info);
         }
+
     }
 
     public void showDatePickerDialog(View v) {
@@ -373,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 alarmTime.add(Calendar.SECOND, 3);
             }
 
-            Log.d(TAG, "Alarm set for: " + alarmTime.getTime().toString());
+            Log.d(TAG, "Notifications scheduled for: " + alarmTime.getTime().toString());
 
             // With setInexactRepeating(), you have to use one of the AlarmManager interval
             // constants - in this case, AlarmManager.INTERVAL_DAY.

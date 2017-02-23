@@ -1,7 +1,6 @@
 package com.nightcap.previously;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +25,9 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     private ReceiveEventInterface eventListener;
     private List<Event> eventList;
     private DateHandler dh = new DateHandler();
+
+    static final String FLAG_MARK_EVENT_DONE = "event_done";
+    static final String FLAG_SHOW_EVENT_INFO = "event_info";
 
     // ViewHolder pattern as required
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -52,13 +54,11 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             if (view.getId() == imageButton.getId()) {
-                // Tick is clicked, so send the event to MainActivity
-                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()));
+                // Tick image button was clicked, so get MainActivity to mark it as done
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_MARK_EVENT_DONE);
             } else {
-                // Intent to show event info
-                Intent info = new Intent(view.getContext(), EventInfoActivity.class);
-                info.putExtra("event_id", eventList.get(getAdapterPosition()).getId());
-                context.startActivity(info);
+                // The list item body was clicked, so get MainActivity to show event info (via new Activity)
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_SHOW_EVENT_INFO);
             }
         }
     }

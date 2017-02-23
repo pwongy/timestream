@@ -91,7 +91,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         prepareHistory();
     }
 
-    public void onReceiveEventFromAdapter(Event event) {
+    public void onReceiveEventFromAdapter(Event event, String flag) {
         // Update info on cards to match the selected event from history
         selectedEvent = event;
         updateInfoCard();

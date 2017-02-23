@@ -83,7 +83,7 @@ class DatabaseHandler {
             Answers.getInstance().logCustom(new CustomEvent("[TESTING] Logged an event")
                     .putCustomAttribute("Event name", event.getName())
                     .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
-            Log.i(TAG, "Logged to Answers");
+            Log.i(TAG, "Logged event instance to Answers");
 
         } else {
             Log.d(TAG, "Duplicate event - ignored");
