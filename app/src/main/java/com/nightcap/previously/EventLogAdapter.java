@@ -58,10 +58,9 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
                 // Intent to show event info
                 Intent info = new Intent(view.getContext(), EventInfoActivity.class);
                 info.putExtra("event_id", eventList.get(getAdapterPosition()).getId());
-                view.getContext().getApplicationContext().startActivity(info);
+                context.startActivity(info);
             }
         }
-
     }
 
     // Constructor
