@@ -79,8 +79,8 @@ class DatabaseHandler {
                 incrementEventCount();
             }
 
-            // Track for insights via Answers
-            Answers.getInstance().logCustom(new CustomEvent("[TESTING] Logged event")
+            // Insight tracking via Answers
+            Answers.getInstance().logCustom(new CustomEvent("[TESTING] Logged an event")
                     .putCustomAttribute("Event name", event.getName())
                     .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
             Log.i(TAG, "Logged to Answers");

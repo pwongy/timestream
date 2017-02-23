@@ -1,10 +1,8 @@
 package com.nightcap.previously;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -30,9 +28,8 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     private String TAG = "EventActivity";
     private DatabaseHandler databaseHandler;
     private DateHandler dh = new DateHandler();
-    int eventId;
-    Event selectedEvent;
-    TextView periodView, nextDueView, notesView;
+    private Event selectedEvent;
+    private TextView periodView, nextDueView, notesView;
     private List<Event> historyList = new ArrayList<>();
     private HistoryAdapter historyAdapter;
 
@@ -63,7 +60,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         databaseHandler = new DatabaseHandler(this);
 
         // Get selected event
-        eventId = getIntent().getIntExtra("event_id", 0);
+        int eventId = getIntent().getIntExtra("event_id", 0);
         selectedEvent = databaseHandler.getEventById(eventId);
 
         getSupportActionBar().setTitle(selectedEvent.getName());
@@ -164,23 +161,12 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
                 finish();
                 break;
             case R.id.action_mark_done:
-                // User settings
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                final String doneDatePref = prefs.getString("date_behaviour", "0");
-
-                if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_date_values)[0])) {
-                    // Show date picker
-                    showDatePickerDialog(getCurrentFocus());
-                } else if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_date_values)[1])) {
-                    // Mark currently opened event as done today
-                    databaseHandler.markEventDone(selectedEvent, dh.getTodayDate());
-                    prepareHistory();
-                }
+                // Show date picker
+                showDatePickerDialog(getCurrentFocus());
                 break;
             case R.id.action_delete:
                 databaseHandler.deleteEvent(selectedEvent.getId());
+//                prepareHistory();
                 finish();
                 break;
         }

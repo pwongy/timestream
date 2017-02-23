@@ -26,6 +26,8 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,7 +66,10 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Tracking via Fabric
         Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Answers());
 
         // User settings
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -127,6 +132,11 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
         // Notification (currently testing)
         scheduleNotification(ALARM_DEFAULT);
+
+        // Insight tracking via Answers
+        Answers.getInstance().logCustom(new CustomEvent("[TESTING] Opened app"));
+        Log.i(TAG, "Logged to Answers");
+
     }
 
     @Override
