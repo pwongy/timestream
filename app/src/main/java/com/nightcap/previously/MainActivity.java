@@ -1,13 +1,16 @@
 package com.nightcap.previously;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.service.notification.StatusBarNotification;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -63,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
     // Alarm type codes for scheduling the (background) notification service.
     final int ALARM_DEFAULT = 0;
-    final int ALARM_TEST_DELAYED = 1;
+    final int ALARM_NOW = 1;
+    final int ALARM_TEST_DELAYED = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -322,20 +326,22 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         selectedEvent = event;
 
         if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_MARK_EVENT_DONE)) {
-            String doneDatePref = prefs.getString("date_behaviour", "0");
-
             // Mark event as done
-            // Need to consider date behaviour preference.
-            if (doneDatePref.equalsIgnoreCase(getResources()
+            String dateBehaviour = prefs.getString("date_behaviour", "0");
+
+            // We need to consider the date behaviour preference
+            if (dateBehaviour.equalsIgnoreCase(getResources()
                     .getStringArray(R.array.pref_default_date_values)[0])) {
                 // Show the date picker and save event after a date is selected and received
                 // (See associated methods below).
                 showDatePickerDialog(getCurrentFocus());
-            } else if (doneDatePref.equalsIgnoreCase(getResources()
+            } else if (dateBehaviour.equalsIgnoreCase(getResources()
                     .getStringArray(R.array.pref_default_date_values)[1])) {
                 // Mark currently opened event as done today
                 databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+
                 prepareData();
+                updateNotifications();
             }
         } else if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_SHOW_EVENT_INFO)) {
             // Intent to show event info
@@ -344,6 +350,32 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             startActivity(info);
         }
 
+    }
+
+    /**
+     * Updates the overdue notification if it is already active.
+     */
+    private void updateNotifications() {
+        // Check if an overdue item notification is still active
+        // Get an instance of the NotificationManager service
+        NotificationManager nm =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            StatusBarNotification[] activeNotifications = nm.getActiveNotifications();
+            Log.d(TAG, "Number of active notifications: " + activeNotifications.length);
+
+            if (activeNotifications.length > 0) {
+                for (StatusBarNotification n : activeNotifications) {
+                    if (n.getId() == NotificationService.overdueNotificationId) {
+                        // We know that the notification is active, so update it
+                        scheduleNotification(ALARM_NOW);
+                    }
+                }
+            }
+        } else {
+            // Do something for phones running an earlier SDK
+        }
     }
 
     public void showDatePickerDialog(View v) {
@@ -361,6 +393,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         // Attempt to mark currently opened event as done
         databaseHandler.markEventDone(selectedEvent, date);
         prepareData();
+        updateNotifications();
     }
 
     public void scheduleNotification(int alarmType) {
@@ -390,6 +423,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 if (now.get(Calendar.HOUR_OF_DAY) >= alarmHour) {
                     alarmTime.add(Calendar.DAY_OF_YEAR, 1);
                 }
+            } else if (alarmType == ALARM_NOW) {
+                alarmTime.setTimeInMillis(System.currentTimeMillis());
             } else if (alarmType == ALARM_TEST_DELAYED) {
                 alarmTime.setTimeInMillis(System.currentTimeMillis());
                 alarmTime.add(Calendar.SECOND, 3);

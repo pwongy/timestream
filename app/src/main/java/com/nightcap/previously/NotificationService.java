@@ -24,6 +24,9 @@ public class NotificationService extends IntentService {
     final String KEY_VIBRATE = "notifications_vibrate";
     final String KEY_RINGTONE = "notifications_ringtone";
 
+    // Set an ID for the notification
+    static final int overdueNotificationId = 001;
+
     // Keys (from old app, repurpose or delete these later...)
     public static final String ACTION_UPDATE_DATA = "com.nightcap.oleo.beta.UPDATE_DATA";
 
@@ -41,6 +44,9 @@ public class NotificationService extends IntentService {
     public static final int CODE_NO_NEW_DATA = -11;
     public static final int CODE_NO_DATA_CONNECTION = 404;
 
+    // Get an instance of the NotificationManager service
+    NotificationManager nm;
+
     public NotificationService() {
         super("NotificationService");
     }
@@ -48,6 +54,7 @@ public class NotificationService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "NotificationService intent triggered by alarm");
+        nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         // Check database for overdue tasks
         DatabaseHandler databaseHandler = new DatabaseHandler(this);
@@ -57,6 +64,9 @@ public class NotificationService extends IntentService {
         if (overdueList.size() > 0) {
             Log.d(TAG, "There are overdue events; setting notification");
             setNotification(overdueList);
+        } else {
+            Log.d(TAG, "No more overdue events; removing notification");
+            nm.cancel(overdueNotificationId);
         }
 
 //        boolean isAlarmed = intent.getBooleanExtra(EXTRA_ALARM_TRIGGERED, true);
@@ -129,9 +139,14 @@ public class NotificationService extends IntentService {
                         .setContentIntent(resultPendingIntent)
                         .setPriority(Notification.PRIORITY_LOW);
 
-        // Add overdue events
-        String overdueString = "You have " + overdue.size() + " overdue events.";
-        builder.setContentText(overdueString);
+        // Add overdue events text, and handle plurals
+        String overdueText;
+        if (overdue.size() == 1) {
+            overdueText = "You have " + overdue.size() + " overdue event.";
+        } else {
+            overdueText = "You have " + overdue.size() + " overdue events.";
+        }
+        builder.setContentText(overdueText);
 
         // Account for notification vibration preference
         if (prefs.getBoolean(KEY_VIBRATE, true)) {  // Vibration preference
@@ -139,13 +154,8 @@ public class NotificationService extends IntentService {
             builder.setVibrate(new long[] { 50, 50, 50, 50, 50, 50, 50, 50, 50 });   // Delay, on, off, on...
         }
 
-        // Set an ID for the notification
-        int mNotificationId = 001;
-        // Get an instance of the NotificationManager service
-        NotificationManager nm =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         // Build the notification and issues it
-        nm.notify(mNotificationId, builder.build());
+        nm.notify(overdueNotificationId, builder.build());
     }
 
 }
