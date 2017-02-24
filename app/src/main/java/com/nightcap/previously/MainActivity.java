@@ -181,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             case R.id.action_sort:
                 showSortDialog();
                 break;
-            case R.id.action_crash:
-                throw new RuntimeException("This is a crash");
+//            case R.id.action_crash:
+//                throw new RuntimeException("This is a crash");
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
 
