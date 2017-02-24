@@ -252,7 +252,7 @@ class DatabaseHandler {
                 .findAllSorted("date", Sort.DESCENDING);
 
         List<Event> eventsMatchingName = eventLog.copyFromRealm(queryResults);
-        Log.d(TAG, "Events by name: " + eventsMatchingName.toString());
+//        Log.d(TAG, "Events by name: " + eventsMatchingName.toString());
         return eventsMatchingName;
     }
 
@@ -267,7 +267,7 @@ class DatabaseHandler {
                 .findAll();
 
         Event eventMatchingId = eventLog.copyFromRealm(queryResults).get(0);
-        Log.d(TAG, "Event by ID: " + eventMatchingId.getName());
+//        Log.d(TAG, "Event by ID: " + eventMatchingId.getName());
         return eventMatchingId;
     }
 
