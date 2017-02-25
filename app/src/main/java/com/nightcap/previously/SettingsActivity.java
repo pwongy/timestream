@@ -177,6 +177,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design guidelines.
             bindPreferenceSummaryToValue(findPreference("date_behaviour"));
             bindPreferenceSummaryToValue(findPreference("warning_period"));
+            bindPreferenceSummaryToValue(findPreference("sort_no_next_due"));
             bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
             bindPreferenceSummaryToValue(findPreference("notification_time"));
 
