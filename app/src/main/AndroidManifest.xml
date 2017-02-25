@@ -26,8 +26,7 @@
             android:label="@string/edit_event"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".EventInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".EventInfoActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />

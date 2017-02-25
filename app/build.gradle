@@ -34,7 +34,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     return void;    // TODO: Can delete when updated to Android Studio 2.3
 }
 

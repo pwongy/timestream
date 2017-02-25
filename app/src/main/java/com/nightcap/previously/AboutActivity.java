@@ -23,10 +23,12 @@ public class AboutActivity extends AppCompatActivity {
         // Inflate xml layout
         setContentView(R.layout.activity_about);
 
-        // Get reference to the actionbar
+        // Configure ActionBar
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
 
         // Version number
         TextView versionView = (TextView) findViewById(R.id.about_version);

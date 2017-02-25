@@ -5,12 +5,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
-    private String TAG = "EventActivity";
+    private String TAG = "InfoActivity";
     private DatabaseHandler databaseHandler;
     private DateHandler dh = new DateHandler();
     private Event selectedEvent;
@@ -38,11 +38,8 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
-        // Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.event_info_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Get reference to ActionBar
+        ActionBar actionBar = getSupportActionBar();
 
         // Floating action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.event_info_fab);
@@ -63,7 +60,12 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         int eventId = getIntent().getIntExtra("event_id", 0);
         selectedEvent = databaseHandler.getEventById(eventId);
 
-        getSupportActionBar().setTitle(selectedEvent.getName());
+        // Configure ActionBar
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setTitle(selectedEvent.getName());
+        }
 
         // Card 1 - Info
         periodView = (TextView) findViewById(R.id.card_info_period_value);
