@@ -35,7 +35,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
         @Override
         public void onClick(View view) {
             // Send date to calling Activity (when the list view row is clicked)
-            eventListener.onReceiveEventFromAdapter(historyList.get(getAdapterPosition()));
+            eventListener.onReceiveEventFromAdapter(historyList.get(getAdapterPosition()), "");
 
             // Update highlighted view
             selectedTextView.setTextColor(ContextCompat.getColor(context, R.color.colorDateText));

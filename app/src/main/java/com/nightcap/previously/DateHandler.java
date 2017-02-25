@@ -1,7 +1,6 @@
 package com.nightcap.previously;
 
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -18,16 +17,33 @@ class DateHandler {
 
     }
 
+    /**
+     * Provides a formatted string corresponding to date components.
+     * @param year     Year
+     * @param month    Month
+     * @param day      Day of month
+     * @return The corresponding date string.
+     */
     String dateToString(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
         return DateFormat.getDateInstance().format(cal.getTime());
     }
 
+    /**
+     * Provides a formatted string corresponding to a Date.
+     * @param date      Date
+     * @return The corresponding date string.
+     */
     String dateToString(Date date) {
         return DateFormat.getDateInstance().format(date);
     }
 
+    /**
+     * Provides a date corresponding to a formatted string.
+     * @param dateString      The date string
+     * @return The corresponding date object.
+     */
     Date stringToDate(String dateString) {
         DateFormat df = DateFormat.getDateInstance();
         Date date = new Date();
@@ -41,6 +57,13 @@ class DateHandler {
         return date;
     }
 
+    /**
+     * Provides a date corresponding to specified date components.
+     * @param year     Year
+     * @param month    Month
+     * @param day      Day of month
+     * @return The corresponding date object.
+     */
     Date dateFromComponents(int year, int month, int day) {
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day);
@@ -55,7 +78,7 @@ class DateHandler {
     }
 
     /**
-     * Gets today's date, ignoring time fields.
+     * Convenience method of getting today's date, ignoring time fields.
      * @return Today's date.
      */
     Date getTodayDate() {
@@ -91,36 +114,31 @@ class DateHandler {
         return nextTime;
     }
 
+    /**
+     * Compute elapsed time between two days.
+     *
+     * @param relativeDate    The day of interest.
+     * @param anchorDate      The fixed day for comparison.
+     * @return The number of days in between the two specified days.
+     */
     long getDaysBetween(Date relativeDate, Date anchorDate) {
-        // Compute elapsed time since the latest data record
-        String relativeDays = DateUtils.getRelativeTimeSpanString(relativeDate.getTime(),
-                anchorDate.getTime(), DateUtils.DAY_IN_MILLIS).toString();
-        Log.d(TAG, "String: " + relativeDays);
-
-//        if (relativeDays.substring(relativeDays.length() - 4).equalsIgnoreCase("days")) {
-//            Log.d(TAG, "")
-//        }
-
         // Time difference in millis
         long difference = relativeDate.getTime() - anchorDate.getTime();
-        long days = difference / DateUtils.DAY_IN_MILLIS;
+        long daysBetween = difference / DateUtils.DAY_IN_MILLIS;
 //        long remainder = difference % DateUtils.DAY_IN_MILLIS;
 
 //        Log.d(TAG, "Relative days: " + days);
 //        Log.d(TAG, " -- Remainder: " + remainder);
 
-//        if (relativeDays.equalsIgnoreCase("Yesterday")) {
-//            daysBetween = 1;
-//        } else {
-//            // Get the number of days since the latest stored data.
-//            // Smallest number expected is 2, representing the day before yesterday.
-//            // Use this to determine the number of new data points to shift and add.
-//            int firstSpaceIndex = relativeDays.indexOf(' ');
-//            daysBetween = Integer.parseInt(relativeDays.substring(0, firstSpaceIndex));
-//        }
-        return days;
+        return daysBetween;
     }
 
+    /**
+     * Format the day difference into the desired string format.
+     *
+     * @param daysBetween    The number of days difference.
+     * @return String corresponding to the difference.
+     */
     String getRelativeDaysString(long daysBetween) {
         String relativeDays = "";
 

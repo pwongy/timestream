@@ -14,7 +14,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.Date;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Activity for editing events before storage to database.
@@ -108,16 +113,13 @@ public class EditActivity extends AppCompatActivity {
 //            }
 //        });
 
+        // Initialise Answers
+        Fabric.with(this, new Answers());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-//        RelativeLayout header = (RelativeLayout) findViewById(R.id.detail_head_space);
-//        Log.i(TAG, "Header height: " + header.getHeight());
-//        fab.setY(header.getHeight());
-
     }
 
     @Override
@@ -176,7 +178,9 @@ public class EditActivity extends AppCompatActivity {
             // Create unmanaged event
             Event event = new Event();
 
-            // ID depends on whether we are creating a new event or editing an existing one
+            // ID depends on whether we are creating a new event or editing an existing one.
+            // Existing event should reuse their allocated ID.
+            // New events should start a new ID (hence the increment).
             int id;
             if (isEditExistingEvent) {
                 id = databaseHandler.getEventById(editId).getId();
@@ -193,6 +197,13 @@ public class EditActivity extends AppCompatActivity {
 
             // Save the unmanaged event to Realm
             databaseHandler.saveEvent(event);
+            if (!isEditExistingEvent) { // Must be a new event
+                // Insight tracking via Answers
+                Answers.getInstance().logCustom(new CustomEvent("Added a new event")
+                        .putCustomAttribute("Event name", event.getName())
+                        .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
+                Log.i(TAG, "Logged new event to Answers");
+            }
 
             // TODO: Set common values for similar events
             if (!eventName.equals(oldName)) {

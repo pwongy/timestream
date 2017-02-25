@@ -27,7 +27,6 @@
             android:prompt="@string/pref_title_sort_field"
             android:padding="@dimen/card_padding"
             android:layout_toStartOf="@+id/image_button_1" />
-
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

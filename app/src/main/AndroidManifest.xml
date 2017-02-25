@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nightcap.previously">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,6 +34,12 @@
         <activity
             android:name=".AboutActivity"
             android:label="@string/action_about" />
+        <service
+            android:name=".NotificationService"
+            android:enabled="true" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="d0a42e59c7a52d07e2da734d193928a31199bf0b" />
     </application>
 
 </manifest>

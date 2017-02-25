@@ -176,8 +176,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("default_done_today"));
+            bindPreferenceSummaryToValue(findPreference("date_behaviour"));
             bindPreferenceSummaryToValue(findPreference("warning_period"));
+            bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
+            bindPreferenceSummaryToValue(findPreference("notification_time"));
 
             // Samples (to be deleted)
             bindPreferenceSummaryToValue(findPreference("example_list"));

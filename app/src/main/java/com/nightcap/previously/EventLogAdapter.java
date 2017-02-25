@@ -1,7 +1,6 @@
 package com.nightcap.previously;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -27,8 +26,12 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     private List<Event> eventList;
     private DateHandler dh = new DateHandler();
 
+    static final String FLAG_MARK_DONE_PRIMARY = "event_done_primary";
+    static final String FLAG_MARK_DONE_SECONDARY = "event_done_secondary";
+    static final String FLAG_SHOW_EVENT_INFO = "event_info";
+
     // ViewHolder pattern as required
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView nameView, previousDateView, nextDateView;
         RoundCornerProgressBar progressBar;
         ImageButton imageButton;
@@ -47,21 +50,28 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             // Set listeners
             view.setOnClickListener(this);
             imageButton.setOnClickListener(this);
+            imageButton.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             if (view.getId() == imageButton.getId()) {
-                // Tick is clicked, so send the event to MainActivity
-                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()));
+                // Tick image button was clicked, so get MainActivity to mark it as done
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_MARK_DONE_PRIMARY);
             } else {
-                // Intent to show event info
-                Intent info = new Intent(view.getContext(), EventInfoActivity.class);
-                info.putExtra("event_id", eventList.get(getAdapterPosition()).getId());
-                view.getContext().getApplicationContext().startActivity(info);
+                // The list item body was clicked, so get MainActivity to show event info
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_SHOW_EVENT_INFO);
             }
         }
 
+        @Override
+        public boolean onLongClick(View view) {
+            if (view.getId() == imageButton.getId()) {
+                // Tick image button was long clicked, so get MainActivity to mark it as done
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_MARK_DONE_SECONDARY);
+            }
+            return true;
+        }
     }
 
     // Constructor
@@ -81,21 +91,6 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             eventList = list;
         }
         notifyDataSetChanged();
-
-//        for (Event e : list) {
-//            if (e.hasPeriod()) {
-//                View v = rv.getLayoutManager().findViewByPosition(list.indexOf(e)).getRootView();
-//                TextView nameView = (TextView) v.findViewById(R.id.list_event_name);
-//                long relativeDays = dh.getDaysBetween(e.getNextDue(), dh.getTodayDate());
-//
-//                if (relativeDays <= 7) {
-//                    nameView.setTextColor(ContextCompat.getColor(context, R.color.colorWarning));
-//                }
-//                if (relativeDays <= 0) {
-//                    nameView.setTextColor(ContextCompat.getColor(context, R.color.colorOverdue));
-//                }
-//            }
-//        }
     }
 
     // To inflate the item layout and create the ViewHolder
@@ -147,8 +142,9 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
                 holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorOverdue));
             }
 
-            holder.progressBar.setProgress((float) -relativeDaysPrevious);
+            // Set progress bar
             holder.progressBar.setMax((float) event.getPeriod());
+            holder.progressBar.setProgress(-relativeDaysPrevious);
 
             // Add next due date
             holder.nextDateView.setText(dh.dateToString(event.getNextDue())

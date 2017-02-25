@@ -1,10 +1,16 @@
 package com.nightcap.previously;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.service.notification.StatusBarNotification;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +20,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,9 +28,16 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Main Activity. Displays existing database events.
@@ -32,37 +46,48 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
     private String TAG = "MainActivity";
 
-    // Realm database
+    // A handler to access the Realm (database).
+    // Any interactions with the Realm should go through this.
     private DatabaseHandler databaseHandler;
 
-    // User preferences
+    // Variables to access user preferences, defined in the app settings.
     private SharedPreferences prefs;
     final String KEY_SORT_FIELD = "sort_primary_field";
     final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
-//    final String SORT_SECONDARY_KEY = "sort_secondary_ascending";
+    final String KEY_NOTIFICATIONS = "notifications_toggle";
 
-    // RecyclerView
+    // RecyclerView for displaying the log, and associated adapter.
     RecyclerView recyclerView;
     private List<Event> eventList = new ArrayList<>();
     private EventLogAdapter eventLogAdapter;
 
+    // The currently selected event.
     Event selectedEvent;
+
+    // Alarm type codes for scheduling the (background) notification service.
+    final int ALARM_DEFAULT = 0;
+    final int ALARM_NOW = 1;
+    final int ALARM_TEST_DELAYED = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // User settings
+        // Track crashes and usage stats using Fabric
+        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Answers());
+
+        // Get user settings
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         // Inflate xml layout
         setContentView(R.layout.activity_main);
 
-        // Toolbar
+        // Get the Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        // FAB
+        // Set up the FAB
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.main_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,17 +98,20 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             }
         });
 
-        // Get a data handler, which initialises Realm during construction
+        // Get a database handler
+        // (Realm is initialised during its construction so no need to do that here.)
         databaseHandler = new DatabaseHandler(this);
 
-        // Recycler view
+        // Set up the RecyclerView
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
+        // LayoutManager must be set before adapter
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator line
         recyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
@@ -110,6 +138,13 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
+
+        // Notification (currently testing)
+        scheduleNotification(ALARM_DEFAULT);
+
+        // Insight tracking via Answers
+        Answers.getInstance().logCustom(new CustomEvent("Opened app"));
+        Log.i(TAG, "Logged app opening to Answers");
     }
 
     @Override
@@ -118,6 +153,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         prepareData();
     }
 
+    /**
+     * Get data items from the Realm and apply to the adapter.
+     */
     private void prepareData() {
         // Get data from Realm
         eventList = databaseHandler.getLatestDistinctEvents(prefs.getString(KEY_SORT_FIELD, "name"),
@@ -127,6 +165,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         eventLogAdapter.updateData(eventList);
     }
 
+    /*
+     * Here we create and handle actions from the overflow menu.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -157,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 Intent about = new Intent(this, AboutActivity.class);
                 startActivity(about);
                 break;
+//            case R.id.action_crash:
+//                throw new RuntimeException("This is a crash");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -169,8 +212,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_sort, null);
         dialogBuilder.setView(dialogView);
-
-//        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
 
         // Set initial spinner selection
         final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
@@ -213,32 +254,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             }
         });
 
-        // Sort order - button 2
-//        final ImageButton ib2 = (ImageButton) dialogView.findViewById(R.id.image_button_2);
-//
-//        if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
-//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
-//        } else {
-//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
-//        }
-//
-//        ib2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
-//                    // Currently set as ascending, so switch to descending
-//                    setBooleanPreference(SORT_SECONDARY_KEY, false);
-//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
-//                } else {
-//                    // Currently set as descending, so switch to ascending
-//                    setBooleanPreference(SORT_SECONDARY_KEY, true);
-//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
-//                }
-//            }
-//        });
-
-        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
-        dialogBuilder.setPositiveButton("Sort", new DialogInterface.OnClickListener() {
+//        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
+        dialogBuilder.setPositiveButton(getString(R.string.dialog_sort_button_text), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Get spinner position and set sort preference to corresponding value
                 int spinnerPosition = spinner1.getSelectedItemPosition();
@@ -249,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 prepareData();
             }
         });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button_text), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Pass
             }
@@ -273,24 +290,77 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     }
 
     /**
-     * The tick button has been pressed, indicating an event is to be marked as done.
-     * @param event The event that was done.
+     * An event item has been pressed, and needs to be handled.
+     * @param event The event that was pressed.
+     * @param flag  A flag to indicate what action to take on the event.
      */
     @Override
-    public void onReceiveEventFromAdapter(Event event) {
+    public void onReceiveEventFromAdapter(Event event, String flag) {
         selectedEvent = event;
-        String doneDatePref = prefs.getString("default_done_today", "0");
+        String dateBehaviour = prefs.getString("date_behaviour", "0");
 
         // Mark event as done
-        if (doneDatePref.equalsIgnoreCase(getResources()
-                .getStringArray(R.array.pref_default_date_values)[0])) {
-            showDatePickerDialog(getCurrentFocus());
-        } else if (doneDatePref.equalsIgnoreCase(getResources()
-                .getStringArray(R.array.pref_default_date_values)[1])) {
-            // Mark currently opened event as done today
-            databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+        if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_MARK_DONE_PRIMARY)) {
+            // We need to consider the date behaviour preference
+            if (dateBehaviour.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[0])) {
+                // Show the date picker and save event after a date is selected and received
+                // (See associated methods below).
+                showDatePickerDialog(getCurrentFocus());
+            } else if (dateBehaviour.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[1])) {
+                // Mark currently opened event as done today
+                databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+                prepareData();
+                updateNotifications();
+            }
+        } else if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_MARK_DONE_SECONDARY)) {
+            // We need to consider the date behaviour preference
+            // Flipped relative to above
+            if (dateBehaviour.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[0])) {
+                // Mark currently opened event as done today
+                databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+                prepareData();
+                updateNotifications();
+            } else if (dateBehaviour.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[1])) {
+                // Show the date picker and save event after a date is selected and received
+                // (See associated methods below).
+                showDatePickerDialog(getCurrentFocus());
+            }
+        } else if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_SHOW_EVENT_INFO)) {
+            // Intent to show event info
+            Intent info = new Intent(this, EventInfoActivity.class);
+            info.putExtra("event_id", event.getId());
+            startActivity(info);
+        }
 
-            prepareData();
+    }
+
+    /**
+     * Updates the overdue notification if it is already active.
+     */
+    private void updateNotifications() {
+        // Check if an overdue item notification is still active
+        // Get an instance of the NotificationManager service
+        NotificationManager nm =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            StatusBarNotification[] activeNotifications = nm.getActiveNotifications();
+            Log.d(TAG, "Number of active notifications: " + activeNotifications.length);
+
+            if (activeNotifications.length > 0) {
+                for (StatusBarNotification n : activeNotifications) {
+                    if (n.getId() == NotificationService.overdueNotificationId) {
+                        // We know that the notification is active, so update it
+                        scheduleNotification(ALARM_NOW);
+                    }
+                }
+            }
+        } else {
+            // Do something for phones running an earlier SDK
         }
     }
 
@@ -300,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     }
 
     /**
-     * The tick button has been pressed and the event to be marked done now has an associated done
+     * The tick button was pressed and the event to be marked done now has an associated done
      * date from the dialog.
      * @param date The date the event was done.
      */
@@ -309,5 +379,51 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         // Attempt to mark currently opened event as done
         databaseHandler.markEventDone(selectedEvent, date);
         prepareData();
+        updateNotifications();
+    }
+
+    public void scheduleNotification(int alarmType) {
+        // Get notifications preference
+        boolean showNotifications = prefs.getBoolean(KEY_NOTIFICATIONS, true);
+
+        if (showNotifications) {
+            // Intent to schedule notifications
+            Intent notifyIntent = new Intent(getApplicationContext(), NotificationService.class);
+//        notifyIntent.putExtra(NotificationService.EXTRA_ALARM_TRIGGERED, true);
+            PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0,
+                    notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            // Set the alarm time
+            Calendar alarmTime = Calendar.getInstance();
+            int alarmHour = 7;     // At 7:00 AM, or TODO: by preference
+
+            if (alarmType == ALARM_DEFAULT) {
+                alarmTime.set(Calendar.HOUR_OF_DAY, alarmHour);
+                alarmTime.set(Calendar.MINUTE, 0);
+                alarmTime.set(Calendar.SECOND, 0);
+
+                // If current time is after today's alarm, set it for tomorrow
+                Calendar now = Calendar.getInstance();
+                if (now.get(Calendar.HOUR_OF_DAY) >= alarmHour) {
+                    alarmTime.add(Calendar.DAY_OF_YEAR, 1);
+                }
+            } else if (alarmType == ALARM_NOW) {
+                alarmTime.setTimeInMillis(System.currentTimeMillis());
+            } else if (alarmType == ALARM_TEST_DELAYED) {
+                alarmTime.setTimeInMillis(System.currentTimeMillis());
+                alarmTime.add(Calendar.SECOND, 3);
+            }
+
+            Log.d(TAG, "Notifications scheduled for: " + alarmTime.getTime().toString());
+
+            // With setInexactRepeating(), you have to use one of the AlarmManager interval
+            // constants - in this case, AlarmManager.INTERVAL_DAY.
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+            // TODO: Switch this after testing phase
+//            am.setInexactRepeating(AlarmManager.RTC, alarmTime.getTimeInMillis(),
+//                    AlarmManager.INTERVAL_DAY, pendingIntent);
+            am.setExact(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+        }
     }
 }

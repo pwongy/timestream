@@ -1,10 +1,8 @@
 package com.nightcap.previously;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +11,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,9 +28,8 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     private String TAG = "EventActivity";
     private DatabaseHandler databaseHandler;
     private DateHandler dh = new DateHandler();
-    int eventId;
-    Event selectedEvent;
-    TextView periodView, nextDueView, notesView;
+    private Event selectedEvent;
+    private TextView periodView, nextDueView, notesView;
     private List<Event> historyList = new ArrayList<>();
     private HistoryAdapter historyAdapter;
 
@@ -41,10 +37,6 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
-
-        // User settings
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        final String doneDatePref = prefs.getString("default_done_today", "0");
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_info_toolbar);
@@ -57,17 +49,10 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, doneDatePref);
-
-                if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_date_values)[0])) {
-                    showDatePickerDialog(view);
-                } else if (doneDatePref.equalsIgnoreCase(getResources()
-                        .getStringArray(R.array.pref_default_date_values)[1])) {
-                    // Mark currently opened event as done today
-                    databaseHandler.markEventDone(selectedEvent, dh.getTodayDate());
-                    prepareHistory();
-                }
+                // Intent to edit event
+                Intent edit = new Intent(getApplicationContext(), EditActivity.class);
+                edit.putExtra("edit_id", selectedEvent.getId());
+                startActivity(edit);
             }
         });
 
@@ -75,7 +60,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         databaseHandler = new DatabaseHandler(this);
 
         // Get selected event
-        eventId = getIntent().getIntExtra("event_id", 0);
+        int eventId = getIntent().getIntExtra("event_id", 0);
         selectedEvent = databaseHandler.getEventById(eventId);
 
         getSupportActionBar().setTitle(selectedEvent.getName());
@@ -106,7 +91,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         prepareHistory();
     }
 
-    public void onReceiveEventFromAdapter(Event event) {
+    public void onReceiveEventFromAdapter(Event event, String flag) {
         // Update info on cards to match the selected event from history
         selectedEvent = event;
         updateInfoCard();
@@ -118,11 +103,11 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
             periodView.setText(getString(R.string.event_no_repeat));
             periodView.setTypeface(periodView.getTypeface(), Typeface.ITALIC);
 
-            nextDueView.setText("N/A");
+            nextDueView.setText(getString(R.string.event_not_applicable));
             nextDueView.setTypeface(nextDueView.getTypeface(), Typeface.ITALIC);
         } else {
-            String period = String.valueOf(selectedEvent.getPeriod()) + " "
-                    + getString(R.string.unit_suffix_days);
+            String period = String.format(getString(R.string.event_period),
+                    selectedEvent.getPeriod(), getString(R.string.unit_days));
             periodView.setText(period);
             periodView.setTypeface(null, Typeface.NORMAL);
 
@@ -175,14 +160,13 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
                 // If app icon in Action Bar clicked, go home
                 finish();
                 break;
-            case R.id.action_edit:
-                // Intent to edit event
-                Intent edit = new Intent(getApplicationContext(), EditActivity.class);
-                edit.putExtra("edit_id", selectedEvent.getId());
-                startActivity(edit);
+            case R.id.action_mark_done:
+                // Show date picker
+                showDatePickerDialog(getCurrentFocus());
                 break;
             case R.id.action_delete:
                 databaseHandler.deleteEvent(selectedEvent.getId());
+//                prepareHistory();
                 finish();
                 break;
         }
