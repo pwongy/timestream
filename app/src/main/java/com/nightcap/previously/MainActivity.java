@@ -184,8 +184,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             case R.id.action_sort:
                 showSortDialog();
                 break;
-//            case R.id.action_crash:
-//                throw new RuntimeException("This is a crash");
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
 
@@ -200,6 +198,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 Intent about = new Intent(this, AboutActivity.class);
                 startActivity(about);
                 break;
+//            case R.id.action_crash:
+//                throw new RuntimeException("This is a crash");
         }
         return super.onOptionsItemSelected(item);
     }
@@ -212,8 +212,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_sort, null);
         dialogBuilder.setView(dialogView);
-
-//        final Spinner spinner2 = (Spinner) dialogView.findViewById(R.id.spinner_sort_secondary);
 
         // Set initial spinner selection
         final Spinner spinner1 = (Spinner) dialogView.findViewById(R.id.spinner_sort_primary);
@@ -255,30 +253,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 }
             }
         });
-
-        // Sort order - button 2
-//        final ImageButton ib2 = (ImageButton) dialogView.findViewById(R.id.image_button_2);
-//
-//        if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
-//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
-//        } else {
-//            ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
-//        }
-//
-//        ib2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (prefs.getBoolean(SORT_SECONDARY_KEY, true)) {
-//                    // Currently set as ascending, so switch to descending
-//                    setBooleanPreference(SORT_SECONDARY_KEY, false);
-//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
-//                } else {
-//                    // Currently set as descending, so switch to ascending
-//                    setBooleanPreference(SORT_SECONDARY_KEY, true);
-//                    ib2.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
-//                }
-//            }
-//        });
 
 //        dialogBuilder.setTitle(getResources().getString(R.string.pref_title_sort_field));
         dialogBuilder.setPositiveButton(getString(R.string.dialog_sort_button_text), new DialogInterface.OnClickListener() {
@@ -416,8 +390,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             // Intent to schedule notifications
             Intent notifyIntent = new Intent(getApplicationContext(), NotificationService.class);
 //        notifyIntent.putExtra(NotificationService.EXTRA_ALARM_TRIGGERED, true);
-//        notifyIntent.putExtra(NotificationService.EXTRA_UPDATE_CITY, getCityName());
-//        notifyIntent.putExtra(NotificationService.EXTRA_UPDATE_FUEL, getFuelType());
             PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 0,
                     notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 

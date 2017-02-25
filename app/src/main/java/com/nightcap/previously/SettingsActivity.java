@@ -179,6 +179,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("date_behaviour"));
             bindPreferenceSummaryToValue(findPreference("warning_period"));
             bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
+            bindPreferenceSummaryToValue(findPreference("notification_time"));
 
             // Samples (to be deleted)
             bindPreferenceSummaryToValue(findPreference("example_list"));

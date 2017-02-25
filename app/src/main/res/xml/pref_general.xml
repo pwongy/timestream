@@ -6,11 +6,9 @@
         <!-- NOTE: EditTextPreference accepts EditText attributes. -->
         <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
         <EditTextPreference
-            android:capitalize="sentences"
+            android:key="warning_period"
             android:defaultValue="@string/pref_default_warning_period"
             android:inputType="number"
-            android:key="warning_period"
-            android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/pref_title_warning_period" />
@@ -37,32 +35,36 @@
         <!-- A 'parent' preference, which enables/disables child preferences (below)
         when checked/unchecked. -->
         <SwitchPreference
-            android:defaultValue="true"
             android:key="notifications_toggle"
+            android:defaultValue="true"
             android:summary="@string/pref_description_notifications"
             android:title="@string/pref_title_notifications" />
-
-        <EditTextPreference
-            android:defaultValue="7am"
-            android:key="notification_time"
-            android:title="@string/pref_title_notification_time" />
 
         <!-- Allows the user to choose a ringtone in the 'notification' category. -->
         <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
         <!-- NOTE: RingtonePreference's summary should be set to its value by the activity code. -->
         <RingtonePreference
+            android:key="notifications_ringtone"
             android:defaultValue="content://settings/system/notification_sound"
             android:dependency="notifications_toggle"
-            android:key="notifications_ringtone"
             android:ringtoneType="notification"
             android:title="@string/pref_title_ringtone" />
 
         <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
         <CheckBoxPreference
+            android:key="notifications_vibrate"
             android:defaultValue="true"
             android:dependency="notifications_toggle"
-            android:key="notifications_vibrate"
             android:title="@string/pref_title_vibrate" />
+
+        <EditTextPreference
+            android:key="notification_time"
+            android:defaultValue="7"
+            android:inputType="number"
+            android:dependency="notifications_toggle"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_notification_time" />
 
     </PreferenceCategory>
 

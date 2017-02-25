@@ -32,19 +32,10 @@ public class NotificationService extends IntentService {
 
     public static final String EXTRA_UPDATE_CITY = "com.nightcap.oleo.beta.UPDATE_CITY";
     public static final String EXTRA_UPDATE_FUEL = "com.nightcap.oleo.beta.UPDATE_FUEL";
-    public static final String EXTRA_MOST_RECENT_DATA_TIME = "com.nightcap.oleo.beta.MOST_RECENT_DATA_TIME";
-    public static final String EXTRA_UPDATE_RESULT = "com.nightcap.oleo.beta.UPDATE_RESULT";
-    public static final String EXTRA_ALARM_TRIGGERED = "com.nightcap.oleo.beta.ALARM_TRIGGERED";
 
     private final static String KEY_NOTIFICATION_PRIORITY = "notifications_priority";
 
-    // Codes for broadcasting
-    public static final int CODE_UPDATE_SUCCESSFUL = 42;
-    public static final int CODE_UPDATE_UNSUCCESSFUL = -100;
-    public static final int CODE_NO_NEW_DATA = -11;
-    public static final int CODE_NO_DATA_CONNECTION = 404;
-
-    // Get an instance of the NotificationManager service
+    // NotificationManager Service
     NotificationManager nm;
 
     public NotificationService() {
@@ -69,51 +60,6 @@ public class NotificationService extends IntentService {
             nm.cancel(overdueNotificationId);
         }
 
-//        boolean isAlarmed = intent.getBooleanExtra(EXTRA_ALARM_TRIGGERED, true);
-//        if (isAlarmed) {
-//
-//        }
-
-//        // See if local data is obsolete
-//        dataHandler = new DatabaseHandler(getApplicationContext());
-//        String city = intent.getStringExtra(EXTRA_UPDATE_CITY);
-//        String fuel = intent.getStringExtra(EXTRA_UPDATE_FUEL);
-//
-//        boolean isDataObsolete = true; // dataHandler.checkPhoneData(city, fuel);
-//
-//        if (isDataObsolete) {
-//            Log.d(TAG,"Phone data may be out of date");
-//
-//            // Check connectivity
-//            ConnectivityManager cm =
-//                    (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//            NetworkInfo netInfo = cm.getActiveNetworkInfo();
-//
-//            if (netInfo != null && netInfo.isConnected()) {
-//                Log.d(TAG, "Data connection available");
-//                try {
-////                    new UpdateAllDataTask().execute();
-////                    getNewData(city, fuel);
-//                    Log.d(TAG, "Getting new data");
-//                } catch(Exception e) {
-//                    publishResults(CODE_UPDATE_UNSUCCESSFUL);
-//                    e.printStackTrace();
-//                }
-//            } else {
-//                publishResults(CODE_NO_DATA_CONNECTION);
-//                // Reschedule for later
-//            }
-//        } else {
-//            Log.d(TAG, "Not updating because local data is current");
-//            publishResults(NotificationService.CODE_NO_NEW_DATA);
-//        }
-    }
-
-    private void publishResults(int result) {
-//        // Acknowledge data transfer to InfoFragment
-//        Intent intent = new Intent(ACTION_UPDATE_DATA);
-//        intent.putExtra(EXTRA_UPDATE_RESULT, result);
-//        sendBroadcast(intent);
     }
 
     public void setNotification(List<Event> overdue) {
@@ -151,7 +97,6 @@ public class NotificationService extends IntentService {
 
         // Account for notification vibration preference
         if (prefs.getBoolean(KEY_VIBRATE, true)) {  // Vibration preference
-//            builder.setVibrate(new long[] { 50, 100, 200, 50, 100, 50 });   // Delay, on, off, on...
             builder.setVibrate(new long[] { 50, 50, 50, 50, 50, 50, 50, 50, 50 });   // Delay, on, off, on...
         }
 

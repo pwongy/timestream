@@ -120,11 +120,6 @@ public class EditActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-//        RelativeLayout header = (RelativeLayout) findViewById(R.id.detail_head_space);
-//        Log.i(TAG, "Header height: " + header.getHeight());
-//        fab.setY(header.getHeight());
-
     }
 
     @Override
