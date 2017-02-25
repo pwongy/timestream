@@ -26,11 +26,12 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
     private List<Event> eventList;
     private DateHandler dh = new DateHandler();
 
-    static final String FLAG_MARK_EVENT_DONE = "event_done";
+    static final String FLAG_MARK_DONE_PRIMARY = "event_done_primary";
+    static final String FLAG_MARK_DONE_SECONDARY = "event_done_secondary";
     static final String FLAG_SHOW_EVENT_INFO = "event_info";
 
     // ViewHolder pattern as required
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView nameView, previousDateView, nextDateView;
         RoundCornerProgressBar progressBar;
         ImageButton imageButton;
@@ -49,17 +50,27 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             // Set listeners
             view.setOnClickListener(this);
             imageButton.setOnClickListener(this);
+            imageButton.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             if (view.getId() == imageButton.getId()) {
                 // Tick image button was clicked, so get MainActivity to mark it as done
-                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_MARK_EVENT_DONE);
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_MARK_DONE_PRIMARY);
             } else {
-                // The list item body was clicked, so get MainActivity to show event info (via new Activity)
+                // The list item body was clicked, so get MainActivity to show event info
                 eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_SHOW_EVENT_INFO);
             }
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            if (view.getId() == imageButton.getId()) {
+                // Tick image button was long clicked, so get MainActivity to mark it as done
+                eventListener.onReceiveEventFromAdapter(eventList.get(getAdapterPosition()), FLAG_MARK_DONE_SECONDARY);
+            }
+            return true;
         }
     }
 

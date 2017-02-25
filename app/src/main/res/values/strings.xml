@@ -68,7 +68,7 @@
     <string name="pref_category_saving">Saving events</string>
     <string name="pref_title_date_behaviour">Date behaviour</string>
     <string-array name="pref_date_behaviour_titles">
-        <item>Show date selector every time</item>
+        <item>Show date selector</item>
         <item>Default to today</item>
     </string-array>
     <string-array name="pref_default_date_values">

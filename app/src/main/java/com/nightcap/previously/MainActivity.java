@@ -143,9 +143,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         scheduleNotification(ALARM_DEFAULT);
 
         // Insight tracking via Answers
-        Answers.getInstance().logCustom(new CustomEvent("[TESTING] Opened app"));
+        Answers.getInstance().logCustom(new CustomEvent("Opened app"));
         Log.i(TAG, "Logged app opening to Answers");
-
     }
 
     @Override
@@ -324,11 +323,10 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     @Override
     public void onReceiveEventFromAdapter(Event event, String flag) {
         selectedEvent = event;
+        String dateBehaviour = prefs.getString("date_behaviour", "0");
 
-        if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_MARK_EVENT_DONE)) {
-            // Mark event as done
-            String dateBehaviour = prefs.getString("date_behaviour", "0");
-
+        // Mark event as done
+        if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_MARK_DONE_PRIMARY)) {
             // We need to consider the date behaviour preference
             if (dateBehaviour.equalsIgnoreCase(getResources()
                     .getStringArray(R.array.pref_default_date_values)[0])) {
@@ -339,9 +337,23 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                     .getStringArray(R.array.pref_default_date_values)[1])) {
                 // Mark currently opened event as done today
                 databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
-
                 prepareData();
                 updateNotifications();
+            }
+        } else if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_MARK_DONE_SECONDARY)) {
+            // We need to consider the date behaviour preference
+            // Flipped relative to above
+            if (dateBehaviour.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[0])) {
+                // Mark currently opened event as done today
+                databaseHandler.markEventDone(event, new DateHandler().getTodayDate());
+                prepareData();
+                updateNotifications();
+            } else if (dateBehaviour.equalsIgnoreCase(getResources()
+                    .getStringArray(R.array.pref_default_date_values)[1])) {
+                // Show the date picker and save event after a date is selected and received
+                // (See associated methods below).
+                showDatePickerDialog(getCurrentFocus());
             }
         } else if (flag.equalsIgnoreCase(EventLogAdapter.FLAG_SHOW_EVENT_INFO)) {
             // Intent to show event info

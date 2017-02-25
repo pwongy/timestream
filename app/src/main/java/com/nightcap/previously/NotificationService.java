@@ -119,6 +119,7 @@ public class NotificationService extends IntentService {
     public void setNotification(List<Event> overdue) {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Intent resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);  // Prevent double stacking
 
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.

@@ -79,12 +79,6 @@ class DatabaseHandler {
                 incrementEventCount();
             }
 
-            // Insight tracking via Answers
-            Answers.getInstance().logCustom(new CustomEvent("[TESTING] Logged an event")
-                    .putCustomAttribute("Event name", event.getName())
-                    .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
-            Log.i(TAG, "Logged event instance to Answers");
-
         } else {
             Log.d(TAG, "Duplicate event - ignored");
             Toast.makeText(appContext, "Event already logged on " + dateHandler.dateToString(event.getDate()),
@@ -120,6 +114,12 @@ class DatabaseHandler {
 
         // Once all the attribute fields are filled, we can save the event to the Realm
         saveEvent(event);
+
+        // Insight tracking via Answers
+        Answers.getInstance().logCustom(new CustomEvent("Logged an existing event")
+                .putCustomAttribute("Event name", event.getName())
+                .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
+        Log.i(TAG, "Logged event instance to Answers");
     }
 
     /**
