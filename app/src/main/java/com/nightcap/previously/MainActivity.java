@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -232,10 +233,21 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
         // Set initial sort order image from preferences
         final ImageButton ib1 = (ImageButton) dialogView.findViewById(R.id.image_button_1);
-        if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
-            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+        final Drawable ascendIcon, descendIcon;
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ascendIcon = getDrawable(R.drawable.ic_action_sort_ascending);
+            descendIcon = getDrawable(R.drawable.ic_action_sort_descending);
         } else {
-            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+            // Do something for phones running an earlier SDK
+            ascendIcon = getResources().getDrawable(R.drawable.ic_action_sort_ascending);
+            descendIcon = getResources().getDrawable(R.drawable.ic_action_sort_descending);
+        }
+
+        if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
+            ib1.setImageDrawable(ascendIcon);
+        } else {
+            ib1.setImageDrawable(descendIcon);
         }
 
         // Switch order on click
@@ -245,11 +257,11 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
                     // Currently set as ascending, so switch to descending
                     setBooleanPreference(KEY_SORT_ORDER_ASCENDING, false);
-                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+                    ib1.setImageDrawable(descendIcon);
                 } else {
                     // Currently set as descending, so switch to ascending
                     setBooleanPreference(KEY_SORT_ORDER_ASCENDING, true);
-                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+                    ib1.setImageDrawable(ascendIcon);
                 }
             }
         });

@@ -32,14 +32,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/image_button_1"
             android:src="@drawable/ic_action_sort_ascending"
-            android:background="?android:selectableItemBackground"
+            android:background="?android:selectableItemBackgroundBorderless"
             android:layout_gravity="end"
             android:padding="@dimen/sort_dialog_button_padding"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="@dimen/sort_dialog_button_margin_end"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            android:focusable="true" />
+            android:focusable="true"
+            android:backgroundTint="@color/colorPrimary"/>
 
     </RelativeLayout>
 
