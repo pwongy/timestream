@@ -65,8 +65,8 @@
     <string name="pref_default_warning_period" translatable="false">7</string>
     <string name="action_email_feedback">Contact developer</string>
 
-    <string name="pref_category_saving">Saving events</string>
-    <string name="pref_title_date_behaviour">Date behaviour</string>
+    <string name="pref_category_ui">User interface</string>
+    <string name="pref_title_date_behaviour">Primary date behaviour</string>
     <string-array name="pref_date_behaviour_titles">
         <item>Show date selector</item>
         <item>Default to today</item>

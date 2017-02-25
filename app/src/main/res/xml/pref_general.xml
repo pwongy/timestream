@@ -18,7 +18,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/pref_category_saving">
+        android:title="@string/pref_category_ui">
 
         <ListPreference
             android:key="date_behaviour"
