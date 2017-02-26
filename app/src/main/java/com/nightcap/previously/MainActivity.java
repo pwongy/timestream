@@ -434,10 +434,15 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             // constants - in this case, AlarmManager.INTERVAL_DAY.
             AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-            // TODO: Switch this after testing phase
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // TODO: Switch this after testing phase
 //            am.setInexactRepeating(AlarmManager.RTC, alarmTime.getTimeInMillis(),
 //                    AlarmManager.INTERVAL_DAY, pendingIntent);
-            am.setExact(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+                am.setExact(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+            } else {
+                // Do something for phones running an earlier SDK
+                am.set(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+            }
         }
     }
 }
