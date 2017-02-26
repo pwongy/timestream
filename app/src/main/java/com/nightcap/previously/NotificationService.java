@@ -60,6 +60,8 @@ public class NotificationService extends IntentService {
             nm.cancel(overdueNotificationId);
         }
 
+        // Close realm when finished
+        databaseHandler.closeRealm();
     }
 
     public void setNotification(List<Event> overdue) {

@@ -135,6 +135,12 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         updateInfoCard();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        databaseHandler.closeRealm();
+    }
+
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerDialog();
         newFragment.show(getSupportFragmentManager(), "datePickerDone");
