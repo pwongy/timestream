@@ -185,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             case R.id.action_sort:
                 showSortDialog();
                 break;
+            case R.id.action_notify:
+                scheduleNotification(ALARM_NOW);
+                break;
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
 

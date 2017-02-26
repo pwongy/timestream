@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,14 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             view.setOnClickListener(this);
             imageButton.setOnClickListener(this);
             imageButton.setOnLongClickListener(this);
+
+            // Set text size
+            nameView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.text_size_event_name));
+            previousDateView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.text_size_event_dates));
+            nextDateView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.text_size_event_dates));
         }
 
         @Override

@@ -127,8 +127,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
     }
 
@@ -180,9 +180,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("sort_no_next_due"));
             bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
             bindPreferenceSummaryToValue(findPreference("notification_time"));
-
-            // Samples (to be deleted)
-            bindPreferenceSummaryToValue(findPreference("example_list"));
         }
 
         @Override
