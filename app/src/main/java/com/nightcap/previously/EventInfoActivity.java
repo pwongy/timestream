@@ -70,7 +70,6 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         // Card 1 - Info
         periodView = (TextView) findViewById(R.id.card_info_period_value);
         nextDueView = (TextView) findViewById(R.id.card_info_next_due_value);
-        notesView = (TextView) findViewById(R.id.card_info_notes);
 
         // Card 2 - History
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
@@ -105,7 +104,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
             periodView.setText(getString(R.string.event_no_repeat));
             periodView.setTypeface(periodView.getTypeface(), Typeface.ITALIC);
 
-            nextDueView.setText(getString(R.string.event_not_applicable));
+            nextDueView.setText(getString(R.string.not_applicable));
             nextDueView.setTypeface(nextDueView.getTypeface(), Typeface.ITALIC);
         } else {
             String period = String.format(getString(R.string.event_period),
@@ -115,13 +114,6 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
 
             nextDueView.setText(dh.dateToString(selectedEvent.getNextDue()));
             nextDueView.setTypeface(null, Typeface.NORMAL);
-        }
-
-        // Notes
-        notesView.setText(selectedEvent.getNotes());
-        if (selectedEvent.getNotes().equalsIgnoreCase("")) {
-            notesView.setText(getString(R.string.event_notes_blank));
-            notesView.setTypeface(notesView.getTypeface(), Typeface.ITALIC);
         }
     }
 

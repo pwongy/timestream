@@ -24,7 +24,8 @@ public class Event extends RealmObject {
     private String notes;
 
     private boolean notifications;                  // Common
-    // Other ideas: Pinned events, private events   // Common
+
+    // Other ideas: Pinned events, private events, archived events.
 
     public Event() {
 

@@ -119,24 +119,23 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int warningPeriod = Integer.parseInt(prefs.getString("warning_period", "7"));
 
-        // Set name and previous date (always available)
-        holder.nameView.setText(event.getName());
-
         // Calculate relative days
         long relativeDaysPrevious = dh.getDaysBetween(event.getDate(), dh.getTodayDate());
         long relativeDaysNext = dh.getDaysBetween(event.getNextDue(), dh.getTodayDate());
 
-        // Force resets
+        // Set name and previous date (always available)
+        holder.nameView.setText(event.getName());
+        holder.previousDateView.setText(dh.dateToString(event.getDate())
+                + "\n(" + dh.getRelativeDaysString(relativeDaysPrevious) + ")");
+
+        // Force reset some view formatting
         holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorText));
         holder.progressBar.setVisibility(View.GONE);
         holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorDateText));
         holder.progressBar.setProgress(0);
         holder.progressBar.setMax(100);
 
-        holder.previousDateView.setText(dh.dateToString(event.getDate())
-                + "\n(" + dh.getRelativeDaysString(relativeDaysPrevious) + ")");
-
-        // These fields depend on whether an event is set to repeat
+        // These fields depend on whether an event is repeating
         if (event.hasPeriod()) {
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.nextDateView.setVisibility(View.VISIBLE);

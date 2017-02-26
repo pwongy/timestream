@@ -42,11 +42,11 @@
     <!--Info screen-->
     <string name="card_info">Info</string>
     <string name="event_no_repeat">Does not repeat</string>
-    <string name="event_not_applicable">N/A</string>
+    <string name="not_applicable">N/A</string>
     <string name="event_period" translatable="false">%1$d %2$s</string>
     <string name="unit_days">days</string>
     <string name="event_next_due_label">Next due</string>
-    <string name="event_notes_blank">(Blank)</string>
+    <string name="event_notes_blank">No notes</string>
 
     <string name="card_history">History</string>
     <string name="action_mark_done">Mark as done</string>
