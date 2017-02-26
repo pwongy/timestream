@@ -30,6 +30,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     private DateHandler dh = new DateHandler();
     private Event selectedEvent;
     private TextView periodView, nextDueView, notesView;
+    RecyclerView historyRecyclerView;
     private List<Event> historyList = new ArrayList<>();
     private HistoryAdapter historyAdapter;
 
@@ -72,18 +73,18 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         nextDueView = (TextView) findViewById(R.id.card_info_next_due_value);
 
         // Card 2 - History
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
+        historyRecyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
+        historyRecyclerView.setLayoutManager(layoutManager);
+        historyRecyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator
-        recyclerView.addItemDecoration(itemDecoration);
+        historyRecyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
         historyAdapter = new HistoryAdapter(this, historyList);
-        recyclerView.setAdapter(historyAdapter);
+        historyRecyclerView.setAdapter(historyAdapter);
     }
 
     public void onReceiveDateFromDialog(Date date) {

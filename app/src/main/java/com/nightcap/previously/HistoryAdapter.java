@@ -4,9 +4,13 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,19 +24,26 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     String TAG = "HistoryAdapter";
     private Context context;
     private ReceiveEventInterface eventListener;
+
     private List<Event> historyList;
     private int expandedPosition = 0;
+
+    private RecyclerView recyclerView;
+    private int recyclerViewHeight = 0;
+    private boolean isResized = false;
 
     // ViewHolder pattern as required
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView dateView, notesView;
+        ImageView notesIndicator;
         LinearLayout expandArea;
 
         ViewHolder(View view) {
             super(view);
             dateView = (TextView) view.findViewById(R.id.list_history_date);
+            notesIndicator = (ImageView) view.findViewById(R.id.history_notes_indicator);
             expandArea = (LinearLayout) view.findViewById(R.id.history_expand_area);
-            notesView = (TextView) view.findViewById(R.id.card_info_notes);
+            notesView = (TextView) view.findViewById(R.id.history_notes);
 
             view.setOnClickListener(this);
         }
@@ -59,6 +70,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
         this.eventListener = parent;
         this.historyList = list;
         context = parent.getApplicationContext();
+        this.recyclerView = parent.historyRecyclerView;
     }
 
     // Updating the list data
@@ -83,7 +95,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         Event event = historyList.get(position);
 
         // Build and set date string
@@ -93,7 +105,12 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
         // Force reset some view formatting
         holder.dateView.setTypeface(null, Typeface.NORMAL);
         holder.dateView.setTextColor(ContextCompat.getColor(context, R.color.colorDateText));
+        holder.notesIndicator.setVisibility(View.GONE);
         holder.notesView.setTypeface(null, Typeface.NORMAL);
+
+        if (!event.getNotes().equalsIgnoreCase("")) {
+            holder.notesIndicator.setVisibility(View.VISIBLE);
+        }
 
         // Handle click expansion
         if (position == expandedPosition) { // Initially 0
@@ -113,6 +130,43 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
         } else {
             holder.expandArea.setVisibility(View.GONE);
         }
+
+        // Set RecyclerView height
+        ViewTreeObserver vto = recyclerView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Set initial max height to that of screen
+                DisplayMetrics metrics = new DisplayMetrics();
+                WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+                wm.getDefaultDisplay().getMetrics(metrics);
+                int maxHeight = metrics.heightPixels;
+
+                // Total height of first few rows
+                int rowsToShow = 5;
+                if (!isResized && holder.getAdapterPosition() < rowsToShow) {
+                    recyclerViewHeight += holder.itemView.getHeight();
+                }
+
+                // Get original height of recyclerView
+                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int rvHeight = recyclerView.getMeasuredHeight();
+
+                // Cap the recyclerView's height
+                // Should equal the height of the first 5 rows (including expanded row 1)
+                if (holder.getAdapterPosition() == (rowsToShow-1)) {
+                    maxHeight = recyclerViewHeight;
+                }
+
+                // Resize the view (just once)
+                ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+                if (!isResized && rvHeight > maxHeight) {
+                    params.height = maxHeight;
+                    recyclerView.requestLayout();
+                    isResized = true;
+                }
+            }
+        });
 
     }
 

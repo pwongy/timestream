@@ -42,4 +42,7 @@
     <dimen name="text_size_normal">15sp</dimen>
     <dimen name="text_size_event_name">16sp</dimen>
     <dimen name="text_size_event_dates">14sp</dimen>
+
+    <!--Indicators-->
+    <dimen name="indicator_icon_size">24dp</dimen>
 </resources>
