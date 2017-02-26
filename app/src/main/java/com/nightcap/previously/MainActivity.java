@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     final String KEY_SORT_FIELD = "sort_primary_field";
     final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
     final String KEY_NOTIFICATIONS = "notifications_toggle";
+    final String KEY_NOTIFICATION_TIME = "notification_time";
 
     // RecyclerView for displaying the log, and associated adapter.
     RecyclerView recyclerView;
@@ -163,6 +164,12 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
         // Send list to adapter
         eventLogAdapter.updateData(eventList);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        databaseHandler.closeRealm();
     }
 
     /*
@@ -399,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     public void scheduleNotification(int alarmType) {
         // Get notifications preference
         boolean showNotifications = prefs.getBoolean(KEY_NOTIFICATIONS, true);
+        int alarmHour = Integer.parseInt(prefs.getString(KEY_NOTIFICATION_TIME, "7"));
 
         if (showNotifications) {
             // Intent to schedule notifications
@@ -409,7 +417,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
             // Set the alarm time
             Calendar alarmTime = Calendar.getInstance();
-            int alarmHour = 7;     // At 7:00 AM, or TODO: by preference
 
             if (alarmType == ALARM_DEFAULT) {
                 alarmTime.set(Calendar.HOUR_OF_DAY, alarmHour);

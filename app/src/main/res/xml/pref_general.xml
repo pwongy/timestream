@@ -69,7 +69,6 @@
             android:title="@string/pref_title_vibrate" />
 
         <EditTextPreference
-            android:enabled="false"
             android:key="notification_time"
             android:defaultValue="7"
             android:inputType="number"

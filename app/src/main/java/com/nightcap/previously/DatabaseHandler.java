@@ -271,6 +271,13 @@ class DatabaseHandler {
         return eventMatchingId;
     }
 
+    /**
+     * Closes the realm.
+     */
+    void closeRealm() {
+        eventLog.close();
+    }
+
     int getEventCount() {
         String dateKey = KEY_EVENT_COUNT;
         return dataStore.getInt(dateKey, 0);
