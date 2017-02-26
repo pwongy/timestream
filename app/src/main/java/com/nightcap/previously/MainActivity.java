@@ -20,7 +20,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -84,9 +83,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         // Inflate xml layout
         setContentView(R.layout.activity_main);
 
-        // Get the Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
+//        // Get the Toolbar
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+//        setSupportActionBar(toolbar);
 
         // Set up the FAB
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.main_fab);
