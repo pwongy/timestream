@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,7 +20,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     final String KEY_SORT_FIELD = "sort_primary_field";
     final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
     final String KEY_NOTIFICATIONS = "notifications_toggle";
+    final String KEY_NOTIFICATION_TIME = "notification_time";
 
     // RecyclerView for displaying the log, and associated adapter.
     RecyclerView recyclerView;
@@ -83,9 +84,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         // Inflate xml layout
         setContentView(R.layout.activity_main);
 
-        // Get the Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        setSupportActionBar(toolbar);
+//        // Get the Toolbar
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+//        setSupportActionBar(toolbar);
 
         // Set up the FAB
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.main_fab);
@@ -165,6 +166,12 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         eventLogAdapter.updateData(eventList);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        databaseHandler.closeRealm();
+    }
+
     /*
      * Here we create and handle actions from the overflow menu.
      */
@@ -183,6 +190,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         switch (item.getItemId()) {
             case R.id.action_sort:
                 showSortDialog();
+                break;
+            case R.id.action_notify:
+                scheduleNotification(ALARM_NOW);
                 break;
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
@@ -232,10 +242,21 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
         // Set initial sort order image from preferences
         final ImageButton ib1 = (ImageButton) dialogView.findViewById(R.id.image_button_1);
-        if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
-            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+        final Drawable ascendIcon, descendIcon;
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ascendIcon = getDrawable(R.drawable.ic_action_sort_ascending);
+            descendIcon = getDrawable(R.drawable.ic_action_sort_descending);
         } else {
-            ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+            // Do something for phones running an earlier SDK
+            ascendIcon = getResources().getDrawable(R.drawable.ic_action_sort_ascending);
+            descendIcon = getResources().getDrawable(R.drawable.ic_action_sort_descending);
+        }
+
+        if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
+            ib1.setImageDrawable(ascendIcon);
+        } else {
+            ib1.setImageDrawable(descendIcon);
         }
 
         // Switch order on click
@@ -245,11 +266,11 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 if (prefs.getBoolean(KEY_SORT_ORDER_ASCENDING, true)) {
                     // Currently set as ascending, so switch to descending
                     setBooleanPreference(KEY_SORT_ORDER_ASCENDING, false);
-                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_descending));
+                    ib1.setImageDrawable(descendIcon);
                 } else {
                     // Currently set as descending, so switch to ascending
                     setBooleanPreference(KEY_SORT_ORDER_ASCENDING, true);
-                    ib1.setImageDrawable(getDrawable(R.drawable.ic_action_sort_ascending));
+                    ib1.setImageDrawable(ascendIcon);
                 }
             }
         });
@@ -385,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     public void scheduleNotification(int alarmType) {
         // Get notifications preference
         boolean showNotifications = prefs.getBoolean(KEY_NOTIFICATIONS, true);
+        int alarmHour = Integer.parseInt(prefs.getString(KEY_NOTIFICATION_TIME, "7"));
 
         if (showNotifications) {
             // Intent to schedule notifications
@@ -395,7 +417,6 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
             // Set the alarm time
             Calendar alarmTime = Calendar.getInstance();
-            int alarmHour = 7;     // At 7:00 AM, or TODO: by preference
 
             if (alarmType == ALARM_DEFAULT) {
                 alarmTime.set(Calendar.HOUR_OF_DAY, alarmHour);
@@ -420,10 +441,15 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             // constants - in this case, AlarmManager.INTERVAL_DAY.
             AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-            // TODO: Switch this after testing phase
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                // TODO: Switch this after testing phase
 //            am.setInexactRepeating(AlarmManager.RTC, alarmTime.getTimeInMillis(),
 //                    AlarmManager.INTERVAL_DAY, pendingIntent);
-            am.setExact(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+                am.setExact(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+            } else {
+                // Do something for phones running an earlier SDK
+                am.set(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);
+            }
         }
     }
 }

@@ -127,8 +127,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     private void setupActionBar() {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            // Show the Up button in the action bar.
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
     }
 
@@ -174,15 +174,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
+            // updated to reflect the new value, per the Android Design guidelines.
             bindPreferenceSummaryToValue(findPreference("date_behaviour"));
             bindPreferenceSummaryToValue(findPreference("warning_period"));
+            bindPreferenceSummaryToValue(findPreference("sort_no_next_due"));
             bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
             bindPreferenceSummaryToValue(findPreference("notification_time"));
-
-            // Samples (to be deleted)
-            bindPreferenceSummaryToValue(findPreference("example_list"));
         }
 
         @Override

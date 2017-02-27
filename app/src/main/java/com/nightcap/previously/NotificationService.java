@@ -60,6 +60,8 @@ public class NotificationService extends IntentService {
             nm.cancel(overdueNotificationId);
         }
 
+        // Close realm when finished
+        databaseHandler.closeRealm();
     }
 
     public void setNotification(List<Event> overdue) {
@@ -97,7 +99,7 @@ public class NotificationService extends IntentService {
 
         // Account for notification vibration preference
         if (prefs.getBoolean(KEY_VIBRATE, true)) {  // Vibration preference
-            builder.setVibrate(new long[] { 50, 50, 50, 50, 50, 50, 50, 50, 50 });   // Delay, on, off, on...
+            builder.setVibrate(new long[] { 50, 100, 50, 50, 50, 50, 50, 50 });   // Delay, on, off, on...
         }
 
         // Build the notification and issues it

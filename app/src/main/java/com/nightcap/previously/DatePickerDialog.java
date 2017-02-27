@@ -61,9 +61,6 @@ public class DatePickerDialog extends DialogFragment implements android.app.Date
             // Send date to calling Activity
             dateListener.onReceiveDateFromDialog(new DateHandler().dateFromComponents(year, month, day));
         }
-
-
-
     }
 
 }

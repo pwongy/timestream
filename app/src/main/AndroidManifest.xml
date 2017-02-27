@@ -13,8 +13,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,8 +25,7 @@
             android:label="@string/edit_event"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".EventInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".EventInfoActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />

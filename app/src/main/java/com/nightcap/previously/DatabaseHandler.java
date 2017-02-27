@@ -74,9 +74,16 @@ class DatabaseHandler {
             logMsg = String.format(logMsg, event.getName());
             Log.d(TAG, logMsg);
 
-            // Only increment event counter if it's a new instance (i.e. not editing)
+            // If it's a new instance (i.e. not editing)
             if (existingEvents.size() == 0) {
+                // Increment event counter to ensure unique event IDs
                 incrementEventCount();
+
+                // Insight tracking via Answers
+                Answers.getInstance().logCustom(new CustomEvent("Logged an existing event")
+                        .putCustomAttribute("Event name", event.getName())
+                        .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
+                Log.i(TAG, "Logged event instance to Answers");
             }
 
         } else {
@@ -115,11 +122,6 @@ class DatabaseHandler {
         // Once all the attribute fields are filled, we can save the event to the Realm
         saveEvent(event);
 
-        // Insight tracking via Answers
-        Answers.getInstance().logCustom(new CustomEvent("Logged an existing event")
-                .putCustomAttribute("Event name", event.getName())
-                .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
-        Log.i(TAG, "Logged event instance to Answers");
     }
 
     /**
@@ -271,6 +273,64 @@ class DatabaseHandler {
         return eventMatchingId;
     }
 
+    /**
+     * Counts the number of times the named event has been logged.
+     * @param eventName    The event to count.
+     * @return The event count.
+     */
+    int getEventCount(String eventName) {
+        List<Event> events = getEventsByName(eventName);
+        return events.size();
+    }
+
+    /**
+     * Calculates the average interval between instances.
+     * @param eventName    The event to measure.
+     * @return The average interval.
+     */
+    double getAverageInterval(String eventName) {
+        long totalInterval = 0;
+        double averageInterval = 0;
+        int count = getEventCount(eventName);
+
+        if (count < 2) {
+            // Need at least two data points for an interval to make sense
+            Log.d(TAG, "Insufficient data points");
+        } else {
+            List<Event> events = getEventsByName(eventName);    // Sorted by date (descending)
+
+            // Calculate total interval days
+            for (int i = 0; i < events.size(); i++) {
+                Log.d(TAG, dateHandler.dateToString(events.get(i).getDate()));
+
+                if (i < events.size()-1 ) { // Ignore the last entry since there is no associated interval
+                    long interval = dateHandler.getDaysBetween(events.get(i).getDate(), events.get(i+1).getDate());
+                    Log.i(TAG, "  " + String.valueOf(interval) + " days");
+
+                    // Add to total
+                    totalInterval += interval;
+                }
+            }
+
+            // Calculate the average interval
+            averageInterval = totalInterval/(float) (count-1);
+        }
+
+        return averageInterval;
+    }
+
+    /**
+     * Closes the realm.
+     */
+    void closeRealm() {
+        eventLog.close();
+    }
+
+    /**
+     * Gets the total number of events ever logged by the app (including deleted instances).
+     * This is used to assign a unique ID to each event instance that is logged.
+     * @return The overall event count.
+     */
     int getEventCount() {
         String dateKey = KEY_EVENT_COUNT;
         return dataStore.getInt(dateKey, 0);

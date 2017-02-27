@@ -1,12 +1,12 @@
 <resources>
     <!--Metadata-->
     <string name="app_name">Previously</string>
-    <string name="build_date">25 February 2017</string>
+    <string name="build_date">27 February 2017</string>
     <string name="author">Paul Wong</string>
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
-    <string name="action_crash">Force crash</string>
+    <string name="action_notify">Set notification</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
 
@@ -42,11 +42,15 @@
     <!--Info screen-->
     <string name="card_info">Info</string>
     <string name="event_no_repeat">Does not repeat</string>
-    <string name="event_not_applicable">N/A</string>
+    <string name="not_applicable">N/A</string>
     <string name="event_period" translatable="false">%1$d %2$s</string>
     <string name="unit_days">days</string>
     <string name="event_next_due_label">Next due</string>
-    <string name="event_notes_blank">(Blank)</string>
+    <string name="event_notes_blank">No notes</string>
+
+    <string name="card_stats">Statistics</string>
+    <string name="stats_count_label">Count</string>
+    <string name="stats_interval_label">Average interval</string>
 
     <string name="card_history">History</string>
     <string name="action_mark_done">Mark as done</string>
@@ -60,10 +64,21 @@
 
     <!--Settings-->
     <string name="title_activity_settings">Settings</string>
+    <string name="action_email_feedback">Contact developer</string>
+
     <string name="pref_category_display">Display</string>
     <string name="pref_title_warning_period">Warning period (in days)</string>
-    <string name="pref_default_warning_period" translatable="false">7</string>
-    <string name="action_email_feedback">Contact developer</string>
+    <string name="pref_default_warning_period">7</string>
+
+    <string name="pref_title_secondary_sort">Sort order for non-repeating events</string>
+    <string-array name="pref_secondary_sort_titles">
+        <item>Event name</item>
+        <item>Last performed date</item>
+    </string-array>
+    <string-array name="pref_secondary_sort_values">
+        <item>name</item>
+        <item>date</item>
+    </string-array>
 
     <string name="pref_category_ui">User interface</string>
     <string name="pref_title_date_behaviour">Primary date behaviour</string>

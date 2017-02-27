@@ -5,17 +5,19 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,11 +27,12 @@ import java.util.List;
  */
 
 public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
-    private String TAG = "EventActivity";
+    private String TAG = "InfoActivity";
     private DatabaseHandler databaseHandler;
     private DateHandler dh = new DateHandler();
     private Event selectedEvent;
-    private TextView periodView, nextDueView, notesView;
+    private TextView periodView, nextDueView, countView, intervalView;
+    RecyclerView historyRecyclerView;
     private List<Event> historyList = new ArrayList<>();
     private HistoryAdapter historyAdapter;
 
@@ -38,11 +41,8 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
-        // Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.event_info_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // Get reference to ActionBar
+        ActionBar actionBar = getSupportActionBar();
 
         // Floating action button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.event_info_fab);
@@ -63,26 +63,34 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         int eventId = getIntent().getIntExtra("event_id", 0);
         selectedEvent = databaseHandler.getEventById(eventId);
 
-        getSupportActionBar().setTitle(selectedEvent.getName());
+        // Configure ActionBar
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setTitle(selectedEvent.getName());
+        }
 
         // Card 1 - Info
         periodView = (TextView) findViewById(R.id.card_info_period_value);
         nextDueView = (TextView) findViewById(R.id.card_info_next_due_value);
-        notesView = (TextView) findViewById(R.id.card_info_notes);
 
         // Card 2 - History
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
+        historyRecyclerView = (RecyclerView) findViewById(R.id.history_recycler_view);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
+        historyRecyclerView.setLayoutManager(layoutManager);
+        historyRecyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator
-        recyclerView.addItemDecoration(itemDecoration);
+        historyRecyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
         historyAdapter = new HistoryAdapter(this, historyList);
-        recyclerView.setAdapter(historyAdapter);
+        historyRecyclerView.setAdapter(historyAdapter);
+
+        // Card 3 - Stats
+        countView = (TextView) findViewById(R.id.card_stats_count_value);
+        intervalView = (TextView) findViewById(R.id.card_stats_interval_value);
     }
 
     public void onReceiveDateFromDialog(Date date) {
@@ -103,7 +111,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
             periodView.setText(getString(R.string.event_no_repeat));
             periodView.setTypeface(periodView.getTypeface(), Typeface.ITALIC);
 
-            nextDueView.setText(getString(R.string.event_not_applicable));
+            nextDueView.setText(getString(R.string.not_applicable));
             nextDueView.setTypeface(nextDueView.getTypeface(), Typeface.ITALIC);
         } else {
             String period = String.format(getString(R.string.event_period),
@@ -114,19 +122,13 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
             nextDueView.setText(dh.dateToString(selectedEvent.getNextDue()));
             nextDueView.setTypeface(null, Typeface.NORMAL);
         }
-
-        // Notes
-        notesView.setText(selectedEvent.getNotes());
-        if (selectedEvent.getNotes().equalsIgnoreCase("")) {
-            notesView.setText(getString(R.string.event_notes_blank));
-            notesView.setTypeface(notesView.getTypeface(), Typeface.ITALIC);
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         prepareHistory();
+        updateStatsCard();
     }
 
     private void prepareHistory() {
@@ -139,6 +141,31 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         // Update info card for selected event
         selectedEvent = historyList.get(0);
         updateInfoCard();
+    }
+
+    private void updateStatsCard() {
+        // Event count
+        int eventCount = databaseHandler.getEventCount(selectedEvent.getName());
+        countView.setText(String.valueOf(eventCount));
+
+        // Average interval
+        double interval = databaseHandler.getAverageInterval(selectedEvent.getName());
+        if (interval == 0) {
+            intervalView.setText(getString(R.string.not_applicable));
+            intervalView.setTypeface(null, Typeface.ITALIC);
+        } else {
+            DecimalFormat df = new DecimalFormat("##0.00");
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            String intervalText = df.format(interval) + " " + getString(R.string.unit_days);
+            intervalView.setText(intervalText);
+            intervalView.setTypeface(null, Typeface.NORMAL);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        databaseHandler.closeRealm();
     }
 
     public void showDatePickerDialog(View v) {
