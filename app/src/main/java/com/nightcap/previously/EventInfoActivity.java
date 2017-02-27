@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +31,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     private DatabaseHandler databaseHandler;
     private DateHandler dh = new DateHandler();
     private Event selectedEvent;
-    private TextView periodView, nextDueView, notesView;
+    private TextView periodView, nextDueView, countView, intervalView;
     RecyclerView historyRecyclerView;
     private List<Event> historyList = new ArrayList<>();
     private HistoryAdapter historyAdapter;
@@ -85,6 +87,10 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         // Adapter (must be set after LayoutManager)
         historyAdapter = new HistoryAdapter(this, historyList);
         historyRecyclerView.setAdapter(historyAdapter);
+
+        // Card 3 - Stats
+        countView = (TextView) findViewById(R.id.card_stats_count_value);
+        intervalView = (TextView) findViewById(R.id.card_stats_interval_value);
     }
 
     public void onReceiveDateFromDialog(Date date) {
@@ -122,6 +128,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     protected void onStart() {
         super.onStart();
         prepareHistory();
+        updateStatsCard();
     }
 
     private void prepareHistory() {
@@ -134,6 +141,25 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         // Update info card for selected event
         selectedEvent = historyList.get(0);
         updateInfoCard();
+    }
+
+    private void updateStatsCard() {
+        // Event count
+        int eventCount = databaseHandler.getEventCount(selectedEvent.getName());
+        countView.setText(String.valueOf(eventCount));
+
+        // Average interval
+        double interval = databaseHandler.getAverageInterval(selectedEvent.getName());
+        if (interval == 0) {
+            intervalView.setText(getString(R.string.not_applicable));
+            intervalView.setTypeface(null, Typeface.ITALIC);
+        } else {
+            DecimalFormat df = new DecimalFormat("##0.00");
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            String intervalText = df.format(interval) + " " + getString(R.string.unit_days);
+            intervalView.setText(intervalText);
+            intervalView.setTypeface(null, Typeface.NORMAL);
+        }
     }
 
     @Override

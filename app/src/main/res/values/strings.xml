@@ -48,6 +48,10 @@
     <string name="event_next_due_label">Next due</string>
     <string name="event_notes_blank">No notes</string>
 
+    <string name="card_stats">Statistics</string>
+    <string name="stats_count_label">Count</string>
+    <string name="stats_interval_label">Average interval</string>
+
     <string name="card_history">History</string>
     <string name="action_mark_done">Mark as done</string>
     <string name="action_edit">Edit</string>
