@@ -140,7 +140,7 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
                 DisplayMetrics metrics = new DisplayMetrics();
                 WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
                 wm.getDefaultDisplay().getMetrics(metrics);
-                int maxHeight = metrics.heightPixels;
+                int maxHeight = metrics.heightPixels * 100; // Long lists will exceed the screen height, so make it arbitrarily large
 
                 // Total height of first few rows
                 int rowsToShow = 5;
