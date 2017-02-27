@@ -1,89 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_event"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:isScrollContainer="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.nightcap.previously.EditActivity"
     tools:showIn="@layout/activity_edit">
 
-
     <RelativeLayout
-        android:id="@+id/detail_head_space"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:background="@color/colorPrimary"
-        android:elevation="@dimen/head_space_elevation"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
-
-        <TextView
-            android:id="@+id/label_event_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/event_name_label"
-            android:textAlignment="viewStart"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:textColor="@color/colorAccent"
-            android:layout_marginStart="@dimen/label_adjustment" />
-
-        <EditText
-            android:id="@+id/event_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textCapSentences|textAutoCorrect"
-            android:hint="@string/event_name_hint"
-            android:textColorHint="?android:attr/textColorHintInverse"
-            android:ems="10"
-            android:textAlignment="viewStart"
-            android:layout_below="@+id/label_event_name"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:textSize="24sp"
-            android:textColor="?android:attr/textColorPrimaryInverse" />
-
-        <TextView
-            android:text="@string/event_date_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/label_event_date"
-            android:textAlignment="viewStart"
-            android:layout_marginTop="@dimen/label_margin"
-            android:layout_below="@+id/event_name"
-            android:layout_alignParentStart="true"
-            android:textColor="@color/colorAccent"
-            android:layout_marginStart="@dimen/label_adjustment" />
-
-        <EditText
-            android:id="@+id/event_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="viewStart"
-            android:layout_below="@+id/label_event_date"
-            android:layout_alignParentStart="true"
-            android:inputType="date"
-            android:textColorHint="?android:attr/textColorHintInverse"
-            android:focusable="true"
-            android:onClick="showDatePickerDialog"
-            android:textColor="?android:attr/textColorPrimaryInverse" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/detail_head_space"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin" >
+        android:scrollbars="none">
 
         <RelativeLayout
             android:id="@+id/period_input"
@@ -92,21 +26,21 @@
             android:layout_alignParentStart="true">
 
             <ImageView
+                android:id="@+id/image_period"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_event_period"
-                android:id="@+id/image_period"
                 android:paddingEnd="@dimen/event_icon_margin"
-                android:paddingTop="@dimen/event_icon_margin" />
+                android:paddingTop="@dimen/event_icon_margin"
+                app:srcCompat="@drawable/ic_event_period" />
 
             <TextView
                 android:id="@+id/label_period"
-                android:text="@string/event_period_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorAccent"
                 android:layout_toEndOf="@id/image_period"
-                android:layout_marginStart="@dimen/label_adjustment" />
+                android:layout_marginStart="@dimen/label_adjustment"
+                android:text="@string/event_period_label"
+                android:textColor="@color/colorAccent" />
 
             <EditText
                 android:id="@+id/event_period"
@@ -115,9 +49,9 @@
                 android:layout_below="@id/label_period"
                 android:layout_toEndOf="@id/image_period"
                 android:ems="10"
+                android:selectAllOnFocus="true"
                 android:inputType="number"
                 android:hint="@string/event_period_hint"
-                android:selectAllOnFocus="true"
                 android:textColorHint="?android:attr/textColorHint"/>
         </RelativeLayout>
 
@@ -125,26 +59,26 @@
             android:id="@+id/notes_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/label_margin"
             android:layout_below="@+id/period_input"
+            android:layout_marginTop="@dimen/label_margin"
             android:layout_alignParentStart="true">
 
             <ImageView
+                android:id="@+id/image_notes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_event_notes"
-                android:id="@+id/image_notes"
                 android:paddingEnd="@dimen/event_icon_margin"
-                android:paddingTop="@dimen/event_icon_margin"/>
+                android:paddingTop="@dimen/event_icon_margin"
+                app:srcCompat="@drawable/ic_event_notes"/>
 
             <TextView
                 android:id="@+id/label_notes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/image_notes"
+                android:layout_marginStart="@dimen/label_adjustment"
                 android:text="@string/event_notes_label"
-                android:textColor="@color/colorAccent"
-                android:layout_marginStart="@dimen/label_adjustment" />
+                android:textColor="@color/colorAccent" />
 
             <EditText
                 android:id="@+id/event_notes"
@@ -161,16 +95,16 @@
 
     </RelativeLayout>
 
-    <!--<android.support.design.widget.FloatingActionButton-->
-        <!--android:id="@+id/event_fab"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="bottom|end"-->
-        <!--app:srcCompat="@drawable/ic_action_add"-->
-        <!--android:layout_marginLeft="@dimen/fab_margin"-->
-        <!--android:layout_marginRight="@dimen/fab_margin"-->
-        <!--android:layout_above="@+id/label_notes"-->
-        <!--android:layout_alignEnd="@+id/button_save_event"-->
-        <!--android:layout_marginEnd="18dp" />-->
+    <!--<TextView-->
+    <!--android:id="@+id/lorem"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="@dimen/label_margin"-->
+    <!--android:layout_marginStart="@dimen/label_adjustment"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:text="@string/lorem"-->
+    <!--android:textSize="18dp"-->
+    <!--android:textAlignment="viewStart"-->
+    <!--android:textColor="@color/colorDateText" />-->
 
-</RelativeLayout>
+</android.support.v4.widget.NestedScrollView>
