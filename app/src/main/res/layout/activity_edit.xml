@@ -4,24 +4,114 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     tools:context="com.nightcap.previously.EditActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/edit_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="@dimen/head_space_elevation" >
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/event_toolbar"
+        <android.support.design.widget.CollapsingToolbarLayout
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            android:id="@+id/edit_collapsing"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="match_parent"
+            android:elevation="@dimen/head_space_elevation"
+            app:contentScrim="?attr/colorPrimary">
+            <!--app:expandedTitleMarginStart="48dp"-->
+            <!--app:expandedTitleMarginEnd="64dp"-->
+
+            <RelativeLayout
+                app:layout_scrollFlags="scroll"
+                android:id="@+id/detail_head_space"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:background="@color/colorPrimary">
+
+                <TextView
+                    android:id="@+id/label_event_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="@dimen/label_adjustment"
+                    android:text="@string/event_name_label"
+                    android:textColor="@color/colorAccent"
+                    android:textAlignment="viewStart" />
+
+                <EditText
+                    android:id="@+id/event_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/label_event_name"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:inputType="textCapSentences|textAutoCorrect"
+                    android:textAlignment="viewStart"
+                    android:textSize="24sp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:hint="@string/event_name_hint"
+                    android:textColorHint="?android:attr/textColorHint"
+                    android:ems="10" />
+
+                <TextView
+                    android:id="@+id/label_event_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/event_name"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="@dimen/label_margin"
+                    android:layout_marginStart="@dimen/label_adjustment"
+                    android:text="@string/event_date_label"
+                    android:textColor="@color/colorAccent"
+                    android:textAlignment="viewStart" />
+
+                <EditText
+                    android:id="@+id/event_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/label_event_date"
+                    android:layout_alignParentStart="true"
+                    android:focusable="true"
+                    android:onClick="showDatePickerDialog"
+                    android:inputType="date"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorHint"
+                    android:textAlignment="viewStart" />
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/event_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+        </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_edit" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/edit_fab"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:src="@drawable/ic_action_save"
+        app:layout_behavior="com.nightcap.previously.FloatingActionButtonBehavior"
+        app:layout_anchor="@id/edit_appbar"
+        app:layout_anchorGravity="bottom|right|end" />
 
 </android.support.design.widget.CoordinatorLayout>

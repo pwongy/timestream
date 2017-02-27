@@ -2,15 +2,20 @@ package com.nightcap.previously;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,7 +40,6 @@ public class EditActivity extends AppCompatActivity {
     private boolean isEditExistingEvent;
     int editId;
     String oldName;
-    int oldPeriod;
 
     // Input fields
     EditText inputName;
@@ -54,12 +58,17 @@ public class EditActivity extends AppCompatActivity {
         inputPeriod = (EditText) findViewById(R.id.event_period);
         inputNotes = (EditText) findViewById(R.id.event_notes);
 
+        // Don't use the Collapsing Toolbar title
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.edit_collapsing);
+        collapsingToolbarLayout.setTitleEnabled(false);
+
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Get Realm handler
         databaseHandler = new DatabaseHandler(this);
@@ -71,6 +80,7 @@ public class EditActivity extends AppCompatActivity {
         editId = getIntent().getIntExtra("edit_id", -1);
         if (editId > 0) {
             // Editing existing event
+            getSupportActionBar().setTitle(getString(R.string.edit_event));
             isEditExistingEvent = true;
 
             // TODO: Keep track of old values
@@ -90,6 +100,7 @@ public class EditActivity extends AppCompatActivity {
             inputNotes.setText(databaseHandler.getEventById(editId).getNotes());
         } else {
             // Creating new event
+            getSupportActionBar().setTitle(getString(R.string.add_event));
             isEditExistingEvent = false;
 
             // Default date to today if preferred
@@ -104,14 +115,20 @@ public class EditActivity extends AppCompatActivity {
             }
         }
 
-        // Floating action button
-//        this.fab = (FloatingActionButton) findViewById(R.id.event_fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                // Start new Activity to add an event
-//            }
-//        });
+        // Set status bar color
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        }
+
+        // Set up the FAB
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.edit_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveEvent();
+            }
+        });
 
         // Initialise Answers
         Fabric.with(this, new Answers());
@@ -131,7 +148,7 @@ public class EditActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit, menu);
+//        getMenuInflater().inflate(R.menu.menu_edit, menu);
         return true;
     }
 
@@ -143,9 +160,9 @@ public class EditActivity extends AppCompatActivity {
                 homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(homeIntent);
                 break;
-            case R.id.action_save_event:
-                saveEvent();
-                break;
+//            case R.id.action_save_event:
+//                saveEvent();
+//                break;
         }
         return (super.onOptionsItemSelected(menuItem));
     }

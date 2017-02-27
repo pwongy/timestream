@@ -27,6 +27,7 @@
     <string name="dialog_cancel_button_text">Cancel</string>
 
     <!--Edit screen-->
+    <string name="add_event">Add event</string>
     <string name="edit_event">Edit event</string>
     <string name="update_event">Update event</string>
     <string name="action_save_event">Save</string>
@@ -99,6 +100,9 @@
     <string name="pref_title_ringtone">Ringtone</string>
     <string name="pref_ringtone_silent">Silent</string>
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <!--Miscellaneous-->
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 
     <!-- ************************************************************** Samples (can be deleted) -->
 
