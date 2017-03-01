@@ -131,14 +131,20 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
         // Force reset some view formatting
         holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorText));
         holder.progressBar.setVisibility(View.GONE);
-        holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorDateText));
-        holder.progressBar.setProgress(0);
         holder.progressBar.setMax(100);
+        holder.progressBar.setProgress(0);
+        holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorDateText));
+        holder.progressBar.setSecondaryProgress(0);
+        holder.progressBar.setSecondaryProgressColor(ContextCompat.getColor(context, R.color.colorOverdue));
 
         // These fields depend on whether an event is repeating
         if (event.hasPeriod()) {
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.nextDateView.setVisibility(View.VISIBLE);
+
+            // Set progress bar
+            holder.progressBar.setMax(event.getPeriod());
+            holder.progressBar.setProgress(-relativeDaysPrevious);
 
             // Highlight upcoming and overdue events
             if (relativeDaysNext <= warningPeriod) {
@@ -146,13 +152,12 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
                 holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorWarning));
             }
             if (relativeDaysNext <= 0) {
-                holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorOverdue));
-                holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorOverdue));
+                holder.nameView.setTextColor(ContextCompat.getColor(context, R.color.colorDue));
+//                holder.progressBar.setMax(-relativeDaysPrevious);
+                holder.progressBar.setProgress(event.getPeriod());
+                holder.progressBar.setProgressColor(ContextCompat.getColor(context, R.color.colorDue));
+//                holder.progressBar.setSecondaryProgress(-relativeDaysPrevious);
             }
-
-            // Set progress bar
-            holder.progressBar.setMax((float) event.getPeriod());
-            holder.progressBar.setProgress(-relativeDaysPrevious);
 
             // Add next due date
             holder.nextDateView.setText(dh.dateToString(event.getNextDue())

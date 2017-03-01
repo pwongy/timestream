@@ -7,8 +7,9 @@
 
     <color name="colorText">#555555</color>
 
-    <color name="colorOverdue">#F44336</color>
     <color name="colorWarning">#FFC107</color>
+    <color name="colorDue">#F44336</color>
+    <color name="colorOverdue">#FFCDD2</color>
 
     <!--Timeline-->
     <color name="colorTimeline">#BDBDBD</color>
