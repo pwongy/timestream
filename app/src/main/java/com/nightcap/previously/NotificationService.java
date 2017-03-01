@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -97,7 +98,12 @@ public class NotificationService extends IntentService {
         }
         builder.setContentText(overdueText);
 
-        // Account for notification vibration preference
+        // Account for preferences:
+        // Ringtone preference
+        String ringtoneStr = prefs.getString("notifications_ringtone", "content://settings/system/notification_sound");
+        builder.setSound(Uri.parse(ringtoneStr));
+
+        // Vibration preference
         if (prefs.getBoolean(KEY_VIBRATE, true)) {  // Vibration preference
             builder.setVibrate(new long[] { 50, 100, 50, 50, 50, 50, 50, 50 });   // Delay, on, off, on...
         }
