@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
@@ -57,10 +56,6 @@ public class EditActivity extends AppCompatActivity {
         inputDate = (EditText) findViewById(R.id.event_date);
         inputPeriod = (EditText) findViewById(R.id.event_period);
         inputNotes = (EditText) findViewById(R.id.event_notes);
-
-        // Don't use the Collapsing Toolbar title
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.edit_collapsing);
-        collapsingToolbarLayout.setTitleEnabled(false);
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.event_toolbar);

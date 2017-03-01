@@ -19,7 +19,7 @@
             android:id="@+id/edit_collapsing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="@dimen/head_space_elevation"
+            app:titleEnabled="false"
             app:contentScrim="?attr/colorPrimary">
             <!--app:expandedTitleMarginStart="48dp"-->
             <!--app:expandedTitleMarginEnd="64dp"-->
