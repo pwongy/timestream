@@ -1,7 +1,7 @@
 <resources>
     <!--Metadata-->
     <string name="app_name">Previously</string>
-    <string name="build_date">3 March 2017</string>
+    <string name="build_date">5 March 2017</string>
     <string name="author">Paul Wong</string>
 
     <!--Main menu items-->
