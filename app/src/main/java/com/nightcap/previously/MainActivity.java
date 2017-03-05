@@ -393,6 +393,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             }
         } else {
             // Do something for phones running an earlier SDK
+            // See >> https://developer.android.com/reference/android/service/notification/NotificationListenerService.html#getActiveNotifications()
+            // Requires API 18
         }
     }
 
