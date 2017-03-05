@@ -31,11 +31,8 @@ public class NotificationService extends IntentService {
 
     // Keys (from old app, repurpose or delete these later...)
     public static final String ACTION_UPDATE_DATA = "com.nightcap.oleo.beta.UPDATE_DATA";
-
     public static final String EXTRA_UPDATE_CITY = "com.nightcap.oleo.beta.UPDATE_CITY";
     public static final String EXTRA_UPDATE_FUEL = "com.nightcap.oleo.beta.UPDATE_FUEL";
-
-    private final static String KEY_NOTIFICATION_PRIORITY = "notifications_priority";
 
     // NotificationManager Service
     NotificationManager nm;
@@ -101,7 +98,7 @@ public class NotificationService extends IntentService {
 
         // Account for preferences:
         // Ringtone preference
-        String ringtoneStr = prefs.getString("notifications_ringtone", "content://settings/system/notification_sound");
+        String ringtoneStr = prefs.getString(KEY_RINGTONE, "content://settings/system/notification_sound");
         builder.setSound(Uri.parse(ringtoneStr));
 
         // Vibration preference
