@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.util.List;
@@ -83,8 +84,8 @@ public class NotificationService extends IntentService {
         // Start building the notification
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_action_done_light)
-                        .setColor(getResources().getColor(R.color.colorPrimary))
+                        .setSmallIcon(R.drawable.ic_stat_previously)
+                        .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                         .setContentTitle("Time to do things")
                         .setContentIntent(resultPendingIntent)
                         .setPriority(Notification.PRIORITY_LOW);
