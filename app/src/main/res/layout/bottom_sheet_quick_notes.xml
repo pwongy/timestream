@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/quick_notes_bottom_sheet"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="12dp"
+    app:layout_scrollFlags="scroll"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    <!--android:clipToPadding="true"-->
+
+    <EditText
+        android:id="@+id/bottom_sheet_notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:hint="@string/bottom_sheet_add_note_hint"
+        android:text=""
+        android:textSize="16sp"
+        android:focusable="true"/>
+
+</LinearLayout>

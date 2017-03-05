@@ -35,6 +35,7 @@
             android:layout_centerVertical="true"/>
     </RelativeLayout>
 
+    <!--This view gets expanded out when a history item is selected-->
     <LinearLayout
         android:id="@+id/history_expand_area"
         android:visibility="gone"
@@ -44,20 +45,27 @@
         android:layout_below="@+id/history_list_header"
         android:layout_marginTop="@dimen/history_expand_top_margin" >
 
-        <TextView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/history_notes_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/event_notes_label"
-            android:textSize="@dimen/text_size_normal"
-            android:textStyle="bold"
-            android:layout_gravity="start"/>
-        <TextView
-            android:id="@+id/history_notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_normal"
-            android:layout_gravity="start"
-            android:gravity="start"/>
+            android:orientation="vertical"
+            android:background="?android:attr/selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/event_notes_label"
+                android:textSize="@dimen/text_size_normal"
+                android:textStyle="bold"
+                android:layout_gravity="start"/>
+            <TextView
+                android:id="@+id/history_notes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_normal"
+                android:layout_gravity="start"
+                android:gravity="start"/>
+        </LinearLayout>
 
     </LinearLayout>
 
