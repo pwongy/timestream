@@ -83,6 +83,10 @@ public class Event extends RealmObject {
         this.notes = notes;
     }
 
+    boolean hasNotes() {
+        return !notes.isEmpty();
+    }
+
     /**
      * Customised comparison criteria for sorting a list of Events. See answer by runaros:
      * http://stackoverflow.com/questions/1421322/how-do-i-sort-a-list-by-different-parameters-at-different-timed

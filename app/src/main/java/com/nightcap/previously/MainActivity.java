@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     }
 
     /*
-     * Here we create and handle actions from the overflow menu.
+     * Here and below, we create and handle actions from the overflow menu.
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -182,6 +182,17 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         return true;
     }
 
+    /*
+     * Don't show the "Set notification" option if notifications are disabled.
+     */
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem notify = menu.findItem(R.id.action_notify);
+        boolean showNotifications = prefs.getBoolean(KEY_NOTIFICATIONS, true);
+        notify.setVisible(showNotifications);
+        return true;
+    }
+
+    // Do things for each item.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -382,6 +393,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             }
         } else {
             // Do something for phones running an earlier SDK
+            // See >> https://developer.android.com/reference/android/service/notification/NotificationListenerService.html#getActiveNotifications()
+            // Requires API 18
         }
     }
 
@@ -442,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                // TODO: Switch this after testing phase
+                // TODO: Switch this after testing phase (will need to handle ALARM_NOW timing)
 //            am.setInexactRepeating(AlarmManager.RTC, alarmTime.getTimeInMillis(),
 //                    AlarmManager.INTERVAL_DAY, pendingIntent);
                 am.setExact(AlarmManager.RTC, alarmTime.getTimeInMillis(), pendingIntent);

@@ -11,9 +11,9 @@ import android.view.View;
  * Custom behaviour for floating action button for the EditActivity.
  */
 
-public class FloatingActionButtonBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
+public class EditFabBehavior extends CoordinatorLayout.Behavior<FloatingActionButton> {
 
-    public FloatingActionButtonBehavior(Context context, AttributeSet attrs) {
+    public EditFabBehavior(Context context, AttributeSet attrs) {
 
     }
 

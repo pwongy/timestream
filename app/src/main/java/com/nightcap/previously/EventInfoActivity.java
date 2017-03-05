@@ -3,6 +3,7 @@ package com.nightcap.previously;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
@@ -26,12 +27,17 @@ import java.util.List;
  * Activity for displaying event details.
  */
 
-public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
+public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface,
+        ReceiveNotesInterface {
     private String TAG = "InfoActivity";
+
     private DatabaseHandler databaseHandler;
     private DateHandler dh = new DateHandler();
     private Event selectedEvent;
+
+    private FloatingActionButton fab;
     private TextView periodView, nextDueView, countView, intervalView;
+
     RecyclerView historyRecyclerView;
     private List<Event> historyList = new ArrayList<>();
     private HistoryAdapter historyAdapter;
@@ -41,11 +47,8 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_info);
 
-        // Get reference to ActionBar
-        ActionBar actionBar = getSupportActionBar();
-
         // Floating action button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.event_info_fab);
+        fab = (FloatingActionButton) findViewById(R.id.event_info_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +66,9 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         int eventId = getIntent().getIntExtra("event_id", 0);
         selectedEvent = databaseHandler.getEventById(eventId);
 
+        // Get reference to ActionBar
+        ActionBar actionBar = getSupportActionBar();
+
         // Configure ActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -79,7 +85,7 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         historyRecyclerView.setLayoutManager(layoutManager);
-        historyRecyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
+        historyRecyclerView.setItemAnimator(new DefaultItemAnimator());         // Animator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator
         historyRecyclerView.addItemDecoration(itemDecoration);
@@ -100,9 +106,23 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     }
 
     public void onReceiveEventFromAdapter(Event event, String flag) {
-        // Update info on cards to match the selected event from history
         selectedEvent = event;
-        updateInfoCard();
+
+        if (flag.equalsIgnoreCase(HistoryAdapter.FLAG_ADD_NOTES)) {
+            // Hide the FAB
+            fab.hide();
+
+            // Show the soft keyboard
+//            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.showSoftInput(getCurrentFocus(), InputMethodManager.SHOW_FORCED);
+
+            // Show the BottomSheet
+            BottomSheetDialogFragment quickNotesFragment = new QuickNotesBottomSheetDialogFragment();
+            quickNotesFragment.show(getSupportFragmentManager(), quickNotesFragment.getTag());
+        } else if (flag.equalsIgnoreCase(HistoryAdapter.FLAG_EXPAND)) {
+            // Update info on cards to match the selected event from history
+            updateInfoCard();
+        }
     }
 
     private void updateInfoCard() {
@@ -168,11 +188,6 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         databaseHandler.closeRealm();
     }
 
-    public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerDialog();
-        newFragment.show(getSupportFragmentManager(), "datePickerDone");
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -199,4 +214,17 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerDialog();
+        newFragment.show(getSupportFragmentManager(), "datePickerDone");
+    }
+
+    @Override
+    public void onReceiveNotesFromBottomSheet(String notes) {
+        selectedEvent.setNotes(notes);
+        databaseHandler.saveEvent(selectedEvent);
+        prepareHistory();
+    }
+
 }

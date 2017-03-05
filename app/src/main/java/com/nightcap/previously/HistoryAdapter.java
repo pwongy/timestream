@@ -32,36 +32,47 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     private int recyclerViewHeight = 0;
     private boolean isResized = false;
 
+    static final String FLAG_ADD_NOTES = "add_event_notes";
+    static final String FLAG_EXPAND = "expand_event_instance";
+
     // ViewHolder pattern as required
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView dateView, notesView;
         ImageView notesIndicator;
-        LinearLayout expandArea;
+        LinearLayout expandArea, notesLayout;
 
         ViewHolder(View view) {
             super(view);
             dateView = (TextView) view.findViewById(R.id.list_history_date);
             notesIndicator = (ImageView) view.findViewById(R.id.history_notes_indicator);
             expandArea = (LinearLayout) view.findViewById(R.id.history_expand_area);
+            notesLayout = (LinearLayout) view.findViewById(R.id.history_notes_layout);
             notesView = (TextView) view.findViewById(R.id.history_notes);
 
             view.setOnClickListener(this);
+            notesLayout.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            // Send date to calling Activity (when the list view row is clicked)
-            eventListener.onReceiveEventFromAdapter(historyList.get(getAdapterPosition()), "");
+            Event event = historyList.get(getAdapterPosition());
 
-            // Check for an expanded view, collapse if you find one
-            if (expandedPosition >= 0) {
-                int prev = expandedPosition;
-                notifyItemChanged(prev);
+            if (view.getId() == notesLayout.getId() && !event.hasNotes()) {
+                eventListener.onReceiveEventFromAdapter(event, FLAG_ADD_NOTES);
+            } else {
+                // Send date to calling Activity (when the list view row is clicked)
+                eventListener.onReceiveEventFromAdapter(event, FLAG_EXPAND);
+
+                // Check for an expanded view, collapse if you find one
+                if (expandedPosition >= 0) {
+                    int prev = expandedPosition;
+                    notifyItemChanged(prev);
+                }
+
+                // Set the current position to "expanded"
+                expandedPosition = getLayoutPosition();
+                notifyItemChanged(expandedPosition);
             }
-
-            // Set the current position to "expanded"
-            expandedPosition = getLayoutPosition();
-            notifyItemChanged(expandedPosition);
         }
     }
 
@@ -108,23 +119,23 @@ class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
         holder.notesIndicator.setVisibility(View.GONE);
         holder.notesView.setTypeface(null, Typeface.NORMAL);
 
-        if (!event.getNotes().equalsIgnoreCase("")) {
+        if (event.hasNotes()) {
             holder.notesIndicator.setVisibility(View.VISIBLE);
         }
 
         // Handle click expansion
-        if (position == expandedPosition) { // Initially 0
+        if (position == expandedPosition) { // Initially 0, so latest entry always starts highlighted
             holder.expandArea.setVisibility(View.VISIBLE);
 
             // Update highlighted view
             holder.dateView.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
             holder.dateView.setTypeface(holder.dateView.getTypeface(), Typeface.BOLD);
 
-            if (event.getNotes().equalsIgnoreCase("")) {
+            if (event.hasNotes()) {
+                holder.notesView.setText(event.getNotes());
+            } else {
                 holder.notesView.setText(context.getString(R.string.event_notes_blank));
                 holder.notesView.setTypeface(holder.notesView.getTypeface(), Typeface.ITALIC);
-            } else {
-                holder.notesView.setText(event.getNotes());
             }
 
         } else {
