@@ -1,15 +1,9 @@
 package com.nightcap.previously;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
@@ -18,12 +12,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.math.RoundingMode;
@@ -36,7 +27,8 @@ import java.util.List;
  * Activity for displaying event details.
  */
 
-public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface {
+public class EventInfoActivity extends AppCompatActivity implements ReceiveDateInterface, ReceiveEventInterface,
+        ReceiveNotesInterface {
     private String TAG = "InfoActivity";
 
     private DatabaseHandler databaseHandler;
@@ -114,6 +106,8 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     }
 
     public void onReceiveEventFromAdapter(Event event, String flag) {
+        selectedEvent = event;
+
         if (flag.equalsIgnoreCase(HistoryAdapter.FLAG_ADD_NOTES)) {
             // Hide the FAB
             fab.hide();
@@ -127,7 +121,6 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
             quickNotesFragment.show(getSupportFragmentManager(), quickNotesFragment.getTag());
         } else if (flag.equalsIgnoreCase(HistoryAdapter.FLAG_EXPAND)) {
             // Update info on cards to match the selected event from history
-            selectedEvent = event;
             updateInfoCard();
         }
     }
@@ -227,89 +220,11 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         newFragment.show(getSupportFragmentManager(), "datePickerDone");
     }
 
-    // Bottom sheet for quickly entering event notes
-    public static class QuickNotesBottomSheetDialogFragment extends BottomSheetDialogFragment {
-        EditText quickNotes;
-        FloatingActionButton fab;
-
-        private BottomSheetBehavior.BottomSheetCallback bottomSheetBehaviorCallback
-                = new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // This is for interacting with the sheet directly
-                switch (newState) {
-                    case BottomSheetBehavior.STATE_DRAGGING:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_DRAGGING");
-                        break;
-                    case BottomSheetBehavior.STATE_SETTLING:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_SETTLING");
-                        break;
-                    case BottomSheetBehavior.STATE_EXPANDED:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_EXPANDED");
-                        break;
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_COLLAPSED");
-                        break;
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_HIDDEN");
-                        dismiss();
-                        break;
-                }
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-            }
-        };
-
-        @Override
-        public void setupDialog(Dialog dialog, int style) {
-            super.setupDialog(dialog, style);
-
-            // Inflate the view from XML
-            View bottomSheetView = View.inflate(getContext(), R.layout.bottom_sheet_quick_notes, null);
-            dialog.setContentView(bottomSheetView);
-
-            // Get and set Behavior params
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) ((View) bottomSheetView.getParent()).getLayoutParams();
-            CoordinatorLayout.Behavior behavior = params.getBehavior();
-
-            if(behavior != null && behavior instanceof BottomSheetBehavior) {
-                ((BottomSheetBehavior) behavior).setBottomSheetCallback(bottomSheetBehaviorCallback);
-            }
-
-            // Find the EditText box for text input
-            quickNotes = (EditText) bottomSheetView.findViewById(R.id.bottom_sheet_notes);
-            fab = (FloatingActionButton) getActivity().findViewById(R.id.event_info_fab);
-
-            // Detect when the dialog is actually shown on screen
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    // Show the soft keyboard
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(quickNotes, InputMethodManager.SHOW_IMPLICIT);
-
-                    // Set focus to the EditText
-                    quickNotes.requestFocus();
-                }
-            });
-        }
-
-        @Override
-        public void onDismiss(DialogInterface dialog) {
-            // Show the FAB when the BottomSheet is dismissed
-            if (!fab.isShown()) {
-                fab.show();
-            }
-        }
-
-//        @Override
-//        public void onCancel(DialogInterface dialog) {
-//            Log.i("onCancel", "FAB: " + f.isShown());
-//            f.show();
-//        }
-
+    @Override
+    public void onReceiveNotesFromBottomSheet(String notes) {
+        selectedEvent.setNotes(notes);
+        databaseHandler.saveEvent(selectedEvent);
+        prepareHistory();
     }
 
 }
