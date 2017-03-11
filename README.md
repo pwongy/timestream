@@ -23,5 +23,6 @@ Example use cases include:
 - Replacing your Britta filter
 - Starting a new toothbrush/razor blade/contact lenses
 - Performing digital maintenance (updating passwords for online accounts, clearing cookies/internet cache)
+- Noting warranty expirations
 
 _A Nightcap Initiative_

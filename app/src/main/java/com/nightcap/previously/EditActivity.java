@@ -87,7 +87,7 @@ public class EditActivity extends AppCompatActivity {
             int period = databaseHandler.getEventById(editId).getPeriod();
             String periodStr;
             if (period <=0) {
-                periodStr = "N/A";
+                periodStr = getString(R.string.not_applicable);
             } else {
                 periodStr = String.valueOf(period);
             }
