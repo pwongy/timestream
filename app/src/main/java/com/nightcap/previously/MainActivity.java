@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.service.notification.StatusBarNotification;
 import android.support.design.widget.FloatingActionButton;
@@ -31,7 +32,10 @@ import android.widget.Spinner;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.opencsv.CSVWriter;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -204,6 +208,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 break;
             case R.id.action_notify:
                 scheduleNotification(ALARM_NOW);
+                break;
+            case R.id.action_export:
+                exportDataToCsv();
                 break;
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
@@ -465,4 +472,32 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             }
         }
     }
+
+    public void exportDataToCsv() {
+        String filename = "/test.csv";
+        String csvFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + filename;
+
+        Log.i(TAG, "Directory is " + csvFilePath);
+
+        CSVWriter writer = null;
+        try {
+            writer = new CSVWriter(new FileWriter(csvFilePath));
+
+            List<String[]> data = new ArrayList<String[]>();
+            data.add(new String[] {"India", "New Delhi"});
+            data.add(new String[] {"United States", "Washington D.C"});
+            data.add(new String[] {"Germany", "Berlin"});
+
+            writer.writeAll(data);
+
+            writer.close();
+            Log.i(TAG, "CSV file written");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.i(TAG, "Error writing CSV file");
+        }
+
+
+    }
+
 }

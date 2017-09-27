@@ -1,12 +1,13 @@
 <resources>
     <!--Metadata-->
     <string name="app_name">Previously</string>
-    <string name="build_date">5 March 2017</string>
+    <string name="build_date">28 September 2017</string>
     <string name="author">Paul Wong</string>
 
     <!--Main menu items-->
     <string name="action_sort">Sort&#8230;</string>
     <string name="action_notify">Set notification</string>
+    <string name="action_export">Export data</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
 
