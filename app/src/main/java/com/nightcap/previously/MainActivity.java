@@ -28,12 +28,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.opencsv.CSVWriter;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -474,26 +476,47 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     }
 
     public void exportDataToCsv() {
-        String filename = "/test.csv";
-        String csvFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + filename;
+        // Create folder
+        File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Previously");
+        folder.mkdirs();
 
-        Log.i(TAG, "Directory is " + csvFilePath);
+        // Create new file is folder
+        String previouslyDirectory = folder.toString();
+        File backupFile = new File(previouslyDirectory, "previously_backup.csv");
+
+        Log.d(TAG, "Directory is " + backupFile);
 
         CSVWriter writer = null;
         try {
-            writer = new CSVWriter(new FileWriter(csvFilePath));
+            writer = new CSVWriter(new FileWriter(backupFile));
+            List<Event> allEvents = databaseHandler.getAllEvents();
 
             List<String[]> data = new ArrayList<String[]>();
-            data.add(new String[] {"India", "New Delhi"});
-            data.add(new String[] {"United States", "Washington D.C"});
-            data.add(new String[] {"Germany", "Berlin"});
+            data.add(new String[] {"ID", "Event name", "Time (as long)", "Period", "Next due date (as long)", "Notes"} );
 
+            // Set up string array
+            for (int i = 0; i < allEvents.size(); i++) {
+                Event event = allEvents.get(i);
+
+                data.add(new String[] {String.valueOf(event.getId()),    // ID
+                        event.getName(),                                 // Event name
+                        String.valueOf(event.getDate().getTime()),       // Time (as long)
+                        String.valueOf(event.getPeriod()),               // Period
+                        String.valueOf(event.getNextDue().getTime()),    // Next due date (as long)
+                        event.getNotes()                                 // Notes
+                });
+            }
+
+            // Write array to file
             writer.writeAll(data);
 
+            // Close writer and notify user
             writer.close();
+            Toast.makeText(this, "Backup complete", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "CSV file written");
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(this, "Error during backup", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "Error writing CSV file");
         }
 

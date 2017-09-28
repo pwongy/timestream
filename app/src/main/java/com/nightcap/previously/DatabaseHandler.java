@@ -152,7 +152,6 @@ class DatabaseHandler {
      * Gets all events logged in the app's Realm.
      * @return A list of all logged events
      */
-    @Deprecated
     List<Event> getAllEvents() {
         // Query the Realm for all event instances (unsorted)
         final RealmResults<Event> queryResult = eventLog.where(Event.class)
