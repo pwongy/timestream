@@ -23,19 +23,16 @@ public class Event extends RealmObject {
     private Date nextDue;                       // Dependent on period
     private String notes;
 
-    private boolean notifications;              // Common
+    private boolean notifications;                // Common
 
 //    private String category;                    // Common
 //    private boolean isPinned;                   // Common
 //    private boolean isPrivate;                  // Common
 //    private boolean isArchived;                 // Common
+//    private int manualOrder;                    // Common
 
     // Other ideas:
-    //  - Category
     //  - Notifications >> Warning date (days before), on Due Date, post-reminders repeat period
-    //  - Pinned events
-    //  - Private events
-    //  - Archived events
 
     public Event() {
 

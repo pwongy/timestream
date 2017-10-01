@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     // Any interactions with the Realm should go through this.
     private DatabaseHandler databaseHandler;
 
+    // Previously folder on SD card
+    File previouslyFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Previously");
+
     // Variables to access user preferences, defined in the app settings.
     private SharedPreferences prefs;
     final String KEY_SORT_FIELD = "sort_primary_field";
@@ -213,6 +216,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                 break;
             case R.id.action_export:
                 exportDataToCsv();
+                break;
+            case R.id.action_restore:
+                restoreDataFromCsv();
                 break;
             case R.id.action_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
@@ -477,11 +483,10 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
     public void exportDataToCsv() {
         // Create folder
-        File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Previously");
-        folder.mkdirs();
+        previouslyFolder.mkdirs();
 
         // Create new file is folder
-        String previouslyDirectory = folder.toString();
+        String previouslyDirectory = previouslyFolder.toString();
         File backupFile = new File(previouslyDirectory, "previously_backup.csv");
 
         Log.d(TAG, "Directory is " + backupFile);
@@ -490,11 +495,12 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         try {
             writer = new CSVWriter(new FileWriter(backupFile));
             List<Event> allEvents = databaseHandler.getAllEvents();
-
             List<String[]> data = new ArrayList<String[]>();
+
+            // Header row
             data.add(new String[] {"ID", "Event name", "Time (as long)", "Period", "Next due date (as long)", "Notes"} );
 
-            // Set up string array
+            // Set up string array with actual Realm data
             for (int i = 0; i < allEvents.size(); i++) {
                 Event event = allEvents.get(i);
 
@@ -519,8 +525,17 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             Toast.makeText(this, "Error during backup", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "Error writing CSV file");
         }
+    }
 
-
+    public void restoreDataFromCsv() {
+//        String path = Environment.getExternalStorageDirectory().toString()+"/Pictures";
+//        Log.d("Files", "Path: " + path);
+//        File directory = new File(path);
+        File[] files = previouslyFolder.listFiles();
+        Log.d("Files", "Size: "+ files.length);
+        for (int i = 0; i < files.length; i++) {
+            Log.d("Files", "FileName:" + files[i].getName());
+        }
     }
 
 }

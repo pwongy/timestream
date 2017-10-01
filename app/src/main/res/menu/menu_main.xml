@@ -18,6 +18,11 @@
         android:title="@string/action_export"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_restore"
+        android:orderInCategory="4"
+        android:title="@string/action_restore"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
