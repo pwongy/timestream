@@ -33,12 +33,15 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -65,6 +68,14 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     final String KEY_SORT_ORDER_ASCENDING = "sort_primary_ascending";
     final String KEY_NOTIFICATIONS = "notifications_toggle";
     final String KEY_NOTIFICATION_TIME = "notification_time";
+
+    // Field names for CSV
+    final String FIELD_EVENT_ID = "id";
+    final String FIELD_EVENT_NAME = "name";
+    final String FIELD_EVENT_DATE = "dateLong";
+    final String FIELD_EVENT_PERIOD = "periodInDays";
+    final String FIELD_EVENT_NEXT_DUE = "nextDueLong";
+    final String FIELD_EVENT_NOTES = "notes";
 
     // RecyclerView for displaying the log, and associated adapter.
     RecyclerView recyclerView;
@@ -498,7 +509,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             List<String[]> data = new ArrayList<String[]>();
 
             // Header row
-            data.add(new String[] {"ID", "Event name", "Time (as long)", "Period", "Next due date (as long)", "Notes"} );
+            data.add(new String[] {FIELD_EVENT_ID, FIELD_EVENT_NAME, FIELD_EVENT_DATE,
+                    FIELD_EVENT_PERIOD, FIELD_EVENT_NEXT_DUE, FIELD_EVENT_NOTES} );
 
             // Set up string array with actual Realm data
             for (int i = 0; i < allEvents.size(); i++) {
@@ -523,18 +535,39 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error during backup", Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Error writing CSV file");
+            Log.e(TAG, "Error writing CSV file");
         }
     }
 
     public void restoreDataFromCsv() {
-//        String path = Environment.getExternalStorageDirectory().toString()+"/Pictures";
-//        Log.d("Files", "Path: " + path);
-//        File directory = new File(path);
+        // List files in directory
         File[] files = previouslyFolder.listFiles();
-        Log.d("Files", "Size: "+ files.length);
+        Log.d("Files", "Size: " + files.length);
         for (int i = 0; i < files.length; i++) {
             Log.d("Files", "FileName:" + files[i].getName());
+        }
+
+        // Show popup with list of files
+
+
+        // When the user picks a file and confirms with OK, restore from file
+        File backupFile = new File(previouslyFolder, "previously_backup.csv");
+
+        // Build reader instance
+        try {
+            CSVReader reader = new CSVReader(new FileReader(backupFile.getAbsolutePath()), ',', '"', 1);
+
+            //Read all rows at once
+            List<String[]> allRows = reader.readAll();
+
+            //Read CSV line by line and use the string array as you want
+            for (String[] row : allRows) {
+                Log.i(TAG, Arrays.toString(row));
+                // Parse and save things here
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Error reading CSV file");
         }
     }
 
