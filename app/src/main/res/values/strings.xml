@@ -36,6 +36,7 @@
     <string name="event_name_label">Event name</string>
     <string name="event_name_hint">Describe the task</string>
     <string name="event_date_label">Date</string>
+    <string name="event_category_label">Category</string>
     <string name="event_period_label">Repeat period</string>
     <string name="event_period_hint">[in days]</string>
     <string name="event_notes_label">Notes</string>

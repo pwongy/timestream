@@ -33,10 +33,12 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
 
     private DatabaseHandler databaseHandler;
     private DateHandler dh = new DateHandler();
+    private int eventId;
     private Event selectedEvent;
 
+    private ActionBar actionBar;
     private FloatingActionButton fab;
-    private TextView periodView, nextDueView, countView, intervalView;
+    private TextView categoryView, periodView, nextDueView, countView, intervalView;
 
     RecyclerView historyRecyclerView;
     private List<Event> historyList = new ArrayList<>();
@@ -63,20 +65,20 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
         databaseHandler = new DatabaseHandler(this);
 
         // Get selected event
-        int eventId = getIntent().getIntExtra("event_id", 0);
+        eventId = getIntent().getIntExtra("event_id", 0);
         selectedEvent = databaseHandler.getEventById(eventId);
 
         // Get reference to ActionBar
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
 
         // Configure ActionBar
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
-            actionBar.setTitle(selectedEvent.getName());
         }
 
         // Card 1 - Info
+        categoryView = (TextView) findViewById(R.id.card_info_category_value);
         periodView = (TextView) findViewById(R.id.card_info_period_value);
         nextDueView = (TextView) findViewById(R.id.card_info_next_due_value);
 
@@ -126,6 +128,10 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     }
 
     private void updateInfoCard() {
+        // Category
+        categoryView.setText(selectedEvent.getCategory());
+        periodView.setTypeface(periodView.getTypeface(), Typeface.NORMAL);
+
         // Period and next due date
         if (selectedEvent.getPeriod() <= 0) {
             periodView.setText(getString(R.string.event_no_repeat));
@@ -147,6 +153,16 @@ public class EventInfoActivity extends AppCompatActivity implements ReceiveDateI
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Update event handle
+        selectedEvent = databaseHandler.getEventById(eventId);
+        actionBar.setTitle(selectedEvent.getName());
+
         prepareHistory();
         updateStatsCard();
     }

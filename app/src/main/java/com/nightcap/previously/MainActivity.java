@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     final String FIELD_EVENT_ID = "id";
     final String FIELD_EVENT_NAME = "name";
     final String FIELD_EVENT_DATE = "dateLong";
+    final String FIELD_EVENT_CATEGORY = "category";
     final String FIELD_EVENT_PERIOD = "periodInDays";
     final String FIELD_EVENT_NEXT_DUE = "nextDueLong";
     final String FIELD_EVENT_NOTES = "notes";
@@ -510,7 +511,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
             // Header row
             data.add(new String[] {FIELD_EVENT_ID, FIELD_EVENT_NAME, FIELD_EVENT_DATE,
-                    FIELD_EVENT_PERIOD, FIELD_EVENT_NEXT_DUE, FIELD_EVENT_NOTES} );
+                    FIELD_EVENT_PERIOD, FIELD_EVENT_NEXT_DUE, FIELD_EVENT_NOTES,
+                    FIELD_EVENT_CATEGORY} );
 
             // Set up string array with actual Realm data
             for (int i = 0; i < allEvents.size(); i++) {
@@ -521,7 +523,8 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
                         String.valueOf(event.getDate().getTime()),       // Time (as long)
                         String.valueOf(event.getPeriod()),               // Period
                         String.valueOf(event.getNextDue().getTime()),    // Next due date (as long)
-                        event.getNotes()                                 // Notes
+                        event.getNotes(),                                // Notes
+                        event.getCategory()                              // Category
                 });
             }
 

@@ -19,13 +19,12 @@ public class Event extends RealmObject {
     @Index
     private String name;                        // Common
     private Date date;
+    private String category;                    // Common
     private int periodInDays;
     private Date nextDue;                       // Dependent on period
     private String notes;
 
     private boolean notifications;                // Common
-
-//    private String category;                    // Common
 //    private boolean isPinned;                   // Common
 //    private boolean isPrivate;                  // Common
 //    private boolean isArchived;                 // Common
@@ -88,6 +87,14 @@ public class Event extends RealmObject {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     boolean hasNotes() {

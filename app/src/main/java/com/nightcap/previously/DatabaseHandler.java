@@ -39,7 +39,8 @@ class DatabaseHandler {
         // The Realm file will be located in Context.getFilesDir() with chosen name
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .name("event_log.realm")
-                .schemaVersion(1)
+                .schemaVersion(2)
+                .migration(new DatabaseMigration())
                 .build();
         // Use the config
         eventLog = Realm.getInstance(config);
@@ -109,6 +110,7 @@ class DatabaseHandler {
 
         // The event name is carried over from previous entries, while the date is set per user input
         event.setName(existingEvent.getName());
+        event.setCategory(existingEvent.getCategory());
         event.setDate(doneDate);
 
         // The event period is also carried over
@@ -228,16 +230,32 @@ class DatabaseHandler {
 
     /**
      * Method for propagating updated event name through to other records in the Realm.
-     * @param oldName The old event name.
+     * @param searchForName The old event name to search for.
      * @param newName The new event name.
      */
-    void updateNameField(String oldName, String newName) {
+    void updateNameField(String searchForName, String newName) {
         // Get list of events matching the old name
-        List<Event> sameEvents = getEventsByName(oldName);
+        List<Event> sameEvents = getEventsByName(searchForName);
 
         // Update each event with the new name
         for (Event e : sameEvents) {
             e.setName(newName);
+            saveEvent(e);
+        }
+    }
+
+    /**
+     * Method for propagating updated category through to other records in the Realm.
+     * @param searchForName The event name to look up.
+     * @param newCategory The new category name.
+     */
+    void updateCategoryField(String searchForName, String newCategory) {
+        // Get list of events matching the old name
+        List<Event> sameEvents = getEventsByName(searchForName);
+
+        // Update each event with the new name
+        for (Event e : sameEvents) {
+            e.setCategory(newCategory);
             saveEvent(e);
         }
     }

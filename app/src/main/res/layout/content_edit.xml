@@ -19,12 +19,48 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:scrollbars="none">
 
+        <!--Category-->
+        <RelativeLayout
+            android:id="@+id/category_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true">
+            <ImageView
+                android:id="@+id/image_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/event_icon_margin"
+                android:paddingTop="@dimen/event_icon_margin"
+                app:srcCompat="@drawable/ic_event_category"/>
+            <TextView
+                android:id="@+id/label_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/image_category"
+                android:layout_marginStart="@dimen/label_adjustment"
+                android:text="@string/event_category_label"
+                android:textColor="@color/colorAccent" />
+            <EditText
+                android:id="@+id/event_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/label_category"
+                android:layout_toEndOf="@+id/image_category"
+                android:inputType="textAutoCorrect|textMultiLine|textCapSentences"
+                android:minLines="1"
+                android:maxLines="4"
+                android:hint="@null"
+                android:textColorHint="?android:attr/textColorHint" />
+        </RelativeLayout>
+
+        <!--Period-->
         <RelativeLayout
             android:id="@+id/period_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/category_input"
+            android:layout_marginTop="@dimen/label_margin"
             android:layout_alignParentStart="true">
-
             <ImageView
                 android:id="@+id/image_period"
                 android:layout_width="wrap_content"
@@ -32,7 +68,6 @@
                 android:paddingEnd="@dimen/event_icon_margin"
                 android:paddingTop="@dimen/event_icon_margin"
                 app:srcCompat="@drawable/ic_event_period" />
-
             <TextView
                 android:id="@+id/label_period"
                 android:layout_width="wrap_content"
@@ -41,7 +76,6 @@
                 android:layout_marginStart="@dimen/label_adjustment"
                 android:text="@string/event_period_label"
                 android:textColor="@color/colorAccent" />
-
             <EditText
                 android:id="@+id/event_period"
                 android:layout_width="match_parent"
@@ -55,6 +89,7 @@
                 android:textColorHint="?android:attr/textColorHint"/>
         </RelativeLayout>
 
+        <!--Notes-->
         <RelativeLayout
             android:id="@+id/notes_input"
             android:layout_width="match_parent"
@@ -62,7 +97,6 @@
             android:layout_below="@+id/period_input"
             android:layout_marginTop="@dimen/label_margin"
             android:layout_alignParentStart="true">
-
             <ImageView
                 android:id="@+id/image_notes"
                 android:layout_width="wrap_content"
@@ -70,7 +104,6 @@
                 android:paddingEnd="@dimen/event_icon_margin"
                 android:paddingTop="@dimen/event_icon_margin"
                 app:srcCompat="@drawable/ic_event_notes"/>
-
             <TextView
                 android:id="@+id/label_notes"
                 android:layout_width="wrap_content"
@@ -79,7 +112,6 @@
                 android:layout_marginStart="@dimen/label_adjustment"
                 android:text="@string/event_notes_label"
                 android:textColor="@color/colorAccent" />
-
             <EditText
                 android:id="@+id/event_notes"
                 android:layout_width="match_parent"
@@ -94,17 +126,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-
-    <!--<TextView-->
-    <!--android:id="@+id/lorem"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="@dimen/label_margin"-->
-    <!--android:layout_marginStart="@dimen/label_adjustment"-->
-    <!--android:layout_alignParentStart="true"-->
-    <!--android:text="@string/lorem"-->
-    <!--android:textSize="18dp"-->
-    <!--android:textAlignment="viewStart"-->
-    <!--android:textColor="@color/colorDateText" />-->
 
 </android.support.v4.widget.NestedScrollView>

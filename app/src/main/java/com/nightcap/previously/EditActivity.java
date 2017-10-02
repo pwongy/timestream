@@ -38,10 +38,11 @@ public class EditActivity extends AppCompatActivity {
     // Editing
     private boolean isEditExistingEvent;
     int editId;
-    String oldName;
+    String oldName, oldCategory;
 
     // Input fields
     EditText inputName;
+    EditText inputCategory;
     EditText inputDate;
     EditText inputPeriod;
     EditText inputNotes;
@@ -53,6 +54,7 @@ public class EditActivity extends AppCompatActivity {
         // Set up views
         setContentView(R.layout.activity_edit);
         inputName = (EditText) findViewById(R.id.event_name);
+        inputCategory = (EditText) findViewById(R.id.event_category);
         inputDate = (EditText) findViewById(R.id.event_date);
         inputPeriod = (EditText) findViewById(R.id.event_period);
         inputNotes = (EditText) findViewById(R.id.event_notes);
@@ -80,6 +82,7 @@ public class EditActivity extends AppCompatActivity {
 
             // TODO: Keep track of old values
             oldName = databaseHandler.getEventById(editId).getName();
+            oldCategory = databaseHandler.getEventById(editId).getCategory();
 
             // Pre-fill existing values
             inputName.setText(oldName);
@@ -93,6 +96,7 @@ public class EditActivity extends AppCompatActivity {
             }
             inputPeriod.setText(periodStr);
             inputNotes.setText(databaseHandler.getEventById(editId).getNotes());
+            inputCategory.setText(oldCategory);
         } else {
             // Creating new event
             getSupportActionBar().setTitle(getString(R.string.add_event));
@@ -173,6 +177,9 @@ public class EditActivity extends AppCompatActivity {
         String eventName = inputName.getText().toString();
         String eventDate = inputDate.getText().toString();
 
+        // Category
+        String eventCategory = inputCategory.getText().toString();
+
         // Period
         int eventPeriod;
         try {
@@ -209,30 +216,39 @@ public class EditActivity extends AppCompatActivity {
 
             event.setName(eventName);
             event.setDate(dh.stringToDate(eventDate));
+            event.setCategory(eventCategory);
             event.setPeriod(eventPeriod);
             event.setNextDue(dh.nextDueDate(dh.stringToDate(eventDate), eventPeriod));
             event.setNotes(eventNotes);
 
             // Save the unmanaged event to Realm
             databaseHandler.saveEvent(event);
-            if (!isEditExistingEvent) { // Must be a new event
-                // Insight tracking via Answers
-                Answers.getInstance().logCustom(new CustomEvent("Added a new event")
-                        .putCustomAttribute("Event name", event.getName())
-                        .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
-                Log.i(TAG, "Logged new event to Answers");
-            }
 
             // TODO: Set common values for similar events
             if (!eventName.equals(oldName)) {
                 Log.d(TAG, "Event name has changed.");
                 databaseHandler.updateNameField(oldName, eventName);
+//                databaseHandler.updateCategoryField(eventName, eventCategory);
+            }
+            if (!eventCategory.equals(oldCategory)) {
+                Log.d(TAG, "Event category has changed.");
+                databaseHandler.updateCategoryField(eventName, eventCategory);
             }
 
-            // Return to main screen
-            Intent homeIntent = new Intent(this, MainActivity.class);
-            homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(homeIntent);
+            if (isEditExistingEvent) {
+                finish();
+            } else {    // Must be a new event
+                // Insight tracking via Answers
+                Answers.getInstance().logCustom(new CustomEvent("Added a new event")
+                        .putCustomAttribute("Event name", event.getName())
+                        .putCustomAttribute("Repeating event", String.valueOf(event.hasPeriod())));
+                Log.i(TAG, "Logged new event to Answers");
+
+                // Return to main screen
+                Intent homeIntent = new Intent(this, MainActivity.class);
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(homeIntent);
+            }
         }
     }
 
