@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     final String FIELD_EVENT_NOTES = "notes";
 
     // RecyclerView for displaying the log, and associated adapter.
-    RecyclerView recyclerView;
+    RecyclerView eventLogRecyclerView;
     private List<Event> eventList = new ArrayList<>();
     private EventLogAdapter eventLogAdapter;
 
@@ -125,23 +126,23 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         databaseHandler = new DatabaseHandler(this);
 
         // Set up the RecyclerView
-        recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+        eventLogRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 
         // LayoutManager must be set before adapter
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        eventLogRecyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
+        eventLogRecyclerView.setItemAnimator(new DefaultItemAnimator());                // Animator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecoration(this, DividerItemDecoration.VERTICAL);    // Decorator line
-        recyclerView.addItemDecoration(itemDecoration);
+        eventLogRecyclerView.addItemDecoration(itemDecoration);
 
         // Adapter (must be set after LayoutManager)
         eventLogAdapter = new EventLogAdapter(this, eventList);
-        recyclerView.setAdapter(eventLogAdapter);
+        eventLogRecyclerView.setAdapter(eventLogAdapter);
 
         // Hide FAB on scroll
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        eventLogRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 10 && fab.isShown()) {
@@ -494,12 +495,17 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     }
 
     public void exportDataToCsv() {
+        Calendar now = Calendar.getInstance();
+        String dateStamp = "" + now.get(Calendar.YEAR)
+                + (now.get(Calendar.MONTH) + 1)
+                + now.get(Calendar.DAY_OF_MONTH);
+
         // Create folder
         previouslyFolder.mkdirs();
 
         // Create new file is folder
         String previouslyDirectory = previouslyFolder.toString();
-        File backupFile = new File(previouslyDirectory, "previously_backup.csv");
+        File backupFile = new File(previouslyDirectory, dateStamp + "_previously_backup.csv");
 
         Log.d(TAG, "Directory is " + backupFile);
 
@@ -551,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         }
 
         // Show popup with list of files
-
+        showRestoreDataDialog(files);
 
         // When the user picks a file and confirms with OK, restore from file
         File backupFile = new File(previouslyFolder, "previously_backup.csv");
@@ -572,6 +578,42 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
             e.printStackTrace();
             Log.e(TAG, "Error reading CSV file");
         }
+    }
+
+    /**
+     * Dialog for choosing CSV file from which to restore
+     */
+    public void showRestoreDataDialog(File[] files) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_restore, null);
+        dialogBuilder.setView(dialogView);
+        final TextView csvFileListView = (TextView) dialogView.findViewById(R.id.csv_text_list);
+
+        // List files
+        for (int i = 0; i < files.length; i++) {
+            String text = (i + 1) + ". " + files[i].getName();
+            if (i < (files.length - 1)) {
+                text = text + "\n";
+            }
+            csvFileListView.append(text);
+        }
+
+        // Build the dialog
+        dialogBuilder.setTitle(getResources().getString(R.string.action_restore));
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // ??
+            }
+        });
+        dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button_text), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Pass
+            }
+        });
+        AlertDialog b = dialogBuilder.create();
+        b.show();
+
     }
 
 }

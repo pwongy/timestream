@@ -49,6 +49,8 @@ class DatabaseMigration implements RealmMigration {
         }
     }
 
+    // Solution for Realm migration error:
+    // https://stackoverflow.com/questions/36907001/open-realm-with-new-realmconfiguration
     @Override
     public boolean equals(Object o) {
         return o instanceof DatabaseMigration;
