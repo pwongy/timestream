@@ -33,7 +33,7 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
 
     // ViewHolder pattern as required
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        TextView nameView, previousDateView, nextDateView;
+        TextView nameView, categoryView, previousDateView, nextDateView;
         RoundCornerProgressBar progressBar;
         ImageButton imageButton;
 //        http://stackoverflow.com/questions/30284067/handle-button-click-inside-a-row-in-recyclerview
@@ -42,11 +42,12 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             super(view);
 
             // Get relevant views
-            nameView = (TextView) view.findViewById(R.id.list_event_name);
-            previousDateView = (TextView) view.findViewById(R.id.list_event_previous_date);
-            nextDateView = (TextView) view.findViewById(R.id.list_event_next_date);
-            progressBar = (RoundCornerProgressBar) view.findViewById(R.id.list_item_progress);
-            imageButton = (ImageButton) view.findViewById(R.id.list_item_image_button);
+            nameView = view.findViewById(R.id.list_event_name);
+            categoryView = view.findViewById(R.id.list_event_category);
+            previousDateView = view.findViewById(R.id.list_event_previous_date);
+            nextDateView = view.findViewById(R.id.list_event_next_date);
+            progressBar = view.findViewById(R.id.list_item_progress);
+            imageButton = view.findViewById(R.id.list_item_image_button);
 
             // Set listeners
             view.setOnClickListener(this);
@@ -56,6 +57,8 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
             // Set text size
             nameView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     context.getResources().getDimension(R.dimen.text_size_event_name));
+            categoryView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    context.getResources().getDimension(R.dimen.text_size_event_category));
             previousDateView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     context.getResources().getDimension(R.dimen.text_size_event_dates));
             nextDateView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -125,6 +128,7 @@ class EventLogAdapter extends RecyclerView.Adapter<EventLogAdapter.ViewHolder> {
 
         // Set name and previous date (always available)
         holder.nameView.setText(event.getName());
+        holder.categoryView.setText(event.getCategory());
         holder.previousDateView.setText(dh.dateToString(event.getDate())
                 + "\n(" + dh.getRelativeDaysString(relativeDaysPrevious) + ")");
 

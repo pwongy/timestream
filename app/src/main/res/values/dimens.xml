@@ -41,6 +41,7 @@
     <!--Text sizes-->
     <dimen name="text_size_normal">15sp</dimen>
     <dimen name="text_size_event_name">16sp</dimen>
+    <dimen name="text_size_event_category">12sp</dimen>
     <dimen name="text_size_event_dates">14sp</dimen>
 
     <!--Indicators-->

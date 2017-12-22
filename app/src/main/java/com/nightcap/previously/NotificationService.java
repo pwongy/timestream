@@ -12,6 +12,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -20,19 +22,15 @@ import java.util.List;
 
 public class NotificationService extends IntentService {
     private String TAG = "NotificationService";
+    DateHandler dateHandler = new DateHandler();
 
     // Preferences
-    private SharedPreferences prefs;
+    SharedPreferences prefs;
     final String KEY_VIBRATE = "notifications_vibrate";
     final String KEY_RINGTONE = "notifications_ringtone";
 
     // Set an ID for the notification
     static final int overdueNotificationId = 001;
-
-    // Keys (from old app, repurpose or delete these later...)
-    public static final String ACTION_UPDATE_DATA = "com.nightcap.oleo.beta.UPDATE_DATA";
-    public static final String EXTRA_UPDATE_CITY = "com.nightcap.oleo.beta.UPDATE_CITY";
-    public static final String EXTRA_UPDATE_FUEL = "com.nightcap.oleo.beta.UPDATE_FUEL";
 
     // NotificationManager Service
     NotificationManager nm;
@@ -43,7 +41,7 @@ public class NotificationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(TAG, "NotificationService intent triggered by alarm");
+        Log.d(TAG, "NotificationService intent triggered");
         nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         // Check database for overdue tasks
@@ -53,6 +51,12 @@ public class NotificationService extends IntentService {
         // Set a notification if there are overdue events
         if (overdueList.size() > 0) {
             Log.d(TAG, "There are overdue events; setting notification");
+
+            // Sort events
+            Event.SortParameter order = Event.SortParameter.NEXT_DUE_ASCENDING;
+            Comparator<Event> cp = Event.getComparator(order);
+            Collections.sort(overdueList, cp);
+
             setNotification(overdueList);
         } else {
             Log.d(TAG, "No more overdue events; removing notification");
@@ -80,21 +84,39 @@ public class NotificationService extends IntentService {
 
         // Start building the notification
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(this)
+                new NotificationCompat.Builder(this, "overdue_events_channel")
                         .setSmallIcon(R.drawable.ic_stat_previously)
                         .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
-                        .setContentTitle("Time to do things")
                         .setContentIntent(resultPendingIntent)
                         .setPriority(Notification.PRIORITY_LOW);
 
         // Add overdue events text, and handle plurals
         String overdueText;
         if (overdue.size() == 1) {
-            overdueText = "You have " + overdue.size() + " overdue event.";
+            overdueText = overdue.size() + " overdue item";
         } else {
-            overdueText = "You have " + overdue.size() + " overdue events.";
+            overdueText = overdue.size() + " overdue items";
         }
-        builder.setContentText(overdueText);
+
+        builder.setSubText(overdueText);
+        builder.setContentTitle("You have " + overdueText);
+        builder.setContentText("Just pick one and get it done");
+
+        // Big notification
+        NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+        StringBuilder overdueBigTextBuilder = new StringBuilder();
+        for (int i = 0; i < overdue.size(); i++) {
+            overdueBigTextBuilder.append(dateHandler.getRelativeDaysString(dateHandler.getDaysBetween(
+                    overdue.get(i).getNextDue(), dateHandler.getTodayDate())));
+            overdueBigTextBuilder.append("    " + overdue.get(i).getName());
+            if (i < overdue.size() - 1) {
+                overdueBigTextBuilder.append("\n");
+            }
+        }
+
+        bigText.bigText(overdueBigTextBuilder.toString());
+        bigText.setBigContentTitle("Here's what's left on your list:");
+        builder.setStyle(bigText);
 
         // Account for preferences:
         // Ringtone preference

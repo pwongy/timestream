@@ -28,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
@@ -59,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
     // A handler to access the Realm (database).
     // Any interactions with the Realm should go through this.
     private DatabaseHandler databaseHandler;
+    private DateHandler dateHandler;
 
     // Previously folder on SD card
     File previouslyFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Previously");
@@ -86,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
     // The currently selected event.
     Event selectedEvent;
+
+    // Selected file position for Restore dialog
+    private int selectedRestoreItemPosition = -1;
 
     // Alarm type codes for scheduling the (background) notification service.
     final int ALARM_DEFAULT = 0;
@@ -125,8 +128,11 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
         // (Realm is initialised during its construction so no need to do that here.)
         databaseHandler = new DatabaseHandler(this);
 
+        // Get a date handler
+        dateHandler = new DateHandler();
+
         // Set up the RecyclerView
-        eventLogRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
+        eventLogRecyclerView = findViewById(R.id.main_recycler_view);
 
         // LayoutManager must be set before adapter
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -496,18 +502,17 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
 
     public void exportDataToCsv() {
         Calendar now = Calendar.getInstance();
-        String dateStamp = "" + now.get(Calendar.YEAR)
-                + (now.get(Calendar.MONTH) + 1)
-                + now.get(Calendar.DAY_OF_MONTH);
+        String dateStamp = dateHandler.dateToStringFilePrefix(now.getTime());
 
         // Create folder
         previouslyFolder.mkdirs();
 
         // Create new file is folder
         String previouslyDirectory = previouslyFolder.toString();
-        File backupFile = new File(previouslyDirectory, dateStamp + "_previously_backup.csv");
+        File backupFile = new File(previouslyDirectory, "Previously_on_" + dateStamp + ".csv");
 
         Log.d(TAG, "Directory is " + backupFile);
+        Log.d(TAG, "Number of events: " + databaseHandler.getEventCount());
 
         CSVWriter writer = null;
         try {
@@ -584,36 +589,37 @@ public class MainActivity extends AppCompatActivity implements ReceiveDateInterf
      * Dialog for choosing CSV file from which to restore
      */
     public void showRestoreDataDialog(File[] files) {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_restore, null);
-        dialogBuilder.setView(dialogView);
-        final TextView csvFileListView = (TextView) dialogView.findViewById(R.id.csv_text_list);
-
-        // List files
+        // Get file names and put in an array for the dialog
+        final String[] fileList = new String[files.length];
         for (int i = 0; i < files.length; i++) {
-            String text = (i + 1) + ". " + files[i].getName();
-            if (i < (files.length - 1)) {
-                text = text + "\n";
-            }
-            csvFileListView.append(text);
+            fileList[i] = files[i].getName();
         }
 
         // Build the dialog
-        dialogBuilder.setTitle(getResources().getString(R.string.action_restore));
-        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                // ??
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle(getResources().getString(R.string.dialog_restore_title));
+        dialogBuilder.setSingleChoiceItems(fileList, -1, new DialogInterface
+                .OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                Toast.makeText(getApplicationContext(),
+                        "File: " + fileList[item], Toast.LENGTH_SHORT).show();
+                selectedRestoreItemPosition = item;
             }
         });
-        dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button_text), new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // restore here = confirm?
+            }
+        });
+        dialogBuilder.setNegativeButton(getString(R.string.dialog_cancel_button_text),
+                new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Pass
             }
         });
-        AlertDialog b = dialogBuilder.create();
-        b.show();
 
+        AlertDialog alert = dialogBuilder.create();
+        alert.show();
     }
 
 }

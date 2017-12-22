@@ -1,7 +1,7 @@
 <resources>
     <!--Metadata-->
     <string name="app_name">Previously</string>
-    <string name="build_date">1 October 2017</string>
+    <string name="build_date">17 December 2017</string>
     <string name="author">Paul Wong</string>
 
     <!--Main menu items-->
@@ -27,6 +27,9 @@
     </string-array>
     <string name="dialog_sort_button_text">Sort</string>
     <string name="dialog_cancel_button_text">Cancel</string>
+
+    <!--Restore dialog-->
+    <string name="dialog_restore_title">Restore data from&#8230;</string>
 
     <!--Edit screen-->
     <string name="add_event">Add event</string>

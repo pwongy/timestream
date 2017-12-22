@@ -24,7 +24,7 @@ class DatabaseHandler {
     private String TAG = "DatabaseHandler";
     private Context appContext;
     private DateHandler dateHandler;
-    private Realm eventLog;    // Realm = database
+    private Realm eventLog;
     private SharedPreferences dataStore;
     private String KEY_EVENT_COUNT = "event_count";
 
@@ -170,7 +170,9 @@ class DatabaseHandler {
     List<Event> getLatestDistinctEvents(String sortField, boolean isSortAscending) {
         // Get all distinct events
         final RealmResults<Event> distinctEvents = eventLog.where(Event.class)
-                .distinct("name");
+                .distinctValues("name")
+                .sort("nextDue")
+                .findAll();
 
         // Find latest instance of each event
         List<Event> latestDistinctEvents = new ArrayList<>();
@@ -178,7 +180,8 @@ class DatabaseHandler {
             // Get latest instance
             RealmResults<Event> result = eventLog.where(Event.class)
                     .equalTo("name", e.getName())
-                    .findAllSorted("date", Sort.DESCENDING);
+                    .sort("date", Sort.DESCENDING)
+                    .findAll();
             latestDistinctEvents.add(result.first());
         }
 
@@ -214,7 +217,8 @@ class DatabaseHandler {
             // Get latest instance of each distinct event from event log
             RealmResults<Event> result = eventLog.where(Event.class)
                     .equalTo("name", e.getName())
-                    .findAllSorted("nextDue", Sort.DESCENDING);
+                    .sort("nextDue", Sort.DESCENDING)
+                    .findAll();
             Event candidate = result.first();
             // FIXME: Is this even necessary?
 
@@ -349,14 +353,25 @@ class DatabaseHandler {
      * @return The overall event count.
      */
     int getEventCount() {
+        // New
+        // Find largest event id
+        RealmResults<Event> result = eventLog.where(Event.class)
+                .findAllSorted("id", Sort.DESCENDING);
+        int newCount = result.first().getId();
+
+        // Old
         String dateKey = KEY_EVENT_COUNT;
-        return dataStore.getInt(dateKey, 0);
+        int oldCount = dataStore.getInt(dateKey, 0);
+
+        Log.w(TAG, "Old Count: " + oldCount + "; new Count: " + newCount);
+        return newCount;
     }
 
     /**
      * Saves event count to a SharedPreferences object, providing a means of assigning unique
      * primary keys for the Realm.
      */
+    // TODO: Can remove if querying from event IDs, but check for first event error
     private void incrementEventCount() {
         SharedPreferences.Editor editor = dataStore.edit();
 

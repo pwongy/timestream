@@ -3,8 +3,10 @@ package com.nightcap.previously;
 import android.text.format.DateUtils;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Helper class for converting between Dates, Calendars, and Strings.
@@ -37,6 +39,11 @@ class DateHandler {
      */
     String dateToString(Date date) {
         return DateFormat.getDateInstance().format(date);
+    }
+
+    String dateToStringFilePrefix(Date date) {
+        SimpleDateFormat df = new SimpleDateFormat("YYYYMMdd", Locale.getDefault());
+        return df.format(date);
     }
 
     /**

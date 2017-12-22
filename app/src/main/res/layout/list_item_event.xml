@@ -18,14 +18,33 @@
         android:layout_centerVertical="true"
         android:layout_toStartOf="@+id/list_item_image_button">
 
-        <TextView
-            android:id="@+id/list_event_name"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="@dimen/text_size_event_name"
-            android:layout_marginBottom="4dp"
-            android:textColor="@color/colorText"/>
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:id="@+id/list_event_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="@dimen/text_size_event_name"
+                android:textColor="@color/colorText"/>
+            <TextView
+                android:id="@+id/list_event_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:background="@android:color/black"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"/>
+
+        </RelativeLayout>
 
         <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
             android:id="@+id/list_item_progress"
